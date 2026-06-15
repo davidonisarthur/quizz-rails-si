@@ -7,6 +7,8 @@ RSpec.describe QuizModule, type: :model do
   end
 
   describe 'validations' do
+    subject { build(:quiz_module) }
+
     it { should validate_presence_of(:title_pt) }
     it { should validate_presence_of(:title_en) }
     it { should validate_presence_of(:slug) }

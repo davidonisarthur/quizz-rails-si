@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :option do
-    question { nil }
-    text_pt { "MyString" }
-    text_en { "MyString" }
+    association :question
+    text_pt { "15" }
+    text_en { "15" }
   end
 end
