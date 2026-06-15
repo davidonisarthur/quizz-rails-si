@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :quiz_module do
-    title_pt { "MyString" }
-    title_en { "MyString" }
-    slug { "MyString" }
-    unlocked { false }
+    title_pt { "O que é primo?" }
+    title_en { "What is a prime?" }
+    sequence(:slug) { |n| "modulo-#{n}" }
+    unlocked { true }
   end
 end
