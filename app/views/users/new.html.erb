@@ -1,0 +1,37 @@
+<div class="max-w-md mx-auto py-10 px-4">
+  <h2 class="text-3xl font-bold mb-6 text-center">Criar Conta</h2>
+
+  <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "space-y-4" do |f| %>
+    <% if @user.errors.any? %>
+      <div class="bg-red-100 text-red-800 p-4 rounded mb-4">
+        <ul>
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium mb-1" %>
+      <%= f.text_field :name, required: true, class: "w-full p-2 rounded border border-gray-300 dark:bg-gray-800 dark:border-gray-700" %>
+    </div>
+
+    <div>
+      <%= f.label :email, class: "block text-sm font-medium mb-1" %>
+      <%= f.email_field :email, required: true, class: "w-full p-2 rounded border border-gray-300 dark:bg-gray-800 dark:border-gray-700" %>
+    </div>
+
+    <div>
+      <%= f.label :password, class: "block text-sm font-medium mb-1" %>
+      <%= f.password_field :password, required: true, class: "w-full p-2 rounded border border-gray-300 dark:bg-gray-800 dark:border-gray-700" %>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, class: "block text-sm font-medium mb-1" %>
+      <%= f.password_field :password_confirmation, required: true, class: "w-full p-2 rounded border border-gray-300 dark:bg-gray-800 dark:border-gray-700" %>
+    </div>
+
+    <%= f.submit "Criar Conta", class: "w-full bg-indigo-600 text-white py-2 rounded font-bold hover:bg-indigo-700 transition cursor-pointer" %>
+  <% end %>
+</div>
