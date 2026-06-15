@@ -1,0 +1,24 @@
+<div class="max-w-2xl mx-auto py-10 px-4">
+  <%= turbo_frame_tag "quiz_content" do %>
+    <div class="p-6 rounded-lg mb-8 <%= @feedback.kind == 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+      <h3 class="text-xl font-bold mb-2">
+        <%= @feedback.kind == 'correct' ? t('quiz.correct', default: 'Correto!') : t('quiz.incorrect', default: 'Quase!') %>
+      </h3>
+      <p>
+        <%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %>
+      </p>
+    </div>
+
+    <div class="text-center">
+      <% if @next_question %>
+        <%= link_to t('quiz.next_question', default: 'Próxima questão'), 
+                    play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), 
+                    class: "inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition" %>
+      <% else %>
+        <%= link_to t('quiz.see_result', default: 'Ver resultado'), 
+                    result_quiz_module_path(@module.slug, locale: I18n.locale), 
+                    class: "inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
