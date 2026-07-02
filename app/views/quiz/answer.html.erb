@@ -1,0 +1,37 @@
+<div class="max-w-2xl mx-auto py-10 px-4">
+  <%= turbo_frame_tag "quiz_content" do %>
+    <!-- Barra de progresso -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+        <span><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %></span>
+        <span><%= (((@current_index + 1).to_f / @total_questions) * 100).round %>%</span>
+      </div>
+      <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+        <div class="bg-indigo-600 h-2 rounded-full transition-all duration-500 ease-out" 
+             style="width: <%= (((@current_index + 1).to_f / @total_questions) * 100).round %>%"></div>
+      </div>
+    </div>
+
+    <div class="p-6 rounded-lg mb-8 <%= @feedback.kind == 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+      <h3 class="text-xl font-bold mb-2">
+        <%= @feedback.kind == 'correct' ? t('quiz.correct', default: 'Correto!') : t('quiz.incorrect', default: 'Quase!') %>
+      </h3>
+      <p>
+        <%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %>
+      </p>
+    </div>
+
+    <div class="text-center">
+      <% if @next_question %>
+        <%= link_to t('quiz.next_question', default: 'Próxima questão'), 
+                    play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), 
+                    class: "inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition" %>
+      <% else %>
+        <%= link_to t('quiz.see_result', default: 'Ver resultado'), 
+                    result_quiz_module_path(@module.slug, locale: I18n.locale), 
+                    data: { turbo_frame: "_top" },
+                    class: "inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

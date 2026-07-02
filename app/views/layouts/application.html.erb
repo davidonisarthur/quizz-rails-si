@@ -24,7 +24,42 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <nav class="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center">
+            <%= link_to "PrimoQuiz", root_path(locale: I18n.locale), class: "text-2xl font-bold text-indigo-600" %>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <%= link_to "Ranking", ranking_path(locale: I18n.locale), class: "text-gray-600 dark:text-gray-300 hover:text-indigo-600" %>
+            
+            <% if current_user %>
+              <%= link_to current_user.name, profile_path(locale: I18n.locale), class: "text-gray-600 dark:text-gray-300 hover:text-indigo-600" %>
+              <%= button_to "Sair", session_path(locale: I18n.locale), method: :delete, class: "text-gray-600 dark:text-gray-300 hover:text-red-600" %>
+            <% else %>
+              <%= link_to "Entrar", new_session_path(locale: I18n.locale), class: "text-gray-600 dark:text-gray-300 hover:text-indigo-600" %>
+            <% end %>
+
+            <!-- LIBRAS Mode Toggle -->
+            <%= button_to toggle_libras_mode_path(locale: I18n.locale), 
+                           method: :post,
+                           class: "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition #{libras_mode_enabled? ? 'bg-amber-100/80 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800/60' : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'}",
+                           aria: { label: t('quiz.libras_mode') } do %>
+              <span class="w-2 h-2 rounded-full <%= libras_mode_enabled? ? 'bg-amber-500 animate-pulse' : 'bg-gray-400' %>"></span>
+              <span><%= t('quiz.libras_mode') %></span>
+            <% end %>
+
+            <div class="flex items-center space-x-2 border-l pl-4 border-gray-200 dark:border-gray-700">
+              <%= link_to "PT", { locale: 'pt-BR' }, class: "text-xs font-bold #{I18n.locale == :'pt-BR' ? 'text-indigo-600' : 'text-gray-400'}" %>
+              <%= link_to "EN", { locale: 'en' }, class: "text-xs font-bold #{I18n.locale == :en ? 'text-indigo-600' : 'text-gray-400'}" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto mt-24 px-5">
       <%= yield %>
     </main>
   </body>

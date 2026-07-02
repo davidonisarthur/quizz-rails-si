@@ -1,0 +1,16 @@
+pt-BR:
+  hello: "Bem-vindo ao PrimoQuiz"
+  sessions:
+    invalid: "Email ou senha incorretos"
+  quiz:
+    correct: "Correto!"
+    incorrect: "Quase!"
+    next_question: "Próxima questão"
+    see_result: "Ver resultado"
+    progress: "Questão %{current} de %{total}"
+    libras_mode: "Modo LIBRAS"
+    watch_in_libras: "Assistir em LIBRAS"
+    close: "Fechar"
+  ranking:
+    title: "Ranking"
+    score: "Pontuação"

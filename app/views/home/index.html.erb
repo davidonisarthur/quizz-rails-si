@@ -1,0 +1,21 @@
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <h1 class="text-4xl font-bold mb-8"><%= t('hello', default: 'Bem-vindo ao PrimoQuiz') %></h1>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <% @modules.each do |modulo| %>
+      <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold mb-2">
+          <%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          <%= modulo.unlocked ? 'Disponível' : 'Bloqueado' %>
+        </p>
+        <% if modulo.unlocked %>
+          <%= link_to 'Jogar', play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition" %>
+        <% else %>
+          <span class="inline-block bg-gray-300 text-gray-600 px-4 py-2 rounded cursor-not-allowed">Bloqueado</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

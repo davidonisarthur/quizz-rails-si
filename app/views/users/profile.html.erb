@@ -1,0 +1,24 @@
+<div class="max-w-2xl mx-auto py-10 px-4">
+  <h2 class="text-3xl font-bold mb-2"><%= current_user.name %></h2>
+  <p class="text-gray-500 mb-8"><%= current_user.email %></p>
+
+  <h3 class="text-xl font-bold mb-4 text-gray-700 dark:text-gray-300">Minhas Tentativas</h3>
+
+  <div class="space-y-4">
+    <% @attempts.each do |attempt| %>
+      <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div>
+          <h4 class="font-bold"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h4>
+          <p class="text-xs text-gray-400"><%= l attempt.created_at, format: :short %></p>
+        </div>
+        <div class="text-lg font-bold text-indigo-600">
+          <%= attempt.score %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @attempts.empty? %>
+      <p class="text-center py-10 text-gray-400">Você ainda não completou nenhum quiz.</p>
+    <% end %>
+  </div>
+</div>
