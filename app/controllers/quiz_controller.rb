@@ -2,9 +2,21 @@ class QuizController < ApplicationController
   before_action :set_module
 
   def show
-    session[:quiz] = { module_id: @module.id, question_index: 0, score: 0 }
-    @question = @module.questions.order(:id).first
-    @options  = @question.options.order(:id)
+    questions = @module.questions.order(:id)
+
+    if params[:question_index].present? && session[:quiz].present? && session[:quiz]["module_id"] == @module.id
+      session[:quiz]["question_index"] = params[:question_index].to_i
+    else
+      session[:quiz] = { "module_id" => @module.id, "question_index" => 0, "score" => 0 }
+    end
+
+    @question = questions[session[:quiz]["question_index"]]
+
+    if @question.nil?
+      redirect_to result_quiz_module_path(@module.slug, locale: I18n.locale)
+    else
+      @options = @question.options.order(:id)
+    end
   end
 
   def answer
