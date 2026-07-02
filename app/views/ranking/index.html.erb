@@ -1,21 +1,21 @@
 <div class="max-w-2xl mx-auto py-10 px-4">
   <h2 class="text-3xl font-bold mb-8 text-center"><%= t('ranking.title') %></h2>
 
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+  <div class="bg-bg2 rounded-xl shadow-md overflow-hidden border border-bg3">
     <table class="w-full text-left">
-      <thead class="bg-gray-50 dark:bg-gray-700">
+      <thead class="bg-bg3">
         <tr>
-          <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">Posição</th>
-          <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase">Nome</th>
-          <th class="px-6 py-3 text-xs font-bold text-gray-500 uppercase"><%= t('ranking.score') %></th>
+          <th class="px-6 py-3 text-xs font-bold text-tx1 uppercase">Posição</th>
+          <th class="px-6 py-3 text-xs font-bold text-tx1 uppercase">Nome</th>
+          <th class="px-6 py-3 text-xs font-bold text-tx1 uppercase"><%= t('ranking.score') %></th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <tbody class="divide-y divide-bg3">
         <% @ranking.each_with_index do |user, index| %>
-          <tr>
-            <td class="px-6 py-4 font-bold text-gray-400">#<%= index + 1 %></td>
-            <td class="px-6 py-4"><%= user.name %></td>
-            <td class="px-6 py-4 font-semibold text-indigo-600"><%= user.total_score %></td>
+          <tr class="hover:bg-bg3/25 transition">
+            <td class="px-6 py-4 font-bold text-tx2">#<%= index + 1 %></td>
+            <td class="px-6 py-4 font-medium"><%= user.name %></td>
+            <td class="px-6 py-4 font-bold text-accent"><%= user.total_score %></td>
           </tr>
         <% end %>
       </tbody>
