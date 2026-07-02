@@ -3,17 +3,17 @@
   
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <% @modules.each do |modulo| %>
-      <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <h2 class="text-xl font-semibold mb-2">
+      <div class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-bold mb-2">
           <%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %>
         </h2>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">
-          <%= modulo.unlocked ? 'Disponível' : 'Bloqueado' %>
+        <p class="text-tx1 mb-4 text-sm font-medium">
+          <%= modulo.unlocked ? (I18n.locale == :en ? 'Available' : 'Disponível') : (I18n.locale == :en ? 'Locked' : 'Bloqueado') %>
         </p>
         <% if modulo.unlocked %>
-          <%= link_to 'Jogar', play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition" %>
+          <%= link_to (I18n.locale == :en ? 'Play' : 'Jogar'), play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "inline-block bg-accent text-white px-5 py-2.5 rounded-lg hover:brightness-110 font-semibold shadow transition duration-200" %>
         <% else %>
-          <span class="inline-block bg-gray-300 text-gray-600 px-4 py-2 rounded cursor-not-allowed">Bloqueado</span>
+          <span class="inline-block bg-bg3 text-tx2 px-5 py-2.5 rounded-lg cursor-not-allowed font-semibold"><%= I18n.locale == :en ? 'Locked' : 'Bloqueado' %></span>
         <% end %>
       </div>
     <% end %>
