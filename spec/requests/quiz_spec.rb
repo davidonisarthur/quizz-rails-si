@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Quizzes", type: :request do
   let!(:quiz_module) { create(:quiz_module, slug: "o-que-e-primo") }
-  let!(:q1) { create(:question, quiz_module: quiz_module, correct_index: 1, body_pt: "Qual destes números é primo?") }
-  let!(:q2) { create(:question, quiz_module: quiz_module, correct_index: 0, body_pt: "O número 1 é primo?") }
+  let!(:q1) { create(:question, quiz_module: quiz_module, correct_index: 1, body_pt: "Qual destes números é primo?", libras_video_url: "https://youtube.com/watch?v=exemplo") }
+  let!(:q2) { create(:question, quiz_module: quiz_module, correct_index: 0, body_pt: "O número 1 é primo?", libras_video_url: "") }
   
   let!(:o1_q1) { create(:option, question: q1, text_pt: "15") }
   let!(:o2_q1) { create(:option, question: q1, text_pt: "17") } # Correct choice for q1 is index 1
@@ -123,6 +123,60 @@ RSpec.describe "Quizzes", type: :request do
       expect(attempt.user).to eq(user)
       expect(attempt.quiz_module).to eq(quiz_module)
       expect(attempt.score).to eq(1)
+    end
+  end
+
+  describe "POST /:locale/libras_mode/toggle" do
+    it "toggles LIBRAS mode session variable and redirects back" do
+      # Make a first request to initialize session
+      get root_path(locale: "pt-BR")
+      expect(session[:libras_mode]).to be_nil
+
+      # Toggle on
+      post toggle_libras_mode_path(locale: "pt-BR")
+      expect(response).to redirect_to(root_path)
+      expect(session[:libras_mode]).to be true
+
+      # Toggle off
+      post toggle_libras_mode_path(locale: "pt-BR")
+      expect(session[:libras_mode]).to be false
+    end
+  end
+
+  describe "LIBRAS video button visibility on play page" do
+    it "does not show the LIBRAS video button if LIBRAS mode is disabled" do
+      # LIBRAS mode disabled by default
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
+      expect(response.body).not_to include("Assistir em LIBRAS")
+    end
+
+    it "shows the LIBRAS video button if LIBRAS mode is enabled and question has embed url" do
+      # Initialize play session
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      # Enable LIBRAS mode in session
+      post toggle_libras_mode_path(locale: "pt-BR")
+      expect(session[:libras_mode]).to be true
+
+      # Access play page for q1 (index 0, which has video)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
+      
+      expect(response.body).to include("Assistir em LIBRAS")
+      expect(response.body).to include("https://www.youtube.com/embed/exemplo")
+    end
+
+    it "does not show the LIBRAS video button if question does not have a video" do
+      # Initialize play session
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      # Enable LIBRAS mode in session
+      post toggle_libras_mode_path(locale: "pt-BR")
+      expect(session[:libras_mode]).to be true
+
+      # Access play page for q2 (index 1, which has empty video url)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      
+      expect(response.body).not_to include("Assistir em LIBRAS")
     end
   end
 end

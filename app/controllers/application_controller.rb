@@ -17,6 +17,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  def libras_mode_enabled?
+    !!session[:libras_mode]
+  end
+  helper_method :libras_mode_enabled?
+
   def require_login
     redirect_to new_session_path(locale: I18n.locale) unless current_user
   end
