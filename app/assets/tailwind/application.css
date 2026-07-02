@@ -17,7 +17,7 @@
   --amber: #f59e0b;
 }
 
-.dark {
+html.dark {
   /* Dark theme values (default first) */
   --bg0: #0e0e0f;
   --bg1: #141415;
