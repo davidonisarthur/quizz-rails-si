@@ -7,6 +7,7 @@ en:
     incorrect: "Not quite!"
     next_question: "Next question"
     see_result: "See result"
+    progress: "Question %{current} of %{total}"
   ranking:
     title: "Ranking"
     score: "Score"

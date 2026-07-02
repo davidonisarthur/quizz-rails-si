@@ -25,6 +25,8 @@ RSpec.describe "Quizzes", type: :request do
         "score" => 0
       })
       expect(response.body).to include("Qual destes números é primo?")
+      expect(response.body).to include("Questão 1 de 2")
+      expect(response.body).to include("0%")
     end
 
     it "avança para a questão solicitada se o quiz já estiver em progresso na sessão" do
@@ -37,6 +39,8 @@ RSpec.describe "Quizzes", type: :request do
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["question_index"]).to eq(1)
       expect(response.body).to include("O número 1 é primo?")
+      expect(response.body).to include("Questão 2 de 2")
+      expect(response.body).to include("50%")
     end
 
     it "redireciona para os resultados se o question_index estiver fora dos limites (nil question)" do
@@ -63,6 +67,8 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["score"]).to eq(1)
       expect(session[:quiz]["question_index"]).to eq(1)
       expect(response.body).to include("Parabéns, o 17 é primo!")
+      expect(response.body).to include("Questão 1 de 2")
+      expect(response.body).to include("50%")
     end
 
     it "não incrementa score mas atualiza o index da sessão quando a resposta está incorreta" do
@@ -72,6 +78,19 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["score"]).to eq(0)
       expect(session[:quiz]["question_index"]).to eq(1)
       expect(response.body).to include("Tente novamente, 15 não é primo!")
+      expect(response.body).to include("Questão 1 de 2")
+      expect(response.body).to include("50%")
+    end
+
+    it "inclui link para ver resultado quebrando o frame turbo (data-turbo-frame='_top') quando for a última questão" do
+      # Avança para a última questão (índice 1)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      
+      # Responde à última questão
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      
+      expect(response.body).to include("data-turbo-frame=\"_top\"")
+      expect(response.body).to include("Ver resultado")
     end
   end
 
