@@ -8,6 +8,9 @@ pt-BR:
     next_question: "Próxima questão"
     see_result: "Ver resultado"
     progress: "Questão %{current} de %{total}"
+    libras_mode: "Modo LIBRAS"
+    watch_in_libras: "Assistir em LIBRAS"
+    close: "Fechar"
   ranking:
     title: "Ranking"
     score: "Pontuação"

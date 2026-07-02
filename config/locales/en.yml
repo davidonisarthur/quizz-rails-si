@@ -8,6 +8,9 @@ en:
     next_question: "Next question"
     see_result: "See result"
     progress: "Question %{current} of %{total}"
+    libras_mode: "LIBRAS Mode"
+    watch_in_libras: "Watch in LIBRAS"
+    close: "Close"
   ranking:
     title: "Ranking"
     score: "Score"

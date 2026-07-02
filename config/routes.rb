@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resource  :session, only: [:new, :create, :destroy]
     get  "/profile", to: "users#profile", as: :profile
     get  "/ranking", to: "ranking#index",  as: :ranking
+    post "/libras_mode/toggle", to: "libras_mode#toggle", as: :toggle_libras_mode
   end
 
   root "home#index", as: :root_redirect
