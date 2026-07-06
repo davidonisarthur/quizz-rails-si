@@ -38,6 +38,8 @@ class QuizController < ApplicationController
 
     if @question.nil?
       redirect_to play_quiz_module_path(@module.slug, locale: I18n.locale) and return
+    elsif params[:question_id].blank? || @question.id != params[:question_id].to_i
+      redirect_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @current_index) and return
     end
 
     chosen    = params[:option_index].to_i

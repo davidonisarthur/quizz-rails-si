@@ -74,7 +74,7 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "incrementa score e atualiza o index da sessão quando a resposta está correta" do
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(1)
@@ -85,7 +85,7 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "não incrementa score mas atualiza o index da sessão quando a resposta está incorreta" do
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
       
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(0)
@@ -100,7 +100,7 @@ RSpec.describe "Quizzes", type: :request do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
       
       # Responde à última questão
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
       
       expect(response.body).to include("data-turbo-frame=\"_top\"")
       expect(response.body).to include("Ver resultado")
@@ -128,7 +128,7 @@ RSpec.describe "Quizzes", type: :request do
       q1.feedbacks.destroy_all
       
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Sem feedback cadastrado.")
@@ -140,9 +140,9 @@ RSpec.describe "Quizzes", type: :request do
       # Inicializa e joga
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       # Responde Q1 (correto)
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       # Responde Q2 (incorreto, correto seria 0)
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
 
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       
@@ -159,11 +159,11 @@ RSpec.describe "Quizzes", type: :request do
 
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       # Responde Q1
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
 
       expect {
         # Responde Q2 (finaliza o quiz)
-        post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+        post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
       }.to change(QuizAttempt, :count).by(1)
 
       attempt = QuizAttempt.last

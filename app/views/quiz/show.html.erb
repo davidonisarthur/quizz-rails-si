@@ -67,7 +67,7 @@
 
     <div class="space-y-4">
       <% @options.each_with_index do |option, index| %>
-        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index), 
+        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), 
                       method: :post,
                       class: "w-full text-left p-4 rounded-xl border border-bg3 bg-bg2 text-tx0 hover:bg-bg3 hover:border-accent/40 shadow-sm transition duration-200 cursor-pointer" do %>
           <span class="font-bold mr-2 text-accent"><%= (index + 65).chr %>)</span>
