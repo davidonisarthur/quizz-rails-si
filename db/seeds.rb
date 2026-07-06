@@ -31,7 +31,7 @@ q1 = modulo1.questions.find_or_create_by!(body_pt: "Qual destes números é prim
   q.context_pt = "Um número primo tem exatamente 2 divisores: 1 e ele mesmo."
   q.context_en = "A prime number has exactly 2 divisors: 1 and itself."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q1.options.find_or_create_by!(text_pt: "15") { |o| o.text_en = "15" }
@@ -52,7 +52,7 @@ q2 = modulo1.questions.find_or_create_by!(body_pt: "O número 1 é primo?") do |
   q.context_pt = "Todo número primo precisa ter exatamente 2 divisores distintos."
   q.context_en = "Every prime must have exactly 2 distinct divisors."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q2.options.find_or_create_by!(text_pt: "Sim, é primo") { |o| o.text_en = "Yes, it is prime" }
@@ -73,7 +73,7 @@ q3 = modulo1.questions.find_or_create_by!(body_pt: "Quantos números primos exis
   q.context_pt = "Euclides demonstrou isso há mais de 2000 anos com uma prova de 3 linhas."
   q.context_en = "Euclid proved this over 2000 years ago with a 3-line proof."
   q.correct_index = 2
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q3.options.find_or_create_by!(text_pt: "Exatamente 25") { |o| o.text_en = "Exactly 25" }
@@ -96,7 +96,7 @@ q4 = modulo2.questions.find_or_create_by!(body_pt: "Para que serve o Crivo de Er
   q.context_pt = "O algoritmo foi criado em ~240 a.C. e ainda é ensinado em ciência da computação."
   q.context_en = "Created in ~240 BC, still taught in computer science today."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q4.options.find_or_create_by!(text_pt: "Peneirar grãos de trigo") { |o| o.text_en = "Filter wheat grains" }
@@ -117,7 +117,7 @@ q5 = modulo2.questions.find_or_create_by!(body_pt: "Para testar se N é primo, b
   q.context_pt = "Se N = a × b e a ≤ b, então a ≤ √N."
   q.context_en = "If N = a × b and a ≤ b, then a ≤ √N."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q5.options.find_or_create_by!(text_pt: "N/2") { |o| o.text_en = "N/2" }
@@ -140,7 +140,7 @@ q6 = modulo3.questions.find_or_create_by!(body_pt: "O que protege a criptografia
   q.context_pt = "RSA está no HTTPS, apps bancários, WhatsApp..."
   q.context_en = "RSA is in HTTPS, banking apps, WhatsApp..."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q6.options.find_or_create_by!(text_pt: "Somar números grandes") { |o| o.text_en = "Adding large numbers" }
@@ -161,7 +161,7 @@ q7 = modulo3.questions.find_or_create_by!(body_pt: "O Teorema Fundamental da Ari
   q.context_pt = "Este teorema é a razão de chamarmos primos de 'átomos da matemática'."
   q.context_en = "This theorem is why primes are called the 'atoms of mathematics'."
   q.correct_index = 1
-  q.libras_video_url = ""
+  q.libras_video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 end
 
 q7.options.find_or_create_by!(text_pt: "Todo primo é ímpar") { |o| o.text_en = "Every prime is odd" }
