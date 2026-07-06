@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    user = User.find_by(email: params[:email])
+    user = User.find_by(email: params[:email]&.to_s&.strip&.downcase)
     if user&.authenticate(params[:password])
       preserved_locale = session[:locale]
       preserved_libras = session[:libras_mode]

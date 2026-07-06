@@ -20,6 +20,13 @@ RSpec.describe "Sessions", type: :request do
         expect(session[:libras_mode]).to be true
         expect(session[:locale].to_s).to eq("pt-BR")
       end
+
+      it "autentica o usuário mesmo se o email digitado tiver maiúsculas e espaços" do
+        post session_path(locale: "pt-BR"), params: { email: "  User@Example.Com  ", password: "password123" }
+
+        expect(response).to redirect_to(root_path(locale: "pt-BR"))
+        expect(session[:user_id]).to eq(user.id)
+      end
     end
 
     context "com credenciais inválidas" do
