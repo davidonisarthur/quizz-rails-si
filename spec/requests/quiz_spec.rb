@@ -43,6 +43,19 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include("50%")
     end
 
+    it "mantém o progresso do quiz se recarregarmos a página sem passar question_index" do
+      # Primeiro, iniciamos o quiz na sessão
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      
+      # Em seguida, solicitamos o question_index 1
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      expect(session[:quiz]["question_index"]).to eq(1)
+
+      # Agora, recarregamos sem passar question_index e validamos se manteve no índice 1
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      expect(session[:quiz]["question_index"]).to eq(1)
+    end
+
     it "redireciona para os resultados se o question_index estiver fora dos limites (nil question)" do
       # Inicializa o quiz
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
