@@ -4,8 +4,10 @@ class QuizController < ApplicationController
   def show
     questions = @module.questions.order(:id)
 
-    if params[:question_index].present? && session[:quiz].present? && session[:quiz]["module_id"] == @module.id
-      session[:quiz]["question_index"] = params[:question_index].to_i
+    if session[:quiz].present? && session[:quiz]["module_id"] == @module.id
+      if params[:question_index].present?
+        session[:quiz]["question_index"] = params[:question_index].to_i
+      end
     else
       session[:quiz] = { "module_id" => @module.id, "question_index" => 0, "score" => 0 }
     end
