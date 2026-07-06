@@ -136,13 +136,14 @@ RSpec.describe "Quizzes", type: :request do
   end
 
   describe "GET /:locale/quiz_modules/:slug/result" do
-    before do
+    it "exibe o resultado e limpa a sessão do quiz para convidados" do
       # Inicializa e joga
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      # Responde Q1 (correto)
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
-    end
+      # Responde Q2 (incorreto, correto seria 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
 
-    it "exibe o resultado e limpa a sessão do quiz" do
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       
       expect(response).to have_http_status(:ok)
@@ -151,19 +152,30 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]).to be_nil
     end
 
-    it "registra um QuizAttempt se houver um usuário autenticado" do
+    it "registra um QuizAttempt se houver um usuário autenticado ao finalizar" do
       user = create(:user)
       # Simula login definindo user_id na sessão do controller
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
 
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      # Responde Q1
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+
       expect {
-        get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+        # Responde Q2 (finaliza o quiz)
+        post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
       }.to change(QuizAttempt, :count).by(1)
 
       attempt = QuizAttempt.last
       expect(attempt.user).to eq(user)
       expect(attempt.quiz_module).to eq(quiz_module)
       expect(attempt.score).to eq(1)
+
+      # Agora acessa o resultado
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("1")
+      expect(response.body).to include("2")
     end
   end
 
