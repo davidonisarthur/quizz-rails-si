@@ -107,6 +107,34 @@ RSpec.describe "Quizzes", type: :request do
     end
   end
 
+  describe "POST /:locale/quiz_modules/:slug/answer - situações excepcionais" do
+    it "redireciona para o play se a sessão estiver em branco" do
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
+    it "redireciona para o play se a pergunta correspondente ao index na sessão não existir" do
+      # Inicializa a sessão
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      
+      # Força a definição de um index alto/inválido
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 999)
+      
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
+    it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do
+      q1.feedbacks.destroy_all
+      
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Sem feedback cadastrado.")
+    end
+  end
+
   describe "GET /:locale/quiz_modules/:slug/result" do
     before do
       # Inicializa e joga
