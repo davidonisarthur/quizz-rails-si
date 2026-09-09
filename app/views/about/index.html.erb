@@ -1,0 +1,48 @@
+<div class="max-w-3xl mx-auto py-12 px-4">
+  <div class="mb-10 text-center">
+    <h1 class="text-4xl font-extrabold mb-4 tracking-tight">
+      <%= I18n.locale == :en ? "About PrimoQuiz" : "Sobre o PrimoQuiz" %>
+    </h1>
+    <p class="text-tx1 max-w-xl mx-auto text-base">
+      <%= I18n.locale == :en ? "An interactive and accessible project designed to teach Number Theory and Prime Numbers through sign language." : "Um projeto interativo e acessível projetado para o ensino de Teoria dos Números e Números Primos através de línguas de sinais." %>
+    </p>
+  </div>
+
+  <div class="space-y-8">
+    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
+      <h2 class="text-xl font-bold mb-4 text-accent">
+        <%= I18n.locale == :en ? "Project Origin" : "Origem do Projeto" %>
+      </h2>
+      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
+        <%= I18n.locale == :en ? "PrimoQuiz is a Scientific Initiation project developed to explore how technology can facilitate the teaching of Mathematics. Our primary focus is deaf students in high school." : "O PrimoQuiz é um projeto de Iniciação Científica desenvolvido para explorar como a tecnologia pode facilitar o ensino de Matemática. Nosso foco primordial são os alunos surdos no ensino médio." %>
+      </p>
+      <p class="text-tx0 leading-relaxed text-sm font-medium">
+        <%= I18n.locale == :en ? "By connecting fascinating topics like prime numbers, cryptography, bank security, and WhatsApp protocols, we aim to engage students and show that mathematics is present in their daily lives." : "Conectando temas fascinantes como números primos, criptografia, segurança bancária e protocolos do WhatsApp, buscamos engajar os estudantes e mostrar que a matemática está presente no seu dia a dia." %>
+      </p>
+    </section>
+
+    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
+      <h2 class="text-xl font-bold mb-4 text-accent">
+        <%= I18n.locale == :en ? "LIBRAS & Accessibility" : "LIBRAS e Acessibilidade" %>
+      </h2>
+      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
+        <%= I18n.locale == :en ? "Mathematics instruction often faces communication barriers. The LIBRAS Mode addresses this by offering unlisted video explanations in Brazilian Sign Language for every single quiz question." : "O ensino de matemática muitas vezes enfrenta barreiras de comunicação. O Modo LIBRAS aborda esse problema oferecendo explicações em vídeo em Língua Brasileira de Sinais para cada questão do quiz." %>
+      </p>
+      <p class="text-tx0 leading-relaxed text-sm font-medium">
+        <%= I18n.locale == :en ? "This allows students to learn math concepts in their natural first language, while supporting bilingual literacy (Portuguese and LIBRAS) with responsive modals, ARIA labels, and clean visual layouts." : "Isso permite que os alunos aprendam os conceitos matemáticos em sua primeira língua natural, promovendo a alfabetização bilíngue (Português e LIBRAS) com modais responsivos, tags ARIA e um design limpo." %>
+      </p>
+    </section>
+
+    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
+      <h2 class="text-xl font-bold mb-4 text-accent">
+        <%= I18n.locale == :en ? "Technology Stack" : "Tecnologia Utilizada" %>
+      </h2>
+      <ul class="list-disc pl-5 space-y-2 text-tx0 text-sm font-medium">
+        <li><strong>Ruby on Rails:</strong> <%= I18n.locale == :en ? "Reliable and robust backend." : "Backend robusto e confiável." %></li>
+        <li><strong>Hotwire (Turbo & Stimulus):</strong> <%= I18n.locale == :en ? "Responsive, single-page application feel without complex JS frameworks." : "Sensação de aplicação de página única altamente interativa sem frameworks JS complexos." %></li>
+        <li><strong>Tailwind CSS:</strong> <%= I18n.locale == :en ? "Clean dark-first design system inspired by Notion." : "Design system dark-first moderno e limpo, inspirado no Notion." %></li>
+        <li><strong>PostgreSQL:</strong> <%= I18n.locale == :en ? "Reliable database structure for storing modules, questions, and attempts." : "Estrutura estável para salvar os módulos, questões e progresso dos alunos." %></li>
+      </ul>
+    </section>
+  </div>
+</div>

@@ -43,6 +43,19 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include("50%")
     end
 
+    it "mantém o progresso do quiz se recarregarmos a página sem passar question_index" do
+      # Primeiro, iniciamos o quiz na sessão
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      
+      # Em seguida, solicitamos o question_index 1
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      expect(session[:quiz]["question_index"]).to eq(1)
+
+      # Agora, recarregamos sem passar question_index e validamos se manteve no índice 1
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      expect(session[:quiz]["question_index"]).to eq(1)
+    end
+
     it "redireciona para os resultados se o question_index estiver fora dos limites (nil question)" do
       # Inicializa o quiz
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
@@ -61,7 +74,7 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "incrementa score e atualiza o index da sessão quando a resposta está correta" do
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(1)
@@ -72,7 +85,7 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "não incrementa score mas atualiza o index da sessão quando a resposta está incorreta" do
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
       
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(0)
@@ -87,21 +100,50 @@ RSpec.describe "Quizzes", type: :request do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
       
       # Responde à última questão
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
       
       expect(response.body).to include("data-turbo-frame=\"_top\"")
       expect(response.body).to include("Ver resultado")
     end
   end
 
-  describe "GET /:locale/quiz_modules/:slug/result" do
-    before do
-      # Inicializa e joga
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1)
+  describe "POST /:locale/quiz_modules/:slug/answer - situações excepcionais" do
+    it "redireciona para o play se a sessão estiver em branco" do
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
     end
 
-    it "exibe o resultado e limpa a sessão do quiz" do
+    it "redireciona para o play se a pergunta correspondente ao index na sessão não existir" do
+      # Inicializa a sessão
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      
+      # Força a definição de um index alto/inválido
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 999)
+      
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
+    it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do
+      q1.feedbacks.destroy_all
+      
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Sem feedback cadastrado.")
+    end
+  end
+
+  describe "GET /:locale/quiz_modules/:slug/result" do
+    it "exibe o resultado e limpa a sessão do quiz para convidados" do
+      # Inicializa e joga
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      # Responde Q1 (correto)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      # Responde Q2 (incorreto, correto seria 0)
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
+
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       
       expect(response).to have_http_status(:ok)
@@ -110,19 +152,30 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]).to be_nil
     end
 
-    it "registra um QuizAttempt se houver um usuário autenticado" do
+    it "registra um QuizAttempt se houver um usuário autenticado ao finalizar" do
       user = create(:user)
       # Simula login definindo user_id na sessão do controller
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
 
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      # Responde Q1
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+
       expect {
-        get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+        # Responde Q2 (finaliza o quiz)
+        post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
       }.to change(QuizAttempt, :count).by(1)
 
       attempt = QuizAttempt.last
       expect(attempt.user).to eq(user)
       expect(attempt.quiz_module).to eq(quiz_module)
       expect(attempt.score).to eq(1)
+
+      # Agora acessa o resultado
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("1")
+      expect(response.body).to include("2")
     end
   end
 

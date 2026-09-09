@@ -43,6 +43,7 @@
           
           <div class="flex items-center space-x-4">
             <%= link_to "Ranking", ranking_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
+            <%= link_to t('about'), about_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             
             <% if current_user %>
               <%= link_to current_user.name, profile_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
