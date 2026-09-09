@@ -196,14 +196,14 @@ RSpec.describe "Quizzes", type: :request do
     end
   end
 
-  describe "LIBRAS video button visibility on play page" do
-    it "does not show the LIBRAS video button if LIBRAS mode is disabled" do
+  describe "LIBRAS translation button and VLibras visibility on play page" do
+    it "does not show the LIBRAS translation buttons if LIBRAS mode is disabled" do
       # LIBRAS mode disabled by default
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
-      expect(response.body).not_to include("Assistir em LIBRAS")
+      expect(response.body).not_to include("Traduzir em LIBRAS (Avatar 3D)")
     end
 
-    it "shows the LIBRAS video button if LIBRAS mode is enabled and question has embed url" do
+    it "shows the VLibras 3D Avatar translation button when LIBRAS mode is enabled" do
       # Initialize play session
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
@@ -211,14 +211,14 @@ RSpec.describe "Quizzes", type: :request do
       post toggle_libras_mode_path(locale: "pt-BR")
       expect(session[:libras_mode]).to be true
 
-      # Access play page for q1 (index 0, which has video)
+      # Access play page for q1 (index 0)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
       
-      expect(response.body).to include("Assistir em LIBRAS")
-      expect(response.body).to include("https://www.youtube.com/embed/exemplo")
+      expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+      expect(response.body).to include("Vídeo Gravado em LIBRAS")
     end
 
-    it "does not show the LIBRAS video button if question does not have a video" do
+    it "shows VLibras 3D translation button even if question does not have a pre-recorded video" do
       # Initialize play session
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
@@ -229,7 +229,8 @@ RSpec.describe "Quizzes", type: :request do
       # Access play page for q2 (index 1, which has empty video url)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
       
-      expect(response.body).not_to include("Assistir em LIBRAS")
+      expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+      expect(response.body).not_to include("Vídeo Gravado em LIBRAS")
     end
   end
 end

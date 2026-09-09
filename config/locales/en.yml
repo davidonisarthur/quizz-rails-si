@@ -10,6 +10,8 @@ en:
     progress: "Question %{current} of %{total}"
     libras_mode: "LIBRAS Mode"
     watch_in_libras: "Watch in LIBRAS"
+    translate_with_vlibras: "Translate into LIBRAS (3D Avatar)"
+    watch_video_libras: "Pre-recorded LIBRAS Video"
     close: "Close"
   ranking:
     title: "Ranking"
