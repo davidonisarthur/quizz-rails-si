@@ -34,5 +34,11 @@ RSpec.describe User, type: :model do
       user = create(:user, password: "senha123")
       expect(user.authenticate("senha123")).to eq(user)
     end
+
+    it "normaliza o email para minúsculas e remove espaços antes de validar" do
+      user = build(:user, email: "  TESTE@Email.COM  ")
+      user.valid?
+      expect(user.email).to eq("teste@email.com")
+    end
   end
 end
