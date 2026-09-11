@@ -215,6 +215,9 @@ RSpec.describe "Quizzes", type: :request do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
       
       expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+      expect(response.body).to include('data-controller="vlibras"')
+      expect(response.body).to include('data-action="click->vlibras#translate"')
+      expect(response.body).to include('data-vlibras-text-value="Qual destes números é primo? Um número primo tem exatamente 2 divisores."')
       expect(response.body).to include("Vídeo Gravado em LIBRAS")
     end
 
@@ -230,7 +233,19 @@ RSpec.describe "Quizzes", type: :request do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
       
       expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+      expect(response.body).to include('data-vlibras-text-value="O número 1 é primo? Um número primo tem exatamente 2 divisores."')
       expect(response.body).not_to include("Vídeo Gravado em LIBRAS")
+    end
+
+    it "renders the English question and context inside data-vlibras-text-value when locale is en" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "en")
+      post toggle_libras_mode_path(locale: "en")
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "en", question_index: 0)
+
+      expect(response.body).to include("Translate into LIBRAS (3D Avatar)")
+      expect(response.body).to include('data-controller="vlibras"')
+      expect(response.body).to include('data-action="click->vlibras#translate"')
+      expect(response.body).to include('data-vlibras-text-value="Which of these numbers is prime? A prime number has exactly 2 divisors."')
     end
   end
 end
