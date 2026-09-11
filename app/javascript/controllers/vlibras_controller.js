@@ -99,6 +99,10 @@ if (typeof document !== "undefined" && !window._vlibrasObserverSet) {
 }
 
 export default class extends Controller {
+  static values = {
+    text: String
+  }
+
   connect() {
     this.initWidget()
   }
@@ -124,6 +128,63 @@ export default class extends Controller {
           init()
         }
       }, 100)
+    }
+  }
+
+  openWidget() {
+    // 1. Modern VLibras v7 API
+    if (window.VLibrasWidget && typeof window.VLibrasWidget.open === "function") {
+      window.VLibrasWidget.open()
+      return
+    }
+
+    // 2. Click button inside Shadow DOM of #vlibras-access-wrapper
+    const accessWrapper = document.getElementById("vlibras-access-wrapper")
+    const shadowButton = accessWrapper?.shadowRoot?.querySelector("#vlibras-button")
+    if (shadowButton) {
+      shadowButton.click()
+      return
+    }
+
+    // 3. Legacy VLibras access button
+    const legacyButton = document.querySelector("[vw-access-button]")
+    if (legacyButton) {
+      legacyButton.click()
+    }
+  }
+
+  translate(event) {
+    if (event) event.preventDefault()
+
+    this.openWidget()
+
+    const text = this.hasTextValue ? this.textValue : this.element.dataset.vlibrasTextValue
+    if (text) {
+      this.translateText(text)
+    }
+  }
+
+  translateText(text) {
+    if (!text || typeof text !== "string") return
+
+    const execute = () => {
+      const fn = (window.plugin && typeof window.plugin.translate === "function" && window.plugin.translate) ||
+                 (window.vlibras && typeof window.vlibras.translateAndPlay === "function" && window.vlibras.translateAndPlay)
+      if (fn) {
+        fn(text)
+        return true
+      }
+      return false
+    }
+
+    if (!execute()) {
+      let attempts = 0
+      const interval = setInterval(() => {
+        attempts++
+        if (execute() || attempts >= 30) {
+          clearInterval(interval)
+        }
+      }, 200)
     }
   }
 }
