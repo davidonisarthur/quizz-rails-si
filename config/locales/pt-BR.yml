@@ -1,7 +1,36 @@
 pt-BR:
   hello: "Bem-vindo ao PrimoQuiz"
+  about: "Sobre"
+  theme:
+    label: "Tema"
+    toggle: "Alternar tema"
+  modules:
+    available: "Disponível"
+    locked: "Bloqueado"
+    play: "Jogar"
   sessions:
+    title: "Entrar"
+    sign_in: "Entrar"
+    sign_out: "Sair"
+    sign_up: "Cadastre-se"
+    email: "Email"
+    password: "Senha"
+    submit: "Entrar"
     invalid: "Email ou senha incorretos"
+    no_account: "Não tem conta?"
+  users:
+    new:
+      title: "Criar Conta"
+      name: "Nome completo"
+      email: "Email"
+      password: "Senha"
+      password_confirmation: "Confirme a senha"
+      submit: "Criar Conta"
+      already_have_account: "Já possui uma conta?"
+      sign_in: "Faça login"
+  profile:
+    my_attempts: "Minhas Tentativas"
+    no_attempts: "Você ainda não completou nenhum quiz."
   quiz:
     correct: "Correto!"
     incorrect: "Quase!"
@@ -15,7 +44,12 @@ pt-BR:
     close: "Fechar"
     module_locked: "Este módulo ainda está bloqueado."
     no_questions: "Este módulo ainda não possui questões cadastradas."
+    completed_title: "Quiz Finalizado!"
+    score_label: "Sua pontuação:"
+    back_home: "Voltar ao início"
+    try_again: "Tentar novamente"
   ranking:
     title: "Ranking"
+    position: "Posição"
+    name: "Nome"
     score: "Pontuação"
-  about: "Sobre"
