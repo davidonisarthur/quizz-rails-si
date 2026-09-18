@@ -1,5 +1,6 @@
 class QuizController < ApplicationController
   before_action :set_module
+  before_action :ensure_module_playable, only: [:show, :answer, :result]
 
   def show
     questions = @module.questions.order(:id)
@@ -96,5 +97,15 @@ class QuizController < ApplicationController
 
   def set_module
     @module = QuizModule.find_by!(slug: params[:slug])
+  end
+
+  def ensure_module_playable
+    unless @module.unlocked?
+      redirect_to root_path(locale: I18n.locale), alert: t("quiz.module_locked") and return
+    end
+
+    if @module.questions.none?
+      redirect_to root_path(locale: I18n.locale), alert: t("quiz.no_questions") and return
+    end
   end
 end

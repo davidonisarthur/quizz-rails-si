@@ -13,6 +13,8 @@ en:
     translate_with_vlibras: "Translate into LIBRAS (3D Avatar)"
     watch_video_libras: "Pre-recorded LIBRAS Video"
     close: "Close"
+    module_locked: "This module is currently locked."
+    no_questions: "This module does not have any questions yet."
   ranking:
     title: "Ranking"
     score: "Score"

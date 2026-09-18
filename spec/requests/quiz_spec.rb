@@ -248,4 +248,40 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include('data-vlibras-text-value="Which of these numbers is prime? A prime number has exactly 2 divisors."')
     end
   end
+
+  describe "Proteção de módulos bloqueados e vazios" do
+    let!(:locked_module) { create(:quiz_module, slug: "modulo-bloqueado", unlocked: false) }
+    let!(:empty_module) { create(:quiz_module, slug: "modulo-vazio", unlocked: true) }
+
+    it "redireciona para o início com alerta ao tentar jogar um módulo bloqueado" do
+      get play_quiz_module_path(slug: locked_module.slug, locale: "pt-BR")
+      expect(response).to redirect_to(root_path(locale: "pt-BR"))
+      follow_redirect!
+      expect(response.body).to include("Este módulo ainda está bloqueado.")
+    end
+
+    it "redireciona para o início com alerta em inglês ao tentar jogar um módulo bloqueado com locale en" do
+      get play_quiz_module_path(slug: locked_module.slug, locale: "en")
+      expect(response).to redirect_to(root_path(locale: "en"))
+      follow_redirect!
+      expect(response.body).to include("This module is currently locked.")
+    end
+
+    it "redireciona para o início com alerta ao tentar jogar um módulo sem questões" do
+      get play_quiz_module_path(slug: empty_module.slug, locale: "pt-BR")
+      expect(response).to redirect_to(root_path(locale: "pt-BR"))
+      follow_redirect!
+      expect(response.body).to include("Este módulo ainda não possui questões cadastradas.")
+    end
+
+    it "redireciona para o início ao tentar responder em módulo bloqueado" do
+      post answer_quiz_module_path(slug: locked_module.slug, locale: "pt-BR"), params: { option_index: 0, question_id: 1 }
+      expect(response).to redirect_to(root_path(locale: "pt-BR"))
+    end
+
+    it "redireciona para o início ao tentar ver resultado de módulo bloqueado" do
+      get result_quiz_module_path(slug: locked_module.slug, locale: "pt-BR")
+      expect(response).to redirect_to(root_path(locale: "pt-BR"))
+    end
+  end
 end
