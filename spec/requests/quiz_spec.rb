@@ -4,11 +4,11 @@ RSpec.describe "Quizzes", type: :request do
   let!(:quiz_module) { create(:quiz_module, slug: "o-que-e-primo") }
   let!(:q1) { create(:question, quiz_module: quiz_module, correct_index: 1, body_pt: "Qual destes números é primo?", libras_video_url: "https://youtube.com/watch?v=exemplo") }
   let!(:q2) { create(:question, quiz_module: quiz_module, correct_index: 0, body_pt: "O número 1 é primo?", libras_video_url: "") }
-  
+
   let!(:o1_q1) { create(:option, question: q1, text_pt: "15") }
   let!(:o2_q1) { create(:option, question: q1, text_pt: "17") } # Correct choice for q1 is index 1
   let!(:o1_q2) { create(:option, question: q2, text_pt: "Sim") } # Correct choice for q2 is index 0
-  
+
   let!(:f_correct_q1) { create(:feedback, question: q1, kind: "correct", body_pt: "Parabéns, o 17 é primo!") }
   let!(:f_incorrect_q1) { create(:feedback, question: q1, kind: "incorrect", body_pt: "Tente novamente, 15 não é primo!") }
   let!(:f_correct_q2) { create(:feedback, question: q2, kind: "correct", body_pt: "Muito bem, 1 não é primo!") }
@@ -17,7 +17,7 @@ RSpec.describe "Quizzes", type: :request do
   describe "GET /:locale/quiz_modules/:slug/play" do
     it "inicia o quiz com a primeira questão quando não passamos question_index" do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]).to eq({
         "module_id" => quiz_module.id,
@@ -32,10 +32,10 @@ RSpec.describe "Quizzes", type: :request do
     it "avança para a questão solicitada se o quiz já estiver em progresso na sessão" do
       # Primeiro, iniciamos o quiz na sessão
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       # Em seguida, solicitamos o question_index 1 (próxima questão)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
-      
+
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["question_index"]).to eq(1)
       expect(response.body).to include("O número 1 é primo?")
@@ -46,7 +46,7 @@ RSpec.describe "Quizzes", type: :request do
     it "mantém o progresso do quiz se recarregarmos a página sem passar question_index" do
       # Primeiro, iniciamos o quiz na sessão
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       # Em seguida, solicitamos o question_index 1
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
       expect(session[:quiz]["question_index"]).to eq(1)
@@ -59,10 +59,10 @@ RSpec.describe "Quizzes", type: :request do
     it "redireciona para os resultados se o question_index estiver fora dos limites (nil question)" do
       # Inicializa o quiz
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       # Solicita índice inexistente (2)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 2)
-      
+
       expect(response).to redirect_to(result_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
     end
   end
@@ -75,7 +75,7 @@ RSpec.describe "Quizzes", type: :request do
 
     it "incrementa score e atualiza o index da sessão quando a resposta está correta" do
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
-      
+
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(1)
       expect(session[:quiz]["question_index"]).to eq(1)
@@ -86,7 +86,7 @@ RSpec.describe "Quizzes", type: :request do
 
     it "não incrementa score mas atualiza o index da sessão quando a resposta está incorreta" do
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
-      
+
       expect(response).to have_http_status(:ok)
       expect(session[:quiz]["score"]).to eq(0)
       expect(session[:quiz]["question_index"]).to eq(1)
@@ -98,10 +98,10 @@ RSpec.describe "Quizzes", type: :request do
     it "inclui link para ver resultado quebrando o frame turbo (data-turbo-frame='_top') quando for a última questão" do
       # Avança para a última questão (índice 1)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
-      
+
       # Responde à última questão
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
-      
+
       expect(response.body).to include("data-turbo-frame=\"_top\"")
       expect(response.body).to include("Ver resultado")
     end
@@ -116,20 +116,20 @@ RSpec.describe "Quizzes", type: :request do
     it "redireciona para o play se a pergunta correspondente ao index na sessão não existir" do
       # Inicializa a sessão
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       # Força a definição de um index alto/inválido
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 999)
-      
+
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
       expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
     end
 
     it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do
       q1.feedbacks.destroy_all
-      
+
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
-      
+
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Sem feedback cadastrado.")
     end
@@ -145,7 +145,7 @@ RSpec.describe "Quizzes", type: :request do
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
 
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
-      
+
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("1") # Mostra score
       expect(response.body).to include("2") # Mostra total
@@ -213,7 +213,7 @@ RSpec.describe "Quizzes", type: :request do
 
       # Access play page for q1 (index 0)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
-      
+
       expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
       expect(response.body).to include('data-controller="vlibras"')
       expect(response.body).to include('data-action="click->vlibras#translate"')
@@ -231,7 +231,7 @@ RSpec.describe "Quizzes", type: :request do
 
       # Access play page for q2 (index 1, which has empty video url)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
-      
+
       expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
       expect(response.body).to include('data-vlibras-text-value="O número 1 é primo? Um número primo tem exatamente 2 divisores."')
       expect(response.body).not_to include("Vídeo Gravado em LIBRAS")

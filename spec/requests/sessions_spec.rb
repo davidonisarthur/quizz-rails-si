@@ -15,7 +15,7 @@ RSpec.describe "Sessions", type: :request do
 
         expect(response).to redirect_to(root_path(locale: "pt-BR"))
         expect(session[:user_id]).to eq(user.id)
-        
+
         # 3. Garante que as preferências de acessibilidade e idioma foram preservadas
         expect(session[:libras_mode]).to be true
         expect(session[:locale].to_s).to eq("pt-BR")

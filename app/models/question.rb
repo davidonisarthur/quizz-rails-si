@@ -8,7 +8,7 @@ class Question < ApplicationRecord
 
   def libras_embed_url
     return nil if libras_video_url.blank?
-    
+
     if libras_video_url =~ /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]+)/
       video_id = $1
       "https://www.youtube.com/embed/#{video_id}"

@@ -1,6 +1,6 @@
 class QuizController < ApplicationController
   before_action :set_module
-  before_action :ensure_module_playable, only: [:show, :answer, :result]
+  before_action :ensure_module_playable, only: [ :show, :answer, :result ]
 
   def show
     questions = @module.questions.order(:id)
