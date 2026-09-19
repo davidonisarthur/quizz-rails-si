@@ -20,7 +20,7 @@ Rails.application.configure do
     policy.font_src :self, :data, "https://vlibras.gov.br", "https://cdn.jsdelivr.net"
     policy.connect_src :self, "https://vlibras.gov.br", "https://traducao2.vlibras.gov.br", "https://dicionario2.vlibras.gov.br", "https://repositorio.vlibras.gov.br", "https://cdn.jsdelivr.net"
     policy.worker_src :self, :blob, "https://cdn.jsdelivr.net"
-    policy.frame_src "https://www.youtube.com"
+    policy.frame_src "https://www.youtube.com", "https://vlibras.gov.br"
   end
 
   config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
