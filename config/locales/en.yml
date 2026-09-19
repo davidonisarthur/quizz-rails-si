@@ -44,6 +44,7 @@ en:
     close: "Close"
     module_locked: "This module is currently locked."
     no_questions: "This module does not have any questions yet."
+    invalid_answer: "Select a valid option to continue."
     completed_title: "Quiz Completed!"
     score_label: "Your score:"
     back_home: "Back to home"
