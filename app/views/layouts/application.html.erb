@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script>
+    <%= javascript_tag nonce: true do %>
       (function() {
         const theme = localStorage.getItem('theme');
         if (theme === 'light') {
@@ -10,7 +10,7 @@
           document.documentElement.classList.add('dark');
         }
       })();
-    </script>
+    <% end %>
     <title><%= content_for(:title) || "Quizz Rails" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
