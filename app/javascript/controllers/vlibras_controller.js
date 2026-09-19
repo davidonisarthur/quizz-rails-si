@@ -1,190 +1,92 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Helper function to adopt VLibras dynamic elements into permanent container
-function adoptVlibrasElements() {
-  const container = document.getElementById("vlibras-widget-container")
-  if (!container) return
+const WIDGET_PATH = "https://vlibras.gov.br/app"
+const MAX_INITIALIZATION_ATTEMPTS = 50
+const MAX_TRANSLATION_ATTEMPTS = 30
 
-  const accessWrapper = document.getElementById("vlibras-access-wrapper")
-  if (accessWrapper && accessWrapper.parentElement !== container) {
-    container.appendChild(accessWrapper)
-  }
+function initializeWidget() {
+  if (window._vlibrasInitialized) return true
+  if (!window.VLibras || typeof window.VLibras.Widget !== "function") return false
 
-  const appRoot = document.getElementById("vlibras-app-root")
-  if (appRoot && appRoot.parentElement !== container) {
-    container.appendChild(appRoot)
-  }
-}
-
-// Preserve document.body event listeners across Turbo page swaps
-if (!window._vlibrasBodyPatched && typeof window !== "undefined" && window.HTMLBodyElement) {
-  window._vlibrasBodyPatched = true
-  const originalAdd = HTMLBodyElement.prototype.addEventListener
-  const originalRemove = HTMLBodyElement.prototype.removeEventListener
-  const bodyListeners = new Set()
-
-  HTMLBodyElement.prototype.addEventListener = function(type, listener, options) {
-    let exists = false
-    for (const item of bodyListeners) {
-      if (item.type === type && item.listener === listener) {
-        exists = true
-        break
-      }
-    }
-    if (!exists) {
-      bodyListeners.add({ type, listener, options })
-    }
-    return originalAdd.call(this, type, listener, options)
-  }
-
-  HTMLBodyElement.prototype.removeEventListener = function(type, listener, options) {
-    for (const item of bodyListeners) {
-      if (item.type === type && item.listener === listener) {
-        bodyListeners.delete(item)
-        break
-      }
-    }
-    return originalRemove.call(this, type, listener, options)
-  }
-
-  const rebindListeners = () => {
-    if (document.body) {
-      for (const { type, listener, options } of bodyListeners) {
-        originalAdd.call(document.body, type, listener, options)
-      }
-    }
-  }
-
-  document.addEventListener("turbo:render", rebindListeners)
-  document.addEventListener("turbo:load", rebindListeners)
-}
-
-// Setup MutationObserver to continuously ensure VLibras elements stay inside the permanent container
-if (typeof document !== "undefined" && !window._vlibrasObserverSet) {
-  window._vlibrasObserverSet = true
-
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      for (const node of mutation.addedNodes) {
-        if (node.nodeType === Node.ELEMENT_NODE && (node.id === "vlibras-access-wrapper" || node.id === "vlibras-app-root")) {
-          adoptVlibrasElements()
-        }
-      }
-    }
-  })
-
-  const startObserving = () => {
-    if (document.body) {
-      observer.observe(document.body, { childList: true })
-      adoptVlibrasElements()
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startObserving)
-  } else {
-    startObserving()
-  }
-
-  document.addEventListener("turbo:before-render", () => {
-    adoptVlibrasElements()
-  })
-
-  document.addEventListener("turbo:render", () => {
-    if (document.body) {
-      observer.observe(document.body, { childList: true })
-      adoptVlibrasElements()
-    }
-  })
+  new window.VLibras.Widget({ rootPath: WIDGET_PATH })
+  window._vlibrasInitialized = true
+  return true
 }
 
 export default class extends Controller {
-  static values = {
-    text: String
-  }
+  static values = { text: String }
 
   connect() {
-    this.initWidget()
+    this.initialize()
   }
 
-  initWidget() {
-    const init = () => {
-      if (window.VLibras && typeof window.VLibras.Widget === "function") {
-        if (!window._vlibrasInstance) {
-          window._vlibrasInstance = new window.VLibras.Widget("https://vlibras.gov.br/app")
-        }
+  disconnect() {
+    this.clearInitializationPoll()
+    this.clearTranslationPoll()
+  }
+
+  initialize() {
+    if (initializeWidget()) {
+      this.clearInitializationPoll()
+      return
+    }
+
+    if (this.initializationPoll) return
+
+    let attempts = 0
+    this.initializationPoll = window.setInterval(() => {
+      attempts += 1
+      if (initializeWidget() || attempts >= MAX_INITIALIZATION_ATTEMPTS) {
+        this.clearInitializationPoll()
       }
-      adoptVlibrasElements()
-    }
-
-    if (window.VLibras) {
-      init()
-    } else {
-      let attempts = 0
-      const poll = setInterval(() => {
-        attempts++
-        if (window.VLibras || attempts > 50) {
-          clearInterval(poll)
-          init()
-        }
-      }, 100)
-    }
-  }
-
-  openWidget() {
-    // 1. Modern VLibras v7 API
-    if (window.VLibrasWidget && typeof window.VLibrasWidget.open === "function") {
-      window.VLibrasWidget.open()
-      return
-    }
-
-    // 2. Click button inside Shadow DOM of #vlibras-access-wrapper
-    const accessWrapper = document.getElementById("vlibras-access-wrapper")
-    const shadowButton = accessWrapper?.shadowRoot?.querySelector("#vlibras-button")
-    if (shadowButton) {
-      shadowButton.click()
-      return
-    }
-
-    // 3. Legacy VLibras access button
-    const legacyButton = document.querySelector("[vw-access-button]")
-    if (legacyButton) {
-      legacyButton.click()
-    }
+    }, 100)
   }
 
   translate(event) {
-    if (event) event.preventDefault()
-
+    event?.preventDefault()
+    this.initialize()
     this.openWidget()
 
     const text = this.hasTextValue ? this.textValue : this.element.dataset.vlibrasTextValue
-    if (text) {
-      this.translateText(text)
-    }
+    if (text) this.translateText(text)
+  }
+
+  openWidget() {
+    window.VLibrasWidget?.open?.()
   }
 
   translateText(text) {
-    if (!text || typeof text !== "string") return
+    const translate = () => {
+      const translateAndPlay = window.vlibras?.translateAndPlay
+      if (typeof translateAndPlay !== "function") return false
 
-    const execute = () => {
-      const fn = (window.plugin && typeof window.plugin.translate === "function" && window.plugin.translate) ||
-                 (window.vlibras && typeof window.vlibras.translateAndPlay === "function" && window.vlibras.translateAndPlay)
-      if (fn) {
-        fn(text)
-        return true
+      translateAndPlay(text)
+      return true
+    }
+
+    if (translate()) return
+
+    this.clearTranslationPoll()
+    let attempts = 0
+    this.translationPoll = window.setInterval(() => {
+      attempts += 1
+      if (translate() || attempts >= MAX_TRANSLATION_ATTEMPTS) {
+        this.clearTranslationPoll()
       }
-      return false
-    }
+    }, 200)
+  }
 
-    if (!execute()) {
-      let attempts = 0
-      const interval = setInterval(() => {
-        attempts++
-        if (execute() || attempts >= 30) {
-          clearInterval(interval)
-        }
-      }, 200)
-    }
+  clearInitializationPoll() {
+    if (!this.initializationPoll) return
+
+    window.clearInterval(this.initializationPoll)
+    this.initializationPoll = null
+  }
+
+  clearTranslationPoll() {
+    if (!this.translationPoll) return
+
+    window.clearInterval(this.translationPoll)
+    this.translationPoll = null
   }
 }

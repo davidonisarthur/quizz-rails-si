@@ -13,7 +13,7 @@ RSpec.describe "VLibras Layout Integration", type: :request do
       expect(response.body).to include('id="vlibras-widget-container"')
       expect(response.body).to include('data-turbo-permanent')
       expect(response.body).to include('data-controller="vlibras"')
-      expect(response.body).to include('vw class="enabled"')
+      expect(response.body).not_to include('vw class="enabled"')
     end
   end
 end
