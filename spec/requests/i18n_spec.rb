@@ -48,6 +48,16 @@ RSpec.describe "I18n Translations", type: :request do
     end
   end
 
+  describe "Página de módulos" do
+    it "usa os textos centralizados para os dois idiomas" do
+      get quiz_modules_path(locale: "pt-BR")
+      expect(response.body).to include("Módulos de Quiz")
+
+      get quiz_modules_path(locale: "en")
+      expect(response.body).to include("Quiz Modules")
+    end
+  end
+
   describe "Autenticação (Login e Cadastro)" do
     it "renderiza página de login traduzida para pt-BR e en" do
       get new_session_path(locale: "pt-BR")

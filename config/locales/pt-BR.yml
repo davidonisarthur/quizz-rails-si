@@ -1,10 +1,13 @@
 pt-BR:
   hello: "Bem-vindo ao PrimoQuiz"
   about: "Sobre"
+  navigation:
+    main: "Navegação principal"
   theme:
     label: "Tema"
     toggle: "Alternar tema"
   modules:
+    title: "Módulos de Quiz"
     available: "Disponível"
     locked: "Bloqueado"
     play: "Jogar"
