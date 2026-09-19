@@ -1,11 +1,14 @@
-<div class="max-w-2xl mx-auto py-10 px-4 text-center">
-  <h2 class="text-4xl font-extrabold mb-4 text-tx0"><%= t('quiz.completed_title') %></h2>
-  <p class="text-2xl mb-8 text-tx1">
-    <%= t('quiz.score_label') %> <span class="font-extrabold text-accent"><%= @score %> / <%= @total %></span>
-  </p>
-
-  <div class="space-x-4">
-    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "inline-block bg-bg3 text-tx1 px-6 py-2.5 rounded-xl hover:brightness-95 font-semibold transition duration-200" %>
-    <%= link_to t('quiz.try_again'), play_quiz_module_path(@module.slug, locale: I18n.locale), class: "inline-block bg-accent text-white px-6 py-2.5 rounded-xl hover:brightness-110 font-semibold shadow transition duration-200" %>
+<section class="mx-auto max-w-3xl py-8 sm:py-16">
+  <p class="eyebrow"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
+  <div class="mt-5 border-y-2 ink-rule py-8 sm:py-12">
+    <h1 class="type-display max-w-2xl text-5xl leading-[0.95] sm:text-7xl"><%= t('quiz.completed_title') %></h1>
+    <p class="mt-8 text-sm font-extrabold tracking-[0.12em] text-tx1 uppercase"><%= t('quiz.score_label') %></p>
+    <p class="type-display mt-1 text-6xl text-accent sm:text-8xl"><%= @score %><span class="text-3xl text-tx1 sm:text-4xl"> / <%= @total %></span></p>
   </div>
-</div>
+  <div class="mt-8 flex flex-wrap gap-4">
+    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink editorial-link px-1 py-3 text-xs font-extrabold tracking-[0.12em] uppercase" %>
+    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex items-center gap-3 border-2 border-tx0 px-5 py-3 text-xs font-extrabold tracking-[0.12em] uppercase transition-colors hover:bg-tx0 hover:text-bg2" do %>
+      <%= t('quiz.try_again') %><span aria-hidden="true">→</span>
+    <% end %>
+  </div>
+</section>

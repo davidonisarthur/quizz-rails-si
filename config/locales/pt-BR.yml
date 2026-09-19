@@ -1,6 +1,13 @@
 pt-BR:
   hello: "Bem-vindo ao PrimoQuiz"
   about: "Sobre"
+  brand:
+    subtitle: "Teoria dos números"
+    footer: "Matemática, linguagem e descoberta"
+  home:
+    eyebrow: "Aprender por descoberta"
+    introduction: "Um percurso de desafios curtos para observar padrões, formular hipóteses e entender os números primos por dentro."
+    path_label: "Percurso de estudo"
   navigation:
     main: "Navegação principal"
   theme:

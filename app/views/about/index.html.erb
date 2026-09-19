@@ -1,48 +1,11 @@
-<div class="max-w-3xl mx-auto py-12 px-4">
-  <div class="mb-10 text-center">
-    <h1 class="text-4xl font-extrabold mb-4 tracking-tight">
-      <%= I18n.locale == :en ? "About PrimoQuiz" : "Sobre o PrimoQuiz" %>
-    </h1>
-    <p class="text-tx1 max-w-xl mx-auto text-base">
-      <%= I18n.locale == :en ? "An interactive and accessible project designed to teach Number Theory and Prime Numbers through sign language." : "Um projeto interativo e acessível projetado para o ensino de Teoria dos Números e Números Primos através de línguas de sinais." %>
-    </p>
+<section class="mx-auto max-w-4xl py-6 sm:py-12">
+  <p class="eyebrow mb-4"><%= t('brand.subtitle') %></p>
+  <h1 class="type-display max-w-3xl text-5xl leading-[0.95] sm:text-7xl"><%= I18n.locale == :en ? "About PrimoQuiz" : "Sobre o PrimoQuiz" %></h1>
+  <p class="mt-7 max-w-2xl border-l-2 border-accent pl-5 text-base leading-7 text-tx1"><%= I18n.locale == :en ? "An interactive and accessible project designed to teach Number Theory and Prime Numbers through sign language." : "Um projeto interativo e acessível projetado para o ensino de Teoria dos Números e Números Primos através de línguas de sinais." %></p>
+
+  <div class="mt-12 border-t-2 ink-rule">
+    <section class="grid gap-4 border-b ink-rule py-8 md:grid-cols-[12rem_1fr]"><h2 class="type-display text-3xl text-accent"><%= I18n.locale == :en ? "Project Origin" : "Origem do Projeto" %></h2><div class="space-y-4 text-sm leading-7 text-tx1"><p><%= I18n.locale == :en ? "PrimoQuiz is a Scientific Initiation project developed to explore how technology can facilitate the teaching of Mathematics. Our primary focus is deaf students in high school." : "O PrimoQuiz é um projeto de Iniciação Científica desenvolvido para explorar como a tecnologia pode facilitar o ensino de Matemática. Nosso foco primordial são os alunos surdos no ensino médio." %></p><p><%= I18n.locale == :en ? "By connecting prime numbers, cryptography, bank security, and WhatsApp protocols, we show that mathematics is present in everyday life." : "Conectando números primos, criptografia, segurança bancária e protocolos do WhatsApp, mostramos que a matemática está presente no dia a dia." %></p></div></section>
+    <section class="grid gap-4 border-b ink-rule py-8 md:grid-cols-[12rem_1fr]"><h2 class="type-display text-3xl text-accent"><%= I18n.locale == :en ? "LIBRAS & Accessibility" : "LIBRAS e Acessibilidade" %></h2><div class="space-y-4 text-sm leading-7 text-tx1"><p><%= I18n.locale == :en ? "LIBRAS Mode offers VLibras translation for written content and supports reviewed Brazilian Sign Language videos when they are registered for a question." : "O Modo LIBRAS oferece tradução do conteúdo escrito com o VLibras e suporta vídeos revisados em Língua Brasileira de Sinais quando são cadastrados para uma questão." %></p><p><%= I18n.locale == :en ? "Keyboard interaction, ARIA labels, responsive modals, and a calm visual hierarchy support bilingual literacy." : "Interação por teclado, tags ARIA, modais responsivos e uma hierarquia visual serena apoiam a alfabetização bilíngue." %></p></div></section>
+    <section class="grid gap-4 border-b ink-rule py-8 md:grid-cols-[12rem_1fr]"><h2 class="type-display text-3xl text-accent"><%= I18n.locale == :en ? "Technology Stack" : "Tecnologia Utilizada" %></h2><ul class="space-y-2 text-sm leading-7 text-tx1"><li><strong class="text-tx0">Ruby on Rails</strong> · backend e dados.</li><li><strong class="text-tx0">Hotwire</strong> · interação sem complexidade desnecessária.</li><li><strong class="text-tx0">Tailwind CSS</strong> · sistema visual responsivo.</li><li><strong class="text-tx0">PostgreSQL</strong> · módulos, questões e progresso.</li></ul></section>
   </div>
-
-  <div class="space-y-8">
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "Project Origin" : "Origem do Projeto" %>
-      </h2>
-      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
-        <%= I18n.locale == :en ? "PrimoQuiz is a Scientific Initiation project developed to explore how technology can facilitate the teaching of Mathematics. Our primary focus is deaf students in high school." : "O PrimoQuiz é um projeto de Iniciação Científica desenvolvido para explorar como a tecnologia pode facilitar o ensino de Matemática. Nosso foco primordial são os alunos surdos no ensino médio." %>
-      </p>
-      <p class="text-tx0 leading-relaxed text-sm font-medium">
-        <%= I18n.locale == :en ? "By connecting fascinating topics like prime numbers, cryptography, bank security, and WhatsApp protocols, we aim to engage students and show that mathematics is present in their daily lives." : "Conectando temas fascinantes como números primos, criptografia, segurança bancária e protocolos do WhatsApp, buscamos engajar os estudantes e mostrar que a matemática está presente no seu dia a dia." %>
-      </p>
-    </section>
-
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "LIBRAS & Accessibility" : "LIBRAS e Acessibilidade" %>
-      </h2>
-      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
-        <%= I18n.locale == :en ? "Mathematics instruction often faces communication barriers. LIBRAS Mode offers a VLibras avatar translation for the written content and supports reviewed Brazilian Sign Language videos when they are registered for a question." : "O ensino de matemática muitas vezes enfrenta barreiras de comunicação. O Modo LIBRAS oferece tradução do conteúdo escrito com o avatar VLibras e suporta vídeos revisados em Língua Brasileira de Sinais quando eles são cadastrados para uma questão." %>
-      </p>
-      <p class="text-tx0 leading-relaxed text-sm font-medium">
-        <%= I18n.locale == :en ? "This supports bilingual literacy (Portuguese and LIBRAS) with responsive modals, keyboard interaction, ARIA labels, and clean visual layouts." : "Isso apoia a alfabetização bilíngue (Português e LIBRAS) com modais responsivos, interação por teclado, tags ARIA e um design limpo." %>
-      </p>
-    </section>
-
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "Technology Stack" : "Tecnologia Utilizada" %>
-      </h2>
-      <ul class="list-disc pl-5 space-y-2 text-tx0 text-sm font-medium">
-        <li><strong>Ruby on Rails:</strong> <%= I18n.locale == :en ? "Reliable and robust backend." : "Backend robusto e confiável." %></li>
-        <li><strong>Hotwire (Turbo & Stimulus):</strong> <%= I18n.locale == :en ? "Responsive, single-page application feel without complex JS frameworks." : "Sensação de aplicação de página única altamente interativa sem frameworks JS complexos." %></li>
-        <li><strong>Tailwind CSS:</strong> <%= I18n.locale == :en ? "Clean dark-first design system inspired by Notion." : "Design system dark-first moderno e limpo, inspirado no Notion." %></li>
-        <li><strong>PostgreSQL:</strong> <%= I18n.locale == :en ? "Reliable database structure for storing modules, questions, and attempts." : "Estrutura estável para salvar os módulos, questões e progresso dos alunos." %></li>
-      </ul>
-    </section>
-  </div>
-</div>
+</section>

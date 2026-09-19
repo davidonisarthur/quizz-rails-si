@@ -1,24 +1,21 @@
-<div class="max-w-2xl mx-auto py-10 px-4">
-  <h2 class="text-3xl font-bold mb-2 text-tx0"><%= current_user.name %></h2>
-  <p class="text-tx2 mb-8"><%= current_user.email %></p>
+<section class="mx-auto max-w-3xl py-6 sm:py-12">
+  <p class="eyebrow"><%= current_user.email %></p>
+  <h1 class="type-display mt-3 text-5xl sm:text-6xl"><%= current_user.name %></h1>
 
-  <h3 class="text-xl font-bold mb-4 text-tx1"><%= t('profile.my_attempts') %></h3>
-
-  <div class="space-y-4">
+  <div class="mt-10 border-t-2 ink-rule">
+    <div class="flex items-baseline justify-between gap-4 py-5">
+      <h2 class="type-display text-3xl"><%= t('profile.my_attempts') %></h2>
+      <span class="eyebrow"><%= @attempts.count %></span>
+    </div>
     <% @attempts.each do |attempt| %>
-      <div class="p-4 bg-bg2 rounded-xl border border-bg3 shadow-sm flex justify-between items-center transition">
+      <article class="grid grid-cols-[1fr_auto] gap-4 border-t ink-rule py-5">
         <div>
-          <h4 class="font-bold text-tx0"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h4>
-          <p class="text-xs text-tx2"><%= l attempt.created_at, format: :short %></p>
+          <h3 class="text-lg font-bold"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h3>
+          <p class="mt-1 text-xs text-tx2"><%= l attempt.created_at, format: :short %></p>
         </div>
-        <div class="text-lg font-bold text-accent">
-          <%= attempt.score %>
-        </div>
-      </div>
+        <p class="type-display text-3xl text-accent"><%= attempt.score %></p>
+      </article>
     <% end %>
-
-    <% if @attempts.empty? %>
-      <p class="text-center py-10 text-tx2 font-medium"><%= t('profile.no_attempts') %></p>
-    <% end %>
+    <% if @attempts.empty? %><p class="border-t ink-rule py-10 text-tx2"><%= t('profile.no_attempts') %></p><% end %>
   </div>
-</div>
+</section>

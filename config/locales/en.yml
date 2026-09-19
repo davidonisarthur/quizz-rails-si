@@ -1,6 +1,13 @@
 en:
   hello: "Welcome to PrimoQuiz"
   about: "About"
+  brand:
+    subtitle: "Number theory"
+    footer: "Mathematics, language, and discovery"
+  home:
+    eyebrow: "Learning through discovery"
+    introduction: "A sequence of short challenges to spot patterns, test ideas, and understand prime numbers from within."
+    path_label: "Study path"
   navigation:
     main: "Main navigation"
   theme:

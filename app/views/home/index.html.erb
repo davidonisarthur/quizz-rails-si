@@ -1,22 +1,9 @@
-<div class="max-w-4xl mx-auto py-10 px-4">
-  <h1 class="text-4xl font-bold mb-8"><%= t('hello', default: 'Bem-vindo ao PrimoQuiz') %></h1>
-  
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <% @modules.each do |modulo| %>
-      <% available = modulo.available_to?(current_user) %>
-      <div class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md hover:shadow-lg transition duration-200">
-        <h2 class="text-xl font-bold mb-2">
-          <%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %>
-        </h2>
-        <p class="text-tx1 mb-4 text-sm font-medium">
-          <%= available ? t('modules.available') : t('modules.complete_previous') %>
-        </p>
-        <% if available %>
-          <%= link_to t('modules.play'), play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "inline-block bg-accent text-white px-5 py-2.5 rounded-lg hover:brightness-110 font-semibold shadow transition duration-200" %>
-        <% else %>
-          <span class="inline-block bg-bg3 text-tx2 px-5 py-2.5 rounded-lg cursor-not-allowed font-semibold"><%= t('modules.locked') %></span>
-        <% end %>
-      </div>
-    <% end %>
+<section class="grid gap-10 py-5 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-end lg:py-12">
+  <div>
+    <p class="eyebrow"><%= t('home.eyebrow') %></p>
+    <h1 class="type-display mt-5 max-w-3xl text-5xl leading-[0.95] sm:text-6xl lg:text-7xl"><%= t('hello') %></h1>
   </div>
-</div>
+  <p class="border-l-2 border-accent pl-5 text-base leading-7 text-tx1"><%= t('home.introduction') %></p>
+</section>
+
+<%= render "quiz_modules/catalog", heading: t('home.path_label') %>
