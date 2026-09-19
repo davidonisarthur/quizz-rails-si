@@ -40,7 +40,12 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - QUIZZ_RAILS_DATABASE_PASSWORD
   clear:
+    # Required: configure this as the public application domain before deploy.
+    # APP_HOST: quiz.example.com
+    # APP_HOSTS: quiz.example.com,www.quiz.example.com
+
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
