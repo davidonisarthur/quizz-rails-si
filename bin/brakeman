@@ -2,6 +2,8 @@
 require "rubygems"
 require "bundler/setup"
 
-ARGV.unshift("--ensure-latest")
+# Keep local analysis deterministic and offline-friendly. CI can opt into the
+# release freshness check with BRAKEMAN_ENSURE_LATEST=true.
+ARGV.unshift("--ensure-latest") if ENV["BRAKEMAN_ENSURE_LATEST"] == "true"
 
 load Gem.bin_path("brakeman", "brakeman")
