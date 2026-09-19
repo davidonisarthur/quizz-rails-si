@@ -105,6 +105,20 @@ Acesse no navegador: `http://localhost:3000`
 
 ---
 
+## 🔐 Configuração para produção
+
+Antes de publicar, configure o domínio público e a senha do PostgreSQL no ambiente de deploy:
+
+```bash
+APP_HOST=quiz.exemplo.com
+APP_HOSTS=quiz.exemplo.com,www.quiz.exemplo.com
+QUIZZ_RAILS_DATABASE_PASSWORD=uma-senha-segura
+```
+
+Em produção, a aplicação exige HTTPS e permite apenas os hosts definidos em `APP_HOSTS` (ou em `APP_HOST`). A configuração Kamal ainda contém valores de exemplo para servidor e registry; substitua-os pelos dados da sua infraestrutura antes de executar um deploy.
+
+---
+
 ## 📖 Citação Acadêmica / Citation (BibTeX)
 
 Caso utilize este software ou sua documentação em seu artigo científico ou trabalho acadêmico, utilize o formato de citação abaixo:
