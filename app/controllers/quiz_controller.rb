@@ -100,12 +100,12 @@ class QuizController < ApplicationController
   end
 
   def ensure_module_playable
-    unless @module.unlocked?
-      redirect_to root_path(locale: I18n.locale), alert: t("quiz.module_locked") and return
-    end
-
     if @module.questions.none?
       redirect_to root_path(locale: I18n.locale), alert: t("quiz.no_questions") and return
+    end
+
+    unless @module.available_to?(current_user)
+      redirect_to root_path(locale: I18n.locale), alert: t("quiz.module_locked") and return
     end
   end
 end

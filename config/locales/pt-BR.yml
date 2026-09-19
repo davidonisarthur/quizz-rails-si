@@ -10,6 +10,7 @@ pt-BR:
     title: "Módulos de Quiz"
     available: "Disponível"
     locked: "Bloqueado"
+    complete_previous: "Conclua o módulo anterior para desbloquear"
     play: "Jogar"
   sessions:
     title: "Entrar"

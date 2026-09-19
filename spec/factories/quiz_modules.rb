@@ -3,6 +3,7 @@ FactoryBot.define do
     title_pt { "O que é primo?" }
     title_en { "What is a prime?" }
     sequence(:slug) { |n| "modulo-#{n}" }
+    sequence(:position) { |n| n }
     unlocked { true }
   end
 end
