@@ -19,7 +19,7 @@ jobs:
           bundler-cache: true
 
       - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
+        run: BRAKEMAN_ENSURE_LATEST=true bin/brakeman --no-pager
       
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
@@ -105,4 +105,3 @@ jobs:
         run: |
           bin/rails db:test:prepare
           bundle exec rspec
-
