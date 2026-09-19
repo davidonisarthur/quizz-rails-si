@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <%= javascript_tag nonce: true do %>
       (function() {
@@ -11,10 +11,10 @@
         }
       })();
     <% end %>
-    <title><%= content_for(:title) || "Quizz Rails" %></title>
+    <title><%= content_for(:title) || "PrimoQuiz" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Quizz Rails">
+    <meta name="application-name" content="PrimoQuiz">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -35,14 +35,14 @@
   </head>
 
   <body class="bg-bg0 text-tx0 font-sans antialiased min-h-screen transition-colors duration-200">
-    <nav class="fixed top-0 left-0 right-0 bg-bg1 border-b border-bg3 z-50 transition-colors duration-200">
+    <nav aria-label="<%= t('navigation.main') %>" class="fixed top-0 left-0 right-0 bg-bg1 border-b border-bg3 z-50 transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+        <div class="flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 sm:h-16 sm:flex-nowrap sm:py-0">
           <div class="flex items-center">
             <%= link_to "PrimoQuiz", root_path(locale: I18n.locale), class: "text-2xl font-bold text-accent" %>
           </div>
           
-          <div class="flex items-center space-x-4">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
             <%= link_to t('ranking.title'), ranking_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             <%= link_to t('about'), about_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             
@@ -77,9 +77,9 @@
               <span><%= t('theme.label') %></span>
             </button>
 
-            <div class="flex items-center space-x-2 border-l pl-4 border-bg3">
-              <%= link_to "PT", { locale: 'pt-BR' }, class: "text-xs font-bold #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2'}" %>
-              <%= link_to "EN", { locale: 'en' }, class: "text-xs font-bold #{I18n.locale == :en ? 'text-accent' : 'text-tx2'}" %>
+            <div class="flex items-center gap-x-2 border-l pl-4 border-bg3">
+              <%= link_to "PT", { locale: 'pt-BR' }, class: "text-xs font-bold #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :'pt-BR' ? 'page' : nil } %>
+              <%= link_to "EN", { locale: 'en' }, class: "text-xs font-bold #{I18n.locale == :en ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :en ? 'page' : nil } %>
             </div>
           </div>
         </div>

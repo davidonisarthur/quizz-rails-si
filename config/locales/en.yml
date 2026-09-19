@@ -1,10 +1,13 @@
 en:
   hello: "Welcome to PrimoQuiz"
   about: "About"
+  navigation:
+    main: "Main navigation"
   theme:
     label: "Theme"
     toggle: "Toggle theme"
   modules:
+    title: "Quiz Modules"
     available: "Available"
     locked: "Locked"
     play: "Play"
