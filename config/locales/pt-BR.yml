@@ -44,6 +44,7 @@ pt-BR:
     close: "Fechar"
     module_locked: "Este módulo ainda está bloqueado."
     no_questions: "Este módulo ainda não possui questões cadastradas."
+    invalid_answer: "Selecione uma alternativa válida para continuar."
     completed_title: "Quiz Finalizado!"
     score_label: "Sua pontuação:"
     back_home: "Voltar ao início"

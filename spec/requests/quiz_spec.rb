@@ -8,6 +8,7 @@ RSpec.describe "Quizzes", type: :request do
   let!(:o1_q1) { create(:option, question: q1, text_pt: "15") }
   let!(:o2_q1) { create(:option, question: q1, text_pt: "17") } # Correct choice for q1 is index 1
   let!(:o1_q2) { create(:option, question: q2, text_pt: "Sim") } # Correct choice for q2 is index 0
+  let!(:o2_q2) { create(:option, question: q2, text_pt: "Não") }
 
   let!(:f_correct_q1) { create(:feedback, question: q1, kind: "correct", body_pt: "Parabéns, o 17 é primo!") }
   let!(:f_incorrect_q1) { create(:feedback, question: q1, kind: "incorrect", body_pt: "Tente novamente, 15 não é primo!") }
@@ -29,26 +30,26 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include("0%")
     end
 
-    it "avança para a questão solicitada se o quiz já estiver em progresso na sessão" do
+    it "ignora question_index informado na URL e preserva o estado da sessão" do
       # Primeiro, iniciamos o quiz na sessão
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
-      # Em seguida, solicitamos o question_index 1 (próxima questão)
+      # A progressão é definida somente depois de uma resposta válida.
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
 
       expect(response).to have_http_status(:ok)
-      expect(session[:quiz]["question_index"]).to eq(1)
-      expect(response.body).to include("O número 1 é primo?")
-      expect(response.body).to include("Questão 2 de 2")
-      expect(response.body).to include("50%")
+      expect(session[:quiz]["question_index"]).to eq(0)
+      expect(response.body).to include("Qual destes números é primo?")
+      expect(response.body).to include("Questão 1 de 2")
+      expect(response.body).to include("0%")
     end
 
     it "mantém o progresso do quiz se recarregarmos a página sem passar question_index" do
       # Primeiro, iniciamos o quiz na sessão
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
-      # Em seguida, solicitamos o question_index 1
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      # Uma resposta válida avança o estado da sessão.
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       expect(session[:quiz]["question_index"]).to eq(1)
 
       # Agora, recarregamos sem passar question_index e validamos se manteve no índice 1
@@ -56,14 +57,16 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["question_index"]).to eq(1)
     end
 
-    it "redireciona para os resultados se o question_index estiver fora dos limites (nil question)" do
+    it "não aceita índices fora dos limites informados pela URL" do
       # Inicializa o quiz
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
       # Solicita índice inexistente (2)
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 2)
 
-      expect(response).to redirect_to(result_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+      expect(response).to have_http_status(:ok)
+      expect(session[:quiz]["question_index"]).to eq(0)
+      expect(response.body).to include("Qual destes números é primo?")
     end
   end
 
@@ -96,8 +99,8 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "inclui link para ver resultado quebrando o frame turbo (data-turbo-frame='_top') quando for a última questão" do
-      # Avança para a última questão (índice 1)
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      # Responder a primeira questão é a única forma de avançar para a última.
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
 
       # Responde à última questão
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
@@ -113,15 +116,40 @@ RSpec.describe "Quizzes", type: :request do
       expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
     end
 
-    it "redireciona para o play se a pergunta correspondente ao index na sessão não existir" do
-      # Inicializa a sessão
+    it "rejeita uma resposta sem alternativa, sem alterar o progresso" do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
-      # Força a definição de um index alto/inválido
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 999)
+      expect {
+        post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_id: q1.id)
+      }.not_to change { session[:quiz]["score"] }
 
-      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0)
       expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+      expect(session[:quiz]["question_index"]).to eq(0)
+    end
+
+    it "rejeita alternativas não numéricas ou fora do intervalo" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: "invalida", question_id: q1.id)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+      expect(session[:quiz]["score"]).to eq(0)
+
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 99, question_id: q1.id)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+      expect(session[:quiz]["score"]).to eq(0)
+    end
+
+    it "não permite responder novamente uma questão já concluída" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      expect(session[:quiz]["score"]).to eq(1)
+
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
+      expect(session[:quiz]["question_index"]).to eq(1)
+
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR", question_index: 1))
+      expect(session[:quiz]["score"]).to eq(1)
     end
 
     it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do
@@ -199,7 +227,7 @@ RSpec.describe "Quizzes", type: :request do
   describe "LIBRAS translation button and VLibras visibility on play page" do
     it "does not show the LIBRAS translation buttons if LIBRAS mode is disabled" do
       # LIBRAS mode disabled by default
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 0)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
       expect(response.body).not_to include("Traduzir em LIBRAS (Avatar 3D)")
     end
 
@@ -229,8 +257,9 @@ RSpec.describe "Quizzes", type: :request do
       post toggle_libras_mode_path(locale: "pt-BR")
       expect(session[:libras_mode]).to be true
 
-      # Access play page for q2 (index 1, which has empty video url)
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", question_index: 1)
+      # Answer q1 to advance to q2 (which has no pre-recorded video).
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
       expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
       expect(response.body).to include('data-vlibras-text-value="O número 1 é primo? Um número primo tem exatamente 2 divisores."')
@@ -240,7 +269,7 @@ RSpec.describe "Quizzes", type: :request do
     it "renders the English question and context inside data-vlibras-text-value when locale is en" do
       get play_quiz_module_path(slug: quiz_module.slug, locale: "en")
       post toggle_libras_mode_path(locale: "en")
-      get play_quiz_module_path(slug: quiz_module.slug, locale: "en", question_index: 0)
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "en")
 
       expect(response.body).to include("Translate into LIBRAS (3D Avatar)")
       expect(response.body).to include('data-controller="vlibras"')
