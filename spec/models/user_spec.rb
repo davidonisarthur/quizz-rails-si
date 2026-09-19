@@ -25,6 +25,13 @@ RSpec.describe User, type: :model do
       expect(user).not_to be_valid
     end
 
+    it "não aceita email duplicado que difere apenas por maiúsculas" do
+      create(:user, email: "teste@email.com")
+      user = build(:user, email: "TESTE@email.com")
+
+      expect(user).not_to be_valid
+    end
+
     it "authenticate retorna false com senha errada" do
       user = create(:user, password: "senha123")
       expect(user.authenticate("errada")).to be_falsey
