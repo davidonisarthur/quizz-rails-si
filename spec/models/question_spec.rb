@@ -59,5 +59,12 @@ RSpec.describe Question, type: :model do
       question = build(:question, libras_video_url: "https://youtube.com/watch?v=exemplo")
       expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/exemplo")
     end
+
+    it "does not accept the known placeholder video as LIBRAS content" do
+      question = build(:question, libras_video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+
+      expect(question).not_to be_valid
+      expect(question.errors[:libras_video_url]).to include("must reference an approved LIBRAS video")
+    end
   end
 end

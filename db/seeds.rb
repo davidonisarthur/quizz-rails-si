@@ -26,7 +26,8 @@ end
 
 puts "Criando questões do Módulo 1..."
 
-libras_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+# Register only reviewed LIBRAS recordings. Until then, the VLibras avatar remains available.
+libras_url = nil
 
 # ==============================================================================
 # QUESTÃO 1 — Conceito Básico
@@ -282,7 +283,7 @@ end
 # MODULO 2
 #=============================================
 
-libras_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+libras_url = nil
 
 # ==============================================================================
 # QUESTÃO 1 — Fatoração (Inteligência Artificial)
