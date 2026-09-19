@@ -280,6 +280,7 @@ RSpec.describe "Quizzes", type: :request do
 
   describe "Proteção de módulos bloqueados e vazios" do
     let!(:locked_module) { create(:quiz_module, slug: "modulo-bloqueado", unlocked: false) }
+    let!(:locked_question) { create(:question, quiz_module: locked_module) }
     let!(:empty_module) { create(:quiz_module, slug: "modulo-vazio", unlocked: true) }
 
     it "redireciona para o início com alerta ao tentar jogar um módulo bloqueado" do

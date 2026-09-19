@@ -1,5 +1,5 @@
 class QuizModulesController < ApplicationController
   def index
-    @modules = QuizModule.all
+    @modules = QuizModule.includes(:questions).order(:position)
   end
 end

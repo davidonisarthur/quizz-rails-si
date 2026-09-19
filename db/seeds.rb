@@ -3,24 +3,28 @@ puts "Criando módulos..."
 modulo1 = QuizModule.find_or_create_by!(slug: "o-que-e-primo") do |m|
   m.title_pt = "Os Blocos de Construção e os Números Primos"
   m.title_en = "The Building Blocks and Prime Numbers"
+  m.position = 1
   m.unlocked = true
 end
 
 modulo2 = QuizModule.find_or_create_by!(slug: "crivo-de-eratostenes") do |m|
   m.title_pt = "Engrenagens Matemáticas: Fatoração, MMC e MDC"
   m.title_en = "Mathematical Gears: Factorization, LCM, and GCD"
-  m.unlocked = true
+  m.position = 2
+  m.unlocked = false
 end
 
 modulo3 = QuizModule.find_or_create_by!(slug: "primos-e-criptografia") do |m|
   m.title_pt = "Desvendando Enigmas: A Lógica da Criptografia"
   m.title_en = "Unraveling Enigmas: The Logic of Cryptography"
-  m.unlocked = true
+  m.position = 3
+  m.unlocked = false
 end
 
 modulo4 = QuizModule.find_or_create_by!(slug: "desafio-final") do |m|
   m.title_pt = "Desafio final"
   m.title_en = "Final challenge"
+  m.position = 4
   m.unlocked = false
 end
 
@@ -788,10 +792,93 @@ q10.feedbacks.find_or_create_by!(kind: "incorrect") do |f|
   f.body_en = "Incorrect. Advance exactly 2 positions in the alphabet for each character of the word GATO (for example, after the letter G comes H, and then I)."
 end
 
+puts "Criando questões do Desafio Final..."
 
+final_questions = [
+  {
+    body_pt: "Qual alternativa apresenta somente números primos?",
+    body_en: "Which option contains only prime numbers?",
+    context_pt: "Revisão final - Identificação de números primos.",
+    context_en: "Final review - Identifying prime numbers.",
+    correct_index: 1,
+    options: [ [ "9, 11 e 13", "9, 11, and 13" ], [ "19, 23 e 29", "19, 23, and 29" ], [ "21, 25 e 31", "21, 25, and 31" ], [ "27, 29 e 33", "27, 29, and 33" ] ],
+    feedback_pt: "Correto! 19, 23 e 29 possuem exatamente dois divisores positivos.",
+    feedback_en: "Correct! 19, 23, and 29 each have exactly two positive divisors.",
+    incorrect_pt: "Revise os divisores: 9, 21, 25, 27 e 33 são compostos.",
+    incorrect_en: "Review the divisors: 9, 21, 25, 27, and 33 are composite."
+  },
+  {
+    body_pt: "Qual é a fatoração prima de 84?",
+    body_en: "What is the prime factorization of 84?",
+    context_pt: "Revisão final - Fatoração prima.",
+    context_en: "Final review - Prime factorization.",
+    correct_index: 0,
+    options: [ [ "2² × 3 × 7", "2² × 3 × 7" ], [ "2 × 6 × 7", "2 × 6 × 7" ], [ "3 × 4 × 7", "3 × 4 × 7" ], [ "2 × 3 × 14", "2 × 3 × 14" ] ],
+    feedback_pt: "Muito bem! 84 = 2 × 2 × 3 × 7, e todos esses fatores são primos.",
+    feedback_en: "Well done! 84 = 2 × 2 × 3 × 7, and all of these factors are prime.",
+    incorrect_pt: "Uma fatoração prima não pode manter fatores compostos como 4, 6 ou 14.",
+    incorrect_en: "A prime factorization cannot retain composite factors such as 4, 6, or 14."
+  },
+  {
+    body_pt: "Qual é o máximo divisor comum (MDC) entre 36 e 48?",
+    body_en: "What is the greatest common divisor (GCD) of 36 and 48?",
+    context_pt: "Revisão final - Divisores comuns.",
+    context_en: "Final review - Common divisors.",
+    correct_index: 2,
+    options: [ [ "6", "6" ], [ "8", "8" ], [ "12", "12" ], [ "18", "18" ] ],
+    feedback_pt: "Correto! 12 é o maior número que divide 36 e 48 sem deixar resto.",
+    feedback_en: "Correct! 12 is the largest number that divides both 36 and 48 with no remainder.",
+    incorrect_pt: "Liste os divisores comuns de 36 e 48 e escolha o maior deles.",
+    incorrect_en: "List the common divisors of 36 and 48, then choose the largest one."
+  },
+  {
+    body_pt: "Qual é o mínimo múltiplo comum (MMC) entre 8 e 12?",
+    body_en: "What is the least common multiple (LCM) of 8 and 12?",
+    context_pt: "Revisão final - Múltiplos comuns.",
+    context_en: "Final review - Common multiples.",
+    correct_index: 1,
+    options: [ [ "16", "16" ], [ "24", "24" ], [ "32", "32" ], [ "48", "48" ] ],
+    feedback_pt: "Isso mesmo! 24 é o menor múltiplo positivo compartilhado por 8 e 12.",
+    feedback_en: "That's right! 24 is the smallest positive multiple shared by 8 and 12.",
+    incorrect_pt: "Procure o primeiro número positivo que apareça nas duas listas de múltiplos.",
+    incorrect_en: "Find the first positive number that appears in both lists of multiples."
+  },
+  {
+    body_pt: "Por que números primos grandes são úteis em sistemas como o RSA?",
+    body_en: "Why are large prime numbers useful in systems such as RSA?",
+    context_pt: "Revisão final - Criptografia.",
+    context_en: "Final review - Cryptography.",
+    correct_index: 3,
+    options: [ [ "Porque todos os números pares são primos.", "Because all even numbers are prime." ], [ "Porque não possuem divisores positivos.", "Because they have no positive divisors." ], [ "Porque eliminam a necessidade de senhas.", "Because they eliminate the need for passwords." ], [ "Porque fatorar o produto de primos grandes pode ser computacionalmente difícil.", "Because factoring the product of large primes can be computationally difficult." ] ],
+    feedback_pt: "Excelente! A dificuldade de fatorar números muito grandes é uma das ideias usadas pela criptografia assimétrica.",
+    feedback_en: "Excellent! The difficulty of factoring very large numbers is one of the ideas used by asymmetric cryptography.",
+    incorrect_pt: "A segurança está relacionada à dificuldade de fatorar o produto de primos grandes, não a uma ausência de divisores.",
+    incorrect_en: "Security relates to the difficulty of factoring the product of large primes, not to an absence of divisors."
+  }
+]
 
+final_questions.each do |attributes|
+  question = modulo4.questions.find_or_create_by!(body_pt: attributes[:body_pt]) do |record|
+    record.body_en = attributes[:body_en]
+    record.context_pt = attributes[:context_pt]
+    record.context_en = attributes[:context_en]
+    record.correct_index = attributes[:correct_index]
+    record.libras_video_url = libras_url
+  end
 
+  attributes[:options].each do |text_pt, text_en|
+    question.options.find_or_create_by!(text_pt: text_pt) { |option| option.text_en = text_en }
+  end
 
+  question.feedbacks.find_or_create_by!(kind: "correct") do |feedback|
+    feedback.body_pt = attributes[:feedback_pt]
+    feedback.body_en = attributes[:feedback_en]
+  end
+  question.feedbacks.find_or_create_by!(kind: "incorrect") do |feedback|
+    feedback.body_pt = attributes[:incorrect_pt]
+    feedback.body_en = attributes[:incorrect_en]
+  end
+end
 
 puts "Seeds criadas com sucesso!"
 puts "  #{QuizModule.count} módulos"
