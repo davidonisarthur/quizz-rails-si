@@ -1,6 +1,9 @@
 pt-BR:
   hello: "Bem-vindo ao PrimoQuiz"
   about: "Sobre"
+  time:
+    formats:
+      short: "%d/%m/%Y às %H:%M"
   brand:
     subtitle: "Teoria dos números"
     footer: "Matemática, linguagem e descoberta"

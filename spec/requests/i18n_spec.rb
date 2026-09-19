@@ -116,6 +116,16 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("My Attempts")
       expect(response.body).to include("You have not completed any quizzes yet.")
     end
+
+    it "formata a data das tentativas nos dois idiomas" do
+      attempt = create(:quiz_attempt, user: user, quiz_module: quiz_module, created_at: Time.zone.local(2026, 1, 2, 15, 30))
+
+      get profile_path(locale: "pt-BR")
+      expect(response.body).to include(I18n.l(attempt.created_at, format: :short, locale: :"pt-BR"))
+
+      get profile_path(locale: "en")
+      expect(response.body).to include(I18n.l(attempt.created_at, format: :short, locale: :en))
+    end
   end
 
   describe "Resultado do Quiz" do

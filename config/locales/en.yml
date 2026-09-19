@@ -1,6 +1,9 @@
 en:
   hello: "Welcome to PrimoQuiz"
   about: "About"
+  time:
+    formats:
+      short: "%b %-d, %Y at %H:%M"
   brand:
     subtitle: "Number theory"
     footer: "Mathematics, language, and discovery"
