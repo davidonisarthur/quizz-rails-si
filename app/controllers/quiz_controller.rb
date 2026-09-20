@@ -96,7 +96,10 @@ class QuizController < ApplicationController
   private
 
   def set_module
-    @module = QuizModule.published.find_by!(slug: params[:slug])
+    @module = QuizModule.published.find_by(slug: params[:slug])
+    return if @module
+
+    redirect_to root_path(locale: I18n.locale), alert: t("quiz.unavailable")
   end
 
   def ensure_module_playable

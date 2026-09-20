@@ -80,6 +80,7 @@ RSpec.describe "Teacher area", type: :request do
     expect(response.body).not_to include("Rascunho privado")
 
     get play_quiz_module_path(module_record.slug, locale: "pt-BR")
-    expect(response).to have_http_status(:not_found)
+    expect(response).to redirect_to(root_path(locale: "pt-BR"))
+    expect(flash[:alert]).to eq("Este módulo não está disponível para jogar.")
   end
 end

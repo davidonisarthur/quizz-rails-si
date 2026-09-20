@@ -105,6 +105,7 @@ en:
     watch_video_libras: "Pre-recorded LIBRAS Video"
     close: "Close"
     module_locked: "This module is currently locked."
+    unavailable: "This module is not available to play."
     no_questions: "This module does not have any questions yet."
     invalid_answer: "Select a valid option to continue."
     completed_title: "Quiz Completed!"

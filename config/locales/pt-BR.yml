@@ -105,6 +105,7 @@ pt-BR:
     watch_video_libras: "Vídeo Gravado em LIBRAS"
     close: "Fechar"
     module_locked: "Este módulo ainda está bloqueado."
+    unavailable: "Este módulo não está disponível para jogar."
     no_questions: "Este módulo ainda não possui questões cadastradas."
     invalid_answer: "Selecione uma alternativa válida para continuar."
     completed_title: "Quiz Finalizado!"
