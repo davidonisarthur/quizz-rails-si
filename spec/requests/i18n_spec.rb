@@ -107,14 +107,14 @@ RSpec.describe "I18n Translations", type: :request do
       post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
     end
 
-    it "renderiza cabeçalho e estado vazio traduzidos" do
+    it "renderiza progresso e estado inicial traduzidos" do
       get profile_path(locale: "pt-BR")
-      expect(response.body).to include("Minhas Tentativas")
-      expect(response.body).to include("Você ainda não completou nenhum quiz.")
+      expect(response.body).to include("Meu progresso")
+      expect(response.body).to include("Conclua seu primeiro módulo para acompanhar seus resultados aqui.")
 
       get profile_path(locale: "en")
-      expect(response.body).to include("My Attempts")
-      expect(response.body).to include("You have not completed any quizzes yet.")
+      expect(response.body).to include("My progress")
+      expect(response.body).to include("Complete your first module to track your results here.")
     end
 
     it "formata a data das tentativas nos dois idiomas" do
@@ -125,6 +125,23 @@ RSpec.describe "I18n Translations", type: :request do
 
       get profile_path(locale: "en")
       expect(response.body).to include(I18n.l(attempt.created_at, format: :short, locale: :en))
+    end
+
+    it "mostra progresso, melhor resultado e módulos pendentes" do
+      completed_module = create(:quiz_module, position: 1, title_pt: "Módulo concluído", title_en: "Completed module")
+      pending_module = create(:quiz_module, position: 2, title_pt: "Próximo módulo", title_en: "Next module")
+      create(:question, quiz_module: completed_module, position: 1)
+      create(:question, quiz_module: pending_module, position: 1)
+      create(:quiz_attempt, user: user, quiz_module: completed_module, score: 1, created_at: 2.days.ago)
+      create(:quiz_attempt, user: user, quiz_module: completed_module, score: 0, created_at: 1.day.ago)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response.body).to include("1 de 3 módulos concluídos")
+      expect(response.body).to include("Próximo módulo")
+      expect(response.body).to include("Melhor resultado")
+      expect(response.body).to include("100%")
+      expect(response.body).to include("Última tentativa")
     end
   end
 
