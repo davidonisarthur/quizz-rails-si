@@ -3,7 +3,7 @@ class QuizController < ApplicationController
   before_action :ensure_module_playable, only: [ :show, :answer, :result ]
 
   def show
-    questions = @module.questions.published.order(:id)
+    questions = @module.questions.published.order(:position)
 
     if session[:quiz].blank? || session[:quiz]["module_id"] != @module.id
       session[:quiz] = { "module_id" => @module.id, "question_index" => 0, "score" => 0 }
@@ -28,7 +28,7 @@ class QuizController < ApplicationController
     end
 
     quiz      = session[:quiz]
-    questions = @module.questions.published.order(:id)
+    questions = @module.questions.published.order(:position)
     @current_index = quiz["question_index"]
     @total_questions = questions.count
     @question = questions[@current_index]
@@ -46,6 +46,8 @@ class QuizController < ApplicationController
 
     correct   = chosen == @question.correct_index
     session[:quiz]["score"] += 1 if correct
+    quiz["responses"] ||= []
+    quiz["responses"] << { "question_id" => @question.id, "selected_index" => chosen, "correct" => correct }
     @feedback = @question.feedbacks.find_by(kind: correct ? "correct" : "incorrect")
     @feedback ||= Feedback.new(
       body_pt: "Sem feedback cadastrado.",
@@ -60,7 +62,13 @@ class QuizController < ApplicationController
     if @next_question.nil?
       score = session[:quiz]["score"]
       if current_user
-        attempt = QuizAttempt.create!(user: current_user, quiz_module: @module, score: score)
+        attempt = QuizAttempt.transaction do
+          record = QuizAttempt.create!(user: current_user, quiz_module: @module, score: score)
+          quiz.fetch("responses", []).each do |response|
+            record.quiz_responses.create!(response.slice("question_id", "selected_index", "correct"))
+          end
+          record
+        end
         session[:last_attempt_id] = attempt.id
       else
         session[:last_score] = { "score" => score, "total" => @total_questions }

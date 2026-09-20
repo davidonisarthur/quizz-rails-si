@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_010100) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_040000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,9 +42,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_010100) do
     t.integer "correct_index", null: false
     t.datetime "created_at", null: false
     t.string "libras_video_url"
+    t.integer "position", null: false
     t.boolean "published", default: false, null: false
     t.bigint "quiz_module_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["quiz_module_id", "position"], name: "index_questions_on_quiz_module_id_and_position", unique: true
     t.index ["quiz_module_id", "published"], name: "index_questions_on_quiz_module_id_and_published"
     t.index ["quiz_module_id"], name: "index_questions_on_quiz_module_id"
     t.check_constraint "correct_index >= 0 AND correct_index <= 3", name: "questions_correct_index_range"
@@ -77,6 +79,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_010100) do
     t.index ["slug"], name: "index_quiz_modules_on_slug", unique: true
   end
 
+  create_table "quiz_responses", force: :cascade do |t|
+    t.boolean "correct", null: false
+    t.datetime "created_at", null: false
+    t.bigint "question_id"
+    t.bigint "quiz_attempt_id", null: false
+    t.integer "selected_index", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_quiz_responses_on_question_id"
+    t.index ["quiz_attempt_id", "question_id"], name: "index_quiz_responses_on_quiz_attempt_id_and_question_id", unique: true
+    t.index ["quiz_attempt_id"], name: "index_quiz_responses_on_quiz_attempt_id"
+    t.check_constraint "selected_index >= 0 AND selected_index <= 3", name: "quiz_responses_selected_index_range"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email"
@@ -94,4 +109,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_010100) do
   add_foreign_key "quiz_attempts", "quiz_modules"
   add_foreign_key "quiz_attempts", "users"
   add_foreign_key "quiz_modules", "users", column: "created_by_id"
+  add_foreign_key "quiz_responses", "questions", on_delete: :nullify
+  add_foreign_key "quiz_responses", "quiz_attempts"
 end

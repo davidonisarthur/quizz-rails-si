@@ -20,7 +20,16 @@ Rails.application.routes.draw do
     namespace :teacher do
       root "dashboard#index"
       resources :quiz_modules do
-        resources :questions, only: %i[new create edit update destroy]
+        member do
+          get :preview
+          get :report
+        end
+        resources :questions, only: %i[new create edit update destroy] do
+          member do
+            post :duplicate
+            patch :move
+          end
+        end
       end
     end
   end

@@ -59,6 +59,78 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "duplicates a question with its content as a new draft" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, position: 1, published: true)
+    4.times { create(:option, question: question) }
+    create(:feedback, question: question, kind: "correct")
+    create(:feedback, question: question, kind: "incorrect")
+    sign_in(teacher)
+
+    expect {
+      post duplicate_teacher_quiz_module_question_path(module_record, question, locale: "pt-BR")
+    }.to change(Question, :count).by(1)
+      .and change(Option, :count).by(4)
+      .and change(Feedback, :count).by(2)
+
+    copy = Question.order(:id).last
+    expect(copy).not_to be_published
+    expect(copy.position).to eq(2)
+    expect(copy.body_pt).to eq(question.body_pt)
+    expect(response).to redirect_to(edit_teacher_quiz_module_question_path(module_record, copy, locale: "pt-BR"))
+  end
+
+  it "moves a question without exposing a cross-module ordering endpoint" do
+    module_record = create(:quiz_module, created_by: teacher)
+    first_question = create(:question, quiz_module: module_record, position: 1)
+    second_question = create(:question, quiz_module: module_record, position: 2)
+    sign_in(teacher)
+
+    patch move_teacher_quiz_module_question_path(module_record, second_question, locale: "pt-BR"), params: { direction: "up" }
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(first_question.reload.position).to eq(2)
+    expect(second_question.reload.position).to eq(1)
+  end
+
+  it "keeps module previews private while showing drafts to their teacher" do
+    module_record = create(:quiz_module, created_by: teacher)
+    create(:question, quiz_module: module_record, published: false, body_pt: "Rascunho visível apenas aqui")
+    sign_in(teacher)
+
+    get preview_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Rascunho visível apenas aqui")
+
+    delete session_path(locale: "pt-BR")
+    sign_in(student)
+    get preview_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it "shows reports only for modules owned by the signed-in teacher" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, position: 1, body_pt: "Questão analisada")
+    attempt = create(:quiz_attempt, user: student, quiz_module: module_record, score: 1)
+    create(:quiz_response, quiz_attempt: attempt, question: question, selected_index: 1, correct: true)
+    sign_in(teacher)
+
+    get report_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Questão analisada")
+    expect(response.body).to include(student.name)
+
+    other_teacher = create(:user, :teacher, email: "reports-other@example.com", password: "password123")
+    delete session_path(locale: "pt-BR")
+    sign_in(other_teacher)
+    get report_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   it "does not publish an incomplete question" do
     module_record = create(:quiz_module, created_by: teacher)
     sign_in(teacher)

@@ -20,6 +20,7 @@
           </div>
           <div class="mt-6 flex gap-4 text-sm font-bold">
             <%= link_to t("teacher.manage"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
+            <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
             <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
           </div>
         </article>

@@ -1,0 +1,50 @@
+<section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <div class="flex flex-wrap items-end justify-between gap-5">
+    <div>
+      <p class="eyebrow"><%= t("teacher.reports") %></p>
+      <h1 class="type-display mt-3 text-4xl sm:text-5xl"><%= @module.title_pt %></h1>
+    </div>
+    <%= link_to t("teacher.back"), teacher_quiz_module_path(@module, locale: I18n.locale), class: "focus-ink editorial-link py-3 text-sm font-bold" %>
+  </div>
+
+  <p class="mt-6 rounded-xl border-l-4 border-accent bg-bg2 p-4 text-sm text-tx1"><%= t("teacher.report_notice") %></p>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-3">
+    <article class="rounded-xl border ink-rule bg-bg2 p-5"><p class="eyebrow"><%= t("teacher.completed_attempts") %></p><p class="type-display mt-3 text-4xl"><%= @attempts_count %></p></article>
+    <article class="rounded-xl border ink-rule bg-bg2 p-5"><p class="eyebrow"><%= t("teacher.participating_students") %></p><p class="type-display mt-3 text-4xl"><%= @students_count %></p></article>
+    <article class="rounded-xl border ink-rule bg-bg2 p-5"><p class="eyebrow"><%= t("teacher.average_score") %></p><p class="type-display mt-3 text-4xl"><%= @average_score %><span class="text-xl text-tx1"> / <%= @question_count %></span></p><p class="mt-2 text-sm text-tx2"><%= @average_percentage %>%</p></article>
+  </div>
+
+  <section class="mt-10">
+    <h2 class="type-display text-3xl"><%= t("teacher.question_insights") %></h2>
+    <div class="mt-5 space-y-3">
+      <% @question_stats.each do |question| %>
+        <% responses_count = question.responses_count.to_i %>
+        <% correct_rate = responses_count.zero? ? nil : ((question.correct_responses_count.to_f / responses_count) * 100).round %>
+        <article class="rounded-xl border ink-rule bg-bg2 p-5">
+          <p class="eyebrow"><%= t("teacher.question_number", number: question.position) %></p>
+          <h3 class="mt-2 font-bold"><%= question.body_pt %></h3>
+          <% if correct_rate %>
+            <p class="mt-3 text-sm text-tx1"><%= t("teacher.answers_count", count: responses_count) %> · <strong><%= t("teacher.correct_rate", rate: correct_rate) %></strong></p>
+          <% else %>
+            <p class="mt-3 text-sm text-tx2"><%= t("teacher.no_question_data") %></p>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="type-display text-3xl"><%= t("teacher.recent_attempts") %></h2>
+    <% if @attempts.any? %>
+      <div class="mt-5 overflow-hidden rounded-xl border ink-rule bg-bg2">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-bg3 text-xs font-extrabold tracking-[0.1em] text-tx2 uppercase"><tr><th class="p-4"><%= t("ranking.name") %></th><th class="p-4"><%= t("teacher.score") %></th><th class="p-4"><%= t("teacher.date") %></th></tr></thead>
+          <tbody><% @attempts.limit(10).each do |attempt| %><tr class="border-b border-bg3 last:border-0"><td class="p-4 font-bold"><%= attempt.user.name %></td><td class="p-4"><%= attempt.score %> / <%= @question_count %></td><td class="p-4 text-tx2"><%= l(attempt.created_at, format: :short) %></td></tr><% end %></tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="mt-5 rounded-xl border border-dashed border-bg3 bg-bg2 p-6 text-tx1"><%= t("teacher.no_attempts") %></p>
+    <% end %>
+  </section>
+</section>

@@ -1,12 +1,35 @@
 module Teacher
   class QuizModulesController < BaseController
-    before_action :set_module, only: %i[show edit update destroy]
+    before_action :set_module, only: %i[show edit update destroy preview report]
 
     def index
       @modules = current_user.authored_quiz_modules.includes(:questions).order(:position)
     end
 
     def show; end
+
+    def preview
+      @questions = @module.questions.includes(:options).order(:position)
+    end
+
+    def report
+      @question_count = @module.questions.published.count
+      @attempts = @module.quiz_attempts.includes(:user).order(created_at: :desc)
+      @attempts_count = @attempts.count
+      @students_count = @attempts.distinct.count(:user_id)
+      @average_score = @attempts.average(:score).to_f.round(1)
+      @average_percentage = @question_count.positive? ? ((@average_score / @question_count) * 100).round : 0
+
+      @question_stats = @module.questions.published
+        .left_joins(:quiz_responses)
+        .select("questions.*, COUNT(quiz_responses.id) AS responses_count, COALESCE(SUM(CASE WHEN quiz_responses.correct THEN 1 ELSE 0 END), 0) AS correct_responses_count")
+        .group("questions.id")
+        .to_a
+        .sort_by do |question|
+          responses_count = question.responses_count.to_i
+          [ responses_count.zero? ? 2 : question.correct_responses_count.to_f / responses_count, question.position ]
+        end
+    end
 
     def new
       @module = current_user.authored_quiz_modules.build(published: false, unlocked: false)

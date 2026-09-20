@@ -37,45 +37,55 @@
   <body class="min-h-screen bg-bg0 text-tx0 antialiased">
     <div class="mx-auto min-h-screen max-w-[1440px] bg-bg0">
       <nav aria-label="<%= t('navigation.main') %>" class="border-b ink-rule bg-bg2 px-5 py-4 sm:px-8">
-        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-4">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-4">
           <%= link_to root_path(locale: I18n.locale), class: "focus-ink leading-none" do %>
             <span class="type-display text-3xl">Primo<span class="text-accent">Quiz</span></span>
             <span class="mt-1 block text-[0.6rem] font-bold tracking-[0.22em] text-tx1 uppercase"><%= t('brand.subtitle') %></span>
           <% end %>
 
-          <div class="flex flex-wrap items-center gap-x-5 gap-y-3 text-xs font-bold tracking-[0.09em] uppercase">
-            <%= link_to t('ranking.title'), ranking_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>
-            <%= link_to t('about'), about_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>
+          <div class="flex flex-wrap items-center justify-end gap-x-5 gap-y-3 text-sm font-semibold">
+            <div class="flex items-center gap-5">
+              <%= link_to t('ranking.title'), ranking_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+              <%= link_to t('about'), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+              <% if current_user&.teacher? %>
+                <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+              <% end %>
+            </div>
 
             <% if current_user %>
-              <%= link_to current_user.name, profile_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0 normal-case tracking-normal" %>
-              <% if current_user.teacher? %>
-                <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>
-              <% end %>
-              <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "editorial-link focus-ink cursor-pointer text-tx0" %>
+              <details class="group relative border-l ink-rule pl-5">
+                <summary class="focus-ink cursor-pointer list-none text-tx1 transition-colors hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('navigation.account') %><span class="ml-1.5 text-tx2 group-open:text-accent" aria-hidden="true">+</span></summary>
+                <div class="absolute right-0 z-20 mt-4 min-w-36 border ink-rule bg-bg2 p-2 shadow-lg">
+                  <%= link_to t('navigation.profile'), profile_path(locale: I18n.locale), class: "focus-ink block px-3 py-2 text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+                  <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "focus-ink w-full cursor-pointer px-3 py-2 text-left text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+                </div>
+              </details>
             <% else %>
-              <%= link_to t('sessions.sign_in'), new_session_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>
+              <%= link_to t('sessions.sign_in'), new_session_path(locale: I18n.locale), class: "focus-ink border-l ink-rule pl-5 text-tx1 transition-colors hover:text-accent" %>
             <% end %>
 
-            <%= button_to toggle_libras_mode_path(locale: I18n.locale),
-                          method: :post,
-                          class: "focus-ink border-b-2 px-0.5 pb-1 text-[0.65rem] font-extrabold tracking-[0.12em] uppercase cursor-pointer #{libras_mode_enabled? ? 'border-accent text-accent' : 'border-transparent text-tx1 hover:border-tx1 hover:text-tx0'}",
-                          aria: { label: t('quiz.libras_mode') } do %>
-              <%= t('quiz.libras_mode') %>
-            <% end %>
-
-            <button type="button"
-                    data-controller="theme"
-                    data-action="click->theme#toggle"
-                    class="focus-ink border-b-2 border-transparent px-0.5 pb-1 text-[0.65rem] font-extrabold tracking-[0.12em] text-tx1 uppercase hover:border-tx1 hover:text-tx0 cursor-pointer"
-                    aria-label="<%= t('theme.toggle') %>">
-              <%= t('theme.label') %>
-            </button>
-
-            <div class="flex gap-2 border-l ink-rule pl-4">
-              <%= link_to "PT", { locale: 'pt-BR' }, class: "focus-ink #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :'pt-BR' ? 'page' : nil } %>
-              <%= link_to "EN", { locale: 'en' }, class: "focus-ink #{I18n.locale == :en ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :en ? 'page' : nil } %>
-            </div>
+            <details class="group relative border-l ink-rule pl-5">
+              <summary class="focus-ink cursor-pointer list-none text-tx1 transition-colors hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('navigation.preferences') %><span class="ml-1.5 text-tx2 group-open:text-accent" aria-hidden="true">+</span></summary>
+              <div class="absolute right-0 z-20 mt-4 min-w-48 border ink-rule bg-bg2 p-2 shadow-lg">
+              <%= button_to toggle_libras_mode_path(locale: I18n.locale),
+                            method: :post,
+                            class: "focus-ink w-full cursor-pointer px-3 py-2 text-left text-sm font-semibold transition-colors #{libras_mode_enabled? ? 'text-accent' : 'text-tx1 hover:bg-bg1 hover:text-tx0'}",
+                            aria: { label: t('quiz.libras_mode') } do %>
+                <%= t('quiz.libras_mode') %>
+              <% end %>
+              <button type="button"
+                      data-controller="theme"
+                      data-action="click->theme#toggle"
+                      class="focus-ink w-full cursor-pointer px-3 py-2 text-left text-sm font-semibold text-tx1 transition-colors hover:bg-bg1 hover:text-tx0"
+                      aria-label="<%= t('theme.toggle') %>">
+                <%= t('theme.label') %>
+              </button>
+              <div class="mt-1 flex gap-2 border-t ink-rule px-3 pt-3 text-xs font-extrabold tracking-[0.08em] uppercase">
+                <%= link_to "PT", { locale: 'pt-BR' }, class: "focus-ink #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2 hover:text-tx0'}", aria: { current: I18n.locale == :'pt-BR' ? 'page' : nil } %>
+                <%= link_to "EN", { locale: 'en' }, class: "focus-ink #{I18n.locale == :en ? 'text-accent' : 'text-tx2 hover:text-tx0'}", aria: { current: I18n.locale == :en ? 'page' : nil } %>
+              </div>
+              </div>
+            </details>
           </div>
         </div>
       </nav>

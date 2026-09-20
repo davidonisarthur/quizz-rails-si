@@ -193,11 +193,16 @@ RSpec.describe "Quizzes", type: :request do
         # Responde Q2 (finaliza o quiz)
         post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
       }.to change(QuizAttempt, :count).by(1)
+        .and change(QuizResponse, :count).by(2)
 
       attempt = QuizAttempt.last
       expect(attempt.user).to eq(user)
       expect(attempt.quiz_module).to eq(quiz_module)
       expect(attempt.score).to eq(1)
+      expect(attempt.quiz_responses.order(:question_id).pluck(:question_id, :selected_index, :correct)).to contain_exactly(
+        [ q1.id, 1, true ],
+        [ q2.id, 1, false ]
+      )
 
       # Agora acessa o resultado
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
