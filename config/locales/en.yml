@@ -1,7 +1,40 @@
 en:
   hello: "Welcome to PrimoQuiz"
+  about: "About"
+  navigation:
+    main: "Main navigation"
+  theme:
+    label: "Theme"
+    toggle: "Toggle theme"
+  modules:
+    title: "Quiz Modules"
+    available: "Available"
+    locked: "Locked"
+    complete_previous: "Complete the previous module to unlock"
+    play: "Play"
   sessions:
+    title: "Sign in"
+    sign_in: "Sign in"
+    sign_out: "Sign out"
+    sign_up: "Sign up"
+    email: "Email"
+    password: "Password"
+    submit: "Sign in"
     invalid: "Invalid email or password"
+    no_account: "Don't have an account?"
+  users:
+    new:
+      title: "Create Account"
+      name: "Full name"
+      email: "Email"
+      password: "Password"
+      password_confirmation: "Confirm password"
+      submit: "Create Account"
+      already_have_account: "Already have an account?"
+      sign_in: "Sign in"
+  profile:
+    my_attempts: "My Attempts"
+    no_attempts: "You have not completed any quizzes yet."
   quiz:
     correct: "Correct!"
     incorrect: "Not quite!"
@@ -13,7 +46,15 @@ en:
     translate_with_vlibras: "Translate into LIBRAS (3D Avatar)"
     watch_video_libras: "Pre-recorded LIBRAS Video"
     close: "Close"
+    module_locked: "This module is currently locked."
+    no_questions: "This module does not have any questions yet."
+    invalid_answer: "Select a valid option to continue."
+    completed_title: "Quiz Completed!"
+    score_label: "Your score:"
+    back_home: "Back to home"
+    try_again: "Try again"
   ranking:
     title: "Ranking"
+    position: "Position"
+    name: "Name"
     score: "Score"
-  about: "About"

@@ -1,14 +1,11 @@
 class QuizController < ApplicationController
   before_action :set_module
+  before_action :ensure_module_playable, only: [ :show, :answer, :result ]
 
   def show
     questions = @module.questions.order(:id)
 
-    if session[:quiz].present? && session[:quiz]["module_id"] == @module.id
-      if params[:question_index].present?
-        session[:quiz]["question_index"] = params[:question_index].to_i
-      end
-    else
+    if session[:quiz].blank? || session[:quiz]["module_id"] != @module.id
       session[:quiz] = { "module_id" => @module.id, "question_index" => 0, "score" => 0 }
       session.delete(:last_attempt_id)
       session.delete(:last_score)
@@ -42,7 +39,11 @@ class QuizController < ApplicationController
       redirect_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @current_index) and return
     end
 
-    chosen    = params[:option_index].to_i
+    chosen = Integer(params[:option_index], exception: false)
+    unless chosen&.between?(0, @question.options.count - 1)
+      redirect_to play_quiz_module_path(@module.slug, locale: I18n.locale), alert: t("quiz.invalid_answer") and return
+    end
+
     correct   = chosen == @question.correct_index
     session[:quiz]["score"] += 1 if correct
     @feedback = @question.feedbacks.find_by(kind: correct ? "correct" : "incorrect")
@@ -96,5 +97,15 @@ class QuizController < ApplicationController
 
   def set_module
     @module = QuizModule.find_by!(slug: params[:slug])
+  end
+
+  def ensure_module_playable
+    if @module.questions.none?
+      redirect_to root_path(locale: I18n.locale), alert: t("quiz.no_questions") and return
+    end
+
+    unless @module.available_to?(current_user)
+      redirect_to root_path(locale: I18n.locale), alert: t("quiz.module_locked") and return
+    end
   end
 end

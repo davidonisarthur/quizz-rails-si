@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_12_171528) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,9 +18,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_171528) do
     t.text "body_en"
     t.text "body_pt"
     t.datetime "created_at", null: false
-    t.string "kind"
+    t.string "kind", null: false
     t.bigint "question_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["question_id", "kind"], name: "index_feedbacks_on_question_id_and_kind", unique: true
     t.index ["question_id"], name: "index_feedbacks_on_question_id"
   end
 
@@ -38,31 +39,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_171528) do
     t.text "body_pt"
     t.text "context_en"
     t.text "context_pt"
-    t.integer "correct_index"
+    t.integer "correct_index", null: false
     t.datetime "created_at", null: false
     t.string "libras_video_url"
     t.bigint "quiz_module_id", null: false
     t.datetime "updated_at", null: false
     t.index ["quiz_module_id"], name: "index_questions_on_quiz_module_id"
+    t.check_constraint "correct_index >= 0 AND correct_index <= 3", name: "questions_correct_index_range"
   end
 
   create_table "quiz_attempts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "quiz_module_id", null: false
-    t.integer "score"
+    t.integer "score", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["quiz_module_id"], name: "index_quiz_attempts_on_quiz_module_id"
     t.index ["user_id"], name: "index_quiz_attempts_on_user_id"
+    t.check_constraint "score >= 0", name: "quiz_attempts_nonnegative_score"
   end
 
   create_table "quiz_modules", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.integer "position", null: false
     t.string "slug"
     t.string "title_en"
     t.string "title_pt"
     t.boolean "unlocked"
     t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_quiz_modules_on_position", unique: true
     t.index ["slug"], name: "index_quiz_modules_on_slug", unique: true
   end
 
@@ -72,7 +77,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_12_171528) do
     t.string "name"
     t.string "password_digest"
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
   end
 
   add_foreign_key "feedbacks", "questions"

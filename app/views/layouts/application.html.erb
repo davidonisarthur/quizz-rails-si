@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
-    <script>
+    <%= javascript_tag nonce: true do %>
       (function() {
         const theme = localStorage.getItem('theme');
         if (theme === 'light') {
@@ -10,11 +10,11 @@
           document.documentElement.classList.add('dark');
         }
       })();
-    </script>
-    <title><%= content_for(:title) || "Quizz Rails" %></title>
+    <% end %>
+    <title><%= content_for(:title) || "PrimoQuiz" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Quizz Rails">
+    <meta name="application-name" content="PrimoQuiz">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -31,25 +31,26 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script defer src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   </head>
 
   <body class="bg-bg0 text-tx0 font-sans antialiased min-h-screen transition-colors duration-200">
-    <nav class="fixed top-0 left-0 right-0 bg-bg1 border-b border-bg3 z-50 transition-colors duration-200">
+    <nav aria-label="<%= t('navigation.main') %>" class="fixed top-0 left-0 right-0 bg-bg1 border-b border-bg3 z-50 transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+        <div class="flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 sm:h-16 sm:flex-nowrap sm:py-0">
           <div class="flex items-center">
             <%= link_to "PrimoQuiz", root_path(locale: I18n.locale), class: "text-2xl font-bold text-accent" %>
           </div>
           
-          <div class="flex items-center space-x-4">
-            <%= link_to "Ranking", ranking_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
+            <%= link_to t('ranking.title'), ranking_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             <%= link_to t('about'), about_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             
             <% if current_user %>
               <%= link_to current_user.name, profile_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
-              <%= button_to "Sair", session_path(locale: I18n.locale), method: :delete, class: "text-tx1 hover:text-red font-semibold transition cursor-pointer" %>
+              <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "text-tx1 hover:text-red font-semibold transition cursor-pointer" %>
             <% else %>
-              <%= link_to "Entrar", new_session_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
+              <%= link_to t('sessions.sign_in'), new_session_path(locale: I18n.locale), class: "text-tx1 hover:text-accent font-semibold transition" %>
             <% end %>
 
             <!-- LIBRAS Mode Toggle -->
@@ -66,19 +67,19 @@
                     data-controller="theme"
                     data-action="click->theme#toggle"
                     class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700/50 hover:bg-gray-150 dark:hover:bg-gray-700/80 cursor-pointer"
-                    aria-label="Toggle Theme">
+                    aria-label="<%= t('theme.toggle') %>">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 hidden dark:inline">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
               </svg>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 inline dark:hidden">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
               </svg>
-              <span><%= I18n.locale == :en ? "Theme" : "Tema" %></span>
+              <span><%= t('theme.label') %></span>
             </button>
 
-            <div class="flex items-center space-x-2 border-l pl-4 border-bg3">
-              <%= link_to "PT", { locale: 'pt-BR' }, class: "text-xs font-bold #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2'}" %>
-              <%= link_to "EN", { locale: 'en' }, class: "text-xs font-bold #{I18n.locale == :en ? 'text-accent' : 'text-tx2'}" %>
+            <div class="flex items-center gap-x-2 border-l pl-4 border-bg3">
+              <%= link_to "PT", { locale: 'pt-BR' }, class: "text-xs font-bold #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :'pt-BR' ? 'page' : nil } %>
+              <%= link_to "EN", { locale: 'en' }, class: "text-xs font-bold #{I18n.locale == :en ? 'text-accent' : 'text-tx2'}", aria: { current: I18n.locale == :en ? 'page' : nil } %>
             </div>
           </div>
         </div>
@@ -86,19 +87,27 @@
     </nav>
 
     <main class="container mx-auto mt-24 px-5">
+      <% if flash[:alert] %>
+        <div class="max-w-2xl mx-auto mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 font-medium text-sm">
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="max-w-2xl mx-auto mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 font-medium text-sm">
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
       <%= yield %>
     </main>
 
-    <!-- VLibras Widget -->
-    <div vw class="enabled">
-      <div vw-access-button class="active"></div>
-      <div vw-plugin-wrapper>
-        <div class="vw-plugin-top-wrapper"></div>
+    <!-- VLibras Widget Container (Permanent across Turbo navigations) -->
+    <div id="vlibras-widget-container" data-turbo-permanent data-controller="vlibras">
+      <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+          <div class="vw-plugin-top-wrapper"></div>
+        </div>
       </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-      new window.VLibras.Widget('https://vlibras.gov.br/app');
-    </script>
   </body>
 </html>
