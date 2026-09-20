@@ -1,9 +1,11 @@
-<section class="grid gap-10 py-5 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-end lg:py-12">
-  <div>
+<section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <div class="max-w-3xl">
     <p class="eyebrow"><%= t('home.eyebrow') %></p>
-    <h1 class="type-display mt-5 max-w-3xl text-5xl leading-[0.95] sm:text-6xl lg:text-7xl"><%= t('hello') %></h1>
+    <h1 class="type-display mt-5 text-4xl leading-tight sm:text-6xl"><%= t('hello') %></h1>
+    <p class="mt-7 max-w-2xl text-base leading-8 text-tx1 sm:text-lg"><%= t('home.introduction') %></p>
   </div>
-  <p class="border-l-2 border-accent pl-5 text-base leading-7 text-tx1"><%= t('home.introduction') %></p>
 </section>
 
-<%= render "quiz_modules/catalog", heading: t('home.path_label') %>
+<div class="mx-auto max-w-5xl pb-10 sm:pb-16">
+  <%= render "quiz_modules/catalog", heading: t('home.path_label') %>
+</div>

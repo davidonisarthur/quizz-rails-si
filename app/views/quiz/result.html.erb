@@ -1,13 +1,13 @@
-<section class="mx-auto max-w-3xl py-8 sm:py-16">
+<section class="mx-auto max-w-2xl py-10 sm:py-16">
   <p class="eyebrow"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
-  <div class="mt-5 border-y-2 ink-rule py-8 sm:py-12">
-    <h1 class="type-display max-w-2xl text-5xl leading-[0.95] sm:text-7xl"><%= t('quiz.completed_title') %></h1>
+  <div class="mt-5 rounded-xl border ink-rule bg-bg2 p-7 sm:p-10">
+    <h1 class="type-display max-w-2xl text-4xl leading-tight sm:text-5xl"><%= t('quiz.completed_title') %></h1>
     <p class="mt-8 text-sm font-extrabold tracking-[0.12em] text-tx1 uppercase"><%= t('quiz.score_label') %></p>
     <p class="type-display mt-1 text-6xl text-accent sm:text-8xl"><%= @score %><span class="text-3xl text-tx1 sm:text-4xl"> / <%= @total %></span></p>
   </div>
-  <div class="mt-8 flex flex-wrap gap-4">
+  <div class="mt-7 flex flex-wrap items-center justify-between gap-4">
     <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink editorial-link px-1 py-3 text-xs font-extrabold tracking-[0.12em] uppercase" %>
-    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex items-center gap-3 border-2 border-tx0 px-5 py-3 text-xs font-extrabold tracking-[0.12em] uppercase transition-colors hover:bg-tx0 hover:text-bg2" do %>
+    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex items-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
       <%= t('quiz.try_again') %><span aria-hidden="true">→</span>
     <% end %>
   </div>

@@ -1,30 +1,29 @@
-<section aria-labelledby="module-catalog-title" class="border-t-2 ink-rule">
-  <div class="flex flex-wrap items-baseline justify-between gap-4 py-5">
-    <h2 id="module-catalog-title" class="type-display text-3xl sm:text-4xl"><%= heading %></h2>
-    <span class="eyebrow"><%= @modules.count %> <%= t('modules.title') %></span>
+<section aria-labelledby="module-catalog-title">
+  <div class="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+    <div>
+      <p class="eyebrow mb-2"><%= t('brand.subtitle') %></p>
+      <h2 id="module-catalog-title" class="type-display text-3xl sm:text-4xl"><%= heading %></h2>
+    </div>
+    <span class="text-sm font-semibold text-tx2"><%= @modules.count %> <%= t('modules.title') %></span>
   </div>
 
-  <div class="border-b ink-rule">
+  <div class="space-y-4">
     <% @modules.each do |modulo| %>
       <% available = modulo.available_to?(current_user) %>
-      <article class="grid gap-5 border-t ink-rule py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:items-center sm:gap-8">
+      <article class="grid gap-5 rounded-xl border ink-rule bg-bg2 p-5 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center sm:gap-6 sm:p-6">
         <span class="module-index" aria-hidden="true"><%= format('%02d', modulo.position) %></span>
 
         <div>
-          <h3 class="type-display text-2xl leading-tight sm:text-3xl">
-            <%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %>
-          </h3>
-          <p class="mt-2 text-sm leading-6 text-tx1">
-            <%= available ? t('modules.available') : t('modules.complete_previous') %>
-          </p>
+          <h3 class="type-display text-xl leading-tight sm:text-2xl"><%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %></h3>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= available ? t('modules.available') : t('modules.complete_previous') %></p>
         </div>
 
         <% if available %>
-          <%= link_to play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "focus-ink inline-flex w-fit items-center gap-3 border-2 border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.12em] uppercase transition-colors hover:bg-tx0 hover:text-bg2" do %>
+          <%= link_to play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "focus-ink inline-flex w-fit items-center gap-2 rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
             <%= t('modules.play') %><span aria-hidden="true">→</span>
           <% end %>
         <% else %>
-          <span class="w-fit border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.12em] text-tx2 uppercase"><%= t('modules.locked') %></span>
+          <span class="w-fit rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-tx2 uppercase"><%= t('modules.locked') %></span>
         <% end %>
       </article>
     <% end %>

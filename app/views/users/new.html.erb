@@ -1,8 +1,8 @@
-<section class="mx-auto max-w-xl py-6 sm:py-12">
+<section class="mx-auto max-w-xl py-10 sm:py-16">
   <p class="eyebrow mb-4"><%= t('brand.subtitle') %></p>
   <h1 class="type-display text-5xl sm:text-6xl"><%= t('users.new.title') %></h1>
 
-  <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "mt-8 border-y-2 ink-rule py-8 space-y-6" do |f| %>
+  <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "mt-8 space-y-6 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" do |f| %>
     <% if @user.errors.any? %>
       <div class="border-l-4 border-red bg-red/10 px-5 py-4 text-sm font-medium text-red">
         <ul class="list-disc space-y-1 pl-5"><% @user.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
@@ -24,7 +24,7 @@
       <%= f.label :password_confirmation, t('users.new.password_confirmation'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
       <%= f.password_field :password_confirmation, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-    <%= f.submit t('users.new.submit'), class: "focus-ink w-full cursor-pointer border-2 border-tx0 bg-tx0 px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-bg2 hover:text-tx0" %>
+    <%= f.submit t('users.new.submit'), class: "focus-ink w-full cursor-pointer rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
   <% end %>
 
   <p class="mt-6 text-sm text-tx1"><%= t('users.new.already_have_account') %> <%= link_to t('users.new.sign_in'), new_session_path(locale: I18n.locale), class: "focus-ink editorial-link ml-1 font-bold text-tx0" %></p>

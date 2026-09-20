@@ -1,14 +1,16 @@
-<section class="mx-auto max-w-3xl py-6 sm:py-12">
-  <p class="eyebrow"><%= current_user.email %></p>
-  <h1 class="type-display mt-3 text-5xl sm:text-6xl"><%= current_user.name %></h1>
+<section class="mx-auto max-w-3xl py-10 sm:py-16">
+  <div class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <p class="eyebrow"><%= current_user.email %></p>
+    <h1 class="type-display mt-3 text-4xl sm:text-5xl"><%= current_user.name %></h1>
+  </div>
 
-  <div class="mt-10 border-t-2 ink-rule">
-    <div class="flex items-baseline justify-between gap-4 py-5">
+  <div class="mt-8">
+    <div class="mb-4 flex items-baseline justify-between gap-4">
       <h2 class="type-display text-3xl"><%= t('profile.my_attempts') %></h2>
       <span class="eyebrow"><%= @attempts.count %></span>
     </div>
     <% @attempts.each do |attempt| %>
-      <article class="grid grid-cols-[1fr_auto] gap-4 border-t ink-rule py-5">
+      <article class="mb-3 grid grid-cols-[1fr_auto] gap-4 rounded-xl border ink-rule bg-bg2 p-5">
         <div>
           <h3 class="text-lg font-bold"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h3>
           <p class="mt-1 text-xs text-tx2"><%= l attempt.created_at, format: :short %></p>
@@ -16,6 +18,6 @@
         <p class="type-display text-3xl text-accent"><%= attempt.score %></p>
       </article>
     <% end %>
-    <% if @attempts.empty? %><p class="border-t ink-rule py-10 text-tx2"><%= t('profile.no_attempts') %></p><% end %>
+    <% if @attempts.empty? %><p class="rounded-xl border border-dashed border-bg3 bg-bg2 px-5 py-10 text-center text-tx2"><%= t('profile.no_attempts') %></p><% end %>
   </div>
 </section>

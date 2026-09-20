@@ -1,7 +1,7 @@
-<div class="mx-auto max-w-3xl py-4 sm:py-10">
+<div class="mx-auto max-w-3xl py-8 sm:py-14">
   <%= turbo_frame_tag "quiz_content" do %>
     <% progress = ((@current_index.to_f / @total_questions) * 100).round %>
-    <header class="mb-10 border-y-2 ink-rule py-4">
+    <header class="mb-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
       <div class="mb-3 flex items-center justify-between gap-4 text-xs font-extrabold tracking-[0.12em] text-tx1 uppercase">
         <span><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %></span>
         <span class="text-accent"><%= progress %>%</span>
@@ -9,9 +9,9 @@
       <div class="h-[3px] bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500 ease-out" style="width: <%= progress %>%"></div></div>
     </header>
 
-    <section class="mb-10">
+    <section class="mb-8 rounded-xl border ink-rule bg-bg2 p-6 sm:p-9">
       <p class="eyebrow mb-4"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
-      <h1 class="type-display max-w-3xl text-3xl leading-tight sm:text-5xl"><%= I18n.locale == :en ? @question.body_en : @question.body_pt %></h1>
+      <h1 class="type-display max-w-3xl text-3xl leading-tight sm:text-4xl"><%= I18n.locale == :en ? @question.body_en : @question.body_pt %></h1>
 
       <% if @question.context_pt.present? %>
         <p class="mt-7 max-w-2xl border-l-2 border-accent pl-5 text-base leading-7 text-tx1"><%= I18n.locale == :en ? @question.context_en : @question.context_pt %></p>
@@ -46,9 +46,9 @@
       <% end %>
     </section>
 
-    <div class="border-b ink-rule">
+    <div class="space-y-3">
       <% @options.each_with_index do |option, index| %>
-        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink group flex w-full gap-5 border-t ink-rule px-2 py-5 text-left text-base font-semibold transition-colors hover:bg-bg1 cursor-pointer sm:px-4 sm:text-lg" do %>
+        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink group flex w-full gap-5 rounded-xl border ink-rule bg-bg2 px-5 py-5 text-left text-base font-semibold transition-colors hover:border-accent hover:bg-bg1 cursor-pointer sm:px-6 sm:text-lg" do %>
           <span class="module-index text-accent"><%= (index + 65).chr %></span>
           <span class="pt-0.5"><%= I18n.locale == :en ? option.text_en : option.text_pt %></span>
           <span aria-hidden="true" class="ml-auto pt-0.5 text-accent opacity-0 transition-opacity group-hover:opacity-100">→</span>
