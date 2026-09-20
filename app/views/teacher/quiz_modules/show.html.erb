@@ -1,0 +1,22 @@
+<section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <div class="flex flex-wrap items-start justify-between gap-5 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <div>
+      <p class="eyebrow"><%= @module.published? ? t("teacher.published") : t("teacher.draft") %></p>
+      <h1 class="type-display mt-3 text-3xl sm:text-4xl"><%= @module.title_pt %></h1>
+      <p class="mt-2 text-sm text-tx2"><%= @module.slug %></p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(@module, locale: I18n.locale), class: "focus-ink rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %>
+      <%= link_to t("teacher.new_question"), new_teacher_quiz_module_question_path(@module, locale: I18n.locale), class: "focus-ink rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase hover:bg-tx0" %>
+    </div>
+  </div>
+
+  <div class="mt-8 space-y-3">
+    <% @module.questions.order(:id).each_with_index do |question, index| %>
+      <article class="flex flex-wrap items-center justify-between gap-4 rounded-xl border ink-rule bg-bg2 p-5">
+        <div><p class="eyebrow"><%= t("teacher.question_number", number: index + 1) %> · <%= question.published? ? t("teacher.published") : t("teacher.draft") %></p><h2 class="mt-2 font-bold"><%= question.body_pt %></h2></div>
+        <div class="flex gap-4"><%= link_to t("teacher.edit"), edit_teacher_quiz_module_question_path(@module, question, locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold" %><%= button_to t("teacher.delete"), teacher_quiz_module_question_path(@module, question, locale: I18n.locale), method: :delete, class: "focus-ink cursor-pointer text-sm font-bold text-red", form: { data: { turbo_confirm: t("teacher.confirm_delete") } } %></div>
+      </article>
+    <% end %>
+  </div>
+</section>

@@ -16,6 +16,13 @@ Rails.application.routes.draw do
     get  "/ranking", to: "ranking#index",  as: :ranking
     get  "/about",   to: "about#index",    as: :about
     post "/libras_mode/toggle", to: "libras_mode#toggle", as: :toggle_libras_mode
+
+    namespace :teacher do
+      root "dashboard#index"
+      resources :quiz_modules do
+        resources :questions, only: %i[new create edit update destroy]
+      end
+    end
   end
 
   root "home#index", as: :root_redirect

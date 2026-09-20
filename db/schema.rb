@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_010100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,8 +42,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
     t.integer "correct_index", null: false
     t.datetime "created_at", null: false
     t.string "libras_video_url"
+    t.boolean "published", default: false, null: false
     t.bigint "quiz_module_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["quiz_module_id", "published"], name: "index_questions_on_quiz_module_id_and_published"
     t.index ["quiz_module_id"], name: "index_questions_on_quiz_module_id"
     t.check_constraint "correct_index >= 0 AND correct_index <= 3", name: "questions_correct_index_range"
   end
@@ -61,13 +63,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
 
   create_table "quiz_modules", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.bigint "created_by_id"
     t.integer "position", null: false
+    t.boolean "published", default: false, null: false
     t.string "slug"
     t.string "title_en"
     t.string "title_pt"
     t.boolean "unlocked"
     t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_quiz_modules_on_created_by_id"
     t.index ["position"], name: "index_quiz_modules_on_position", unique: true
+    t.index ["published"], name: "index_quiz_modules_on_published"
     t.index ["slug"], name: "index_quiz_modules_on_slug", unique: true
   end
 
@@ -76,8 +82,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
     t.string "email"
     t.string "name"
     t.string "password_digest"
+    t.string "role", default: "student", null: false
     t.datetime "updated_at", null: false
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
+    t.check_constraint "role::text = ANY (ARRAY['student'::character varying, 'teacher'::character varying]::text[])", name: "users_role_allowed"
   end
 
   add_foreign_key "feedbacks", "questions"
@@ -85,4 +93,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_020000) do
   add_foreign_key "questions", "quiz_modules"
   add_foreign_key "quiz_attempts", "quiz_modules"
   add_foreign_key "quiz_attempts", "users"
+  add_foreign_key "quiz_modules", "users", column: "created_by_id"
 end

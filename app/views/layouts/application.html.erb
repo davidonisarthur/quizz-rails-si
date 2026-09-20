@@ -49,6 +49,9 @@
 
             <% if current_user %>
               <%= link_to current_user.name, profile_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0 normal-case tracking-normal" %>
+              <% if current_user.teacher? %>
+                <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>
+              <% end %>
               <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "editorial-link focus-ink cursor-pointer text-tx0" %>
             <% else %>
               <%= link_to t('sessions.sign_in'), new_session_path(locale: I18n.locale), class: "editorial-link focus-ink text-tx0" %>

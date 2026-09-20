@@ -3,7 +3,7 @@ class QuizController < ApplicationController
   before_action :ensure_module_playable, only: [ :show, :answer, :result ]
 
   def show
-    questions = @module.questions.order(:id)
+    questions = @module.questions.published.order(:id)
 
     if session[:quiz].blank? || session[:quiz]["module_id"] != @module.id
       session[:quiz] = { "module_id" => @module.id, "question_index" => 0, "score" => 0 }
@@ -28,7 +28,7 @@ class QuizController < ApplicationController
     end
 
     quiz      = session[:quiz]
-    questions = @module.questions.order(:id)
+    questions = @module.questions.published.order(:id)
     @current_index = quiz["question_index"]
     @total_questions = questions.count
     @question = questions[@current_index]
@@ -78,7 +78,7 @@ class QuizController < ApplicationController
                 current_user.quiz_attempts.where(quiz_module: @module).last
       if attempt
         @score = attempt.score
-        @total = @module.questions.count
+        @total = @module.questions.published.count
       else
         redirect_to play_quiz_module_path(@module.slug, locale: I18n.locale) and return
       end
@@ -96,11 +96,11 @@ class QuizController < ApplicationController
   private
 
   def set_module
-    @module = QuizModule.find_by!(slug: params[:slug])
+    @module = QuizModule.published.find_by!(slug: params[:slug])
   end
 
   def ensure_module_playable
-    if @module.questions.none?
+    if @module.questions.published.none?
       redirect_to root_path(locale: I18n.locale), alert: t("quiz.no_questions") and return
     end
 
