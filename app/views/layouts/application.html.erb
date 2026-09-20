@@ -35,8 +35,8 @@
   </head>
 
   <body class="min-h-screen bg-bg0 text-tx0 antialiased">
-    <div class="mx-auto min-h-screen max-w-[1440px] border-x ink-rule bg-bg0/85">
-      <nav aria-label="<%= t('navigation.main') %>" class="border-b-2 ink-rule bg-bg1/92 px-5 py-4 backdrop-blur sm:px-8">
+    <div class="mx-auto min-h-screen max-w-[1440px] bg-bg0">
+      <nav aria-label="<%= t('navigation.main') %>" class="border-b ink-rule bg-bg2 px-5 py-4 sm:px-8">
         <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-4">
           <%= link_to root_path(locale: I18n.locale), class: "focus-ink leading-none" do %>
             <span class="type-display text-3xl">Primo<span class="text-accent">Quiz</span></span>
@@ -91,7 +91,7 @@
       <%= yield %>
       </main>
 
-      <footer class="mx-5 border-t ink-rule py-5 text-[0.65rem] font-bold tracking-[0.14em] text-tx2 uppercase sm:mx-8">
+      <footer class="mx-5 border-t ink-rule py-5 text-[0.65rem] font-bold tracking-[0.1em] text-tx2 uppercase sm:mx-8">
         PrimoQuiz · <%= t('brand.footer') %>
       </footer>
     </div>
