@@ -24,12 +24,12 @@ RSpec.describe "Teacher area", type: :request do
   it "shows the teacher navigation only to teachers" do
     sign_in(student)
     get root_path(locale: "pt-BR")
-    expect(response.body).not_to include("Professor")
+    expect(response.body).not_to include("Área do professor")
 
     delete session_path(locale: "pt-BR")
     sign_in(teacher)
     get root_path(locale: "pt-BR")
-    expect(response.body).to include("Professor")
+    expect(response.body).to include("Área do professor")
   end
 
   it "renders the teacher dashboard and the module index" do

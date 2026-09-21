@@ -1,39 +1,77 @@
 <section class="mx-auto max-w-5xl py-10 sm:py-16">
-  <div class="flex flex-wrap items-end justify-between gap-5">
-    <div>
-      <p class="eyebrow mb-3"><%= t("teacher.area") %></p>
-      <h1 class="type-display text-4xl sm:text-5xl"><%= t("teacher.dashboard") %></h1>
+  <header class="border-b ink-rule pb-8">
+    <p class="eyebrow mb-3"><%= t("teacher.area") %></p>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <h1 class="type-display text-4xl sm:text-5xl"><%= t("teacher.dashboard") %></h1>
+        <p class="mt-4 text-sm leading-7 text-tx1 sm:text-base"><%= t("teacher.dashboard_description") %></p>
+      </div>
+      <nav class="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap" aria-label="<%= t("teacher.area") %>">
+        <%= link_to t("classrooms.manage_title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.08em] uppercase transition-colors hover:border-accent hover:text-accent" %>
+        <%= link_to t("study.management.title"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.08em] uppercase transition-colors hover:border-accent hover:text-accent" %>
+        <%= link_to t("teacher.new_quiz"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.08em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
+      </nav>
     </div>
-    <div class="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap"><%= link_to t("classrooms.title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("study.management.title"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("teacher.new_module"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" %></div>
-  </div>
+  </header>
 
-  <% if @modules.any? %>
-    <div class="mt-8 grid gap-4 md:grid-cols-2">
-      <% @modules.each do |modulo| %>
-        <article class="rounded-xl border ink-rule bg-bg2 p-6">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <p class="eyebrow"><%= modulo.published? ? t("teacher.published") : t("teacher.draft") %></p>
-              <h2 class="type-display mt-2 text-2xl"><%= modulo.title_pt %></h2>
+  <section class="mt-9" aria-labelledby="teacher-quizzes-title">
+    <p class="eyebrow"><%= t("teacher.quizzes") %></p>
+    <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="teacher-quizzes-title" class="type-display text-3xl"><%= t("teacher.quizzes") %></h2>
+        <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.quizzes_description") %></p>
+      </div>
+      <%= link_to t("teacher.new_quiz"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+    </div>
+
+    <% if @modules.any? %>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <% @modules.each do |modulo| %>
+          <article class="rounded-xl border ink-rule bg-bg2 p-6">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="eyebrow"><%= modulo.published? ? t("teacher.published") : t("teacher.draft") %> · <%= modulo.audience_public_audience? ? t("teacher.audience_public") : t("teacher.audience_classroom") %></p>
+                <h3 class="type-display mt-2 text-2xl"><%= modulo.title_pt %></h3>
+              </div>
+              <span class="rounded-full bg-bg1 px-3 py-1 text-xs font-bold text-tx1"><%= modulo.questions.count %> <%= t("teacher.questions") %></span>
             </div>
-            <span class="text-sm text-tx2"><%= modulo.questions.count %> <%= t("teacher.questions") %></span>
-          </div>
-          <div class="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold">
-            <%= link_to t("teacher.manage"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
-            <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
-            <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
-          </div>
-        </article>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="mt-8 rounded-xl border border-dashed border-bg3 bg-bg2 p-8 text-center">
-      <p class="text-tx1"><%= t("teacher.no_modules") %></p>
-    </div>
-  <% end %>
+            <div class="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold">
+              <%= link_to t("teacher.manage_quiz"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
+              <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
+              <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
+            </div>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-6 rounded-xl border border-dashed border-bg3 bg-bg2 p-6 sm:p-8">
+        <p class="font-bold"><%= t("teacher.empty_quizzes") %></p>
+        <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.quiz_setup_steps") %></p>
+        <%= link_to t("teacher.new_quiz"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink mt-5 inline-flex min-h-11 items-center rounded-md bg-accent px-4 text-xs font-extrabold tracking-[0.08em] text-bg2 uppercase hover:bg-tx0" %>
+      </div>
+    <% end %>
+  </section>
 
-  <section class="mt-14 border-t ink-rule pt-8">
-    <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow"><%= t("study.management.title") %></p><h2 class="type-display mt-2 text-3xl"><%= t("study.management.dashboard_title") %></h2></div><%= link_to t("study.management.new"), new_teacher_study_module_path(locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold" %></div>
-    <% if @study_modules.any? %><div class="mt-6 grid gap-4 md:grid-cols-2"><% @study_modules.each do |study_module| %><article class="rounded-xl border ink-rule bg-bg2 p-5"><p class="eyebrow"><%= study_module.published? ? t("teacher.published") : t("teacher.draft") %></p><h3 class="type-display mt-2 text-xl"><%= study_module.title_pt %></h3><%= link_to t("teacher.manage"), teacher_study_module_path(study_module, locale: I18n.locale), class: "focus-ink editorial-link mt-5 inline-block text-sm font-bold" %></article><% end %></div><% else %><p class="mt-5 text-sm text-tx1"><%= t("study.management.empty") %></p><% end %>
+  <section class="mt-14 border-t ink-rule pt-8" aria-labelledby="teacher-study-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow"><%= t("study.management.title") %></p>
+        <h2 id="teacher-study-title" class="type-display mt-2 text-3xl"><%= t("study.management.dashboard_title") %></h2>
+      </div>
+      <%= link_to t("study.management.new"), new_teacher_study_module_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+    </div>
+    <% if @study_modules.any? %>
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <% @study_modules.each do |study_module| %>
+          <article class="rounded-xl border ink-rule bg-bg2 p-5">
+            <p class="eyebrow"><%= study_module.published? ? t("teacher.published") : t("teacher.draft") %> · <%= study_module.audience_public_audience? ? t("teacher.audience_public") : t("teacher.audience_classroom") %></p>
+            <h3 class="type-display mt-2 text-xl"><%= study_module.title_pt %></h3>
+            <%= link_to t("teacher.manage_study"), teacher_study_module_path(study_module, locale: I18n.locale), class: "focus-ink editorial-link mt-5 inline-block text-sm font-bold" %>
+          </article>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="mt-5 text-sm text-tx1"><%= t("study.management.empty") %></p>
+    <% end %>
   </section>
 </section>

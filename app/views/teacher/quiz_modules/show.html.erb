@@ -13,10 +13,26 @@
     </div>
   </div>
 
-  <section class="mt-6 rounded-xl border ink-rule bg-bg2 p-5">
-    <h2 class="font-bold"><%= t("classrooms.assignments") %></h2>
-    <% if @classrooms.any? %><%= form_with url: teacher_quiz_module_module_assignments_path(@module, locale: I18n.locale), class: "mt-4 flex flex-wrap gap-3" do |f| %><%= f.select :classroom_id, @classrooms.map { |classroom| [classroom.name, classroom.id] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %><%= f.submit t("classrooms.assign"), class: "focus-ink cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase" %><% end %><% end %>
-    <div class="mt-4 space-y-2"><% @assignments.each do |assignment| %><div class="flex items-center justify-between text-sm"><span><%= assignment.classroom.name %></span><%= button_to t("teacher.delete"), teacher_quiz_module_module_assignment_path(@module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink text-red" %></div><% end %></div>
+  <section class="mt-6 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
+    <p class="eyebrow"><%= t("teacher.audience") %></p>
+    <% if @module.audience_public_audience? %>
+      <h2 class="type-display mt-2 text-2xl"><%= t("teacher.audience_public") %></h2>
+      <p class="mt-3 text-sm leading-6 text-tx1"><%= t("teacher.public_access_hint") %></p>
+    <% else %>
+      <h2 class="type-display mt-2 text-2xl"><%= t("classrooms.assignments") %></h2>
+      <p class="mt-3 text-sm leading-6 text-tx1"><%= t("teacher.classroom_access_hint") %></p>
+      <% if @classrooms.any? %>
+        <%= form_with url: teacher_quiz_module_module_assignments_path(@module, locale: I18n.locale), class: "mt-5 flex flex-wrap gap-3" do |f| %>
+          <%= f.select :classroom_id, @classrooms.map { |classroom| [classroom.name, classroom.id] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %>
+          <%= f.submit t("classrooms.assign"), class: "focus-ink cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase" %>
+        <% end %>
+      <% end %>
+      <div class="mt-5 space-y-2">
+        <% @assignments.each do |assignment| %>
+          <div class="flex items-center justify-between gap-4 text-sm"><span><%= assignment.classroom.name %></span><%= button_to t("teacher.delete"), teacher_quiz_module_module_assignment_path(@module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink text-red" %></div>
+        <% end %>
+      </div>
+    <% end %>
   </section>
 
   <div class="mt-8 space-y-3">

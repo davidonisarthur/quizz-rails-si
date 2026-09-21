@@ -49,7 +49,7 @@
           <div class="hidden items-center justify-end gap-x-5 gap-y-3 text-sm font-semibold md:flex">
             <div class="flex items-center gap-5">
               <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
-              <%= link_to t('about'), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+              <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <% if current_user&.teacher? %>
                 <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <% end %>
@@ -98,7 +98,7 @@
             </summary>
             <div class="grid gap-1 pb-1 pt-3 text-base font-semibold">
               <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
-              <%= link_to t("about"), about_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+              <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
               <% if current_user&.teacher? %><%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %><% end %>
               <% if current_user %>
                 <%= link_to t("navigation.profile"), profile_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
