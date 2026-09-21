@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :quiz_attempts, dependent: :destroy
   has_many :quiz_modules, through: :quiz_attempts
   has_many :authored_quiz_modules, class_name: "QuizModule", foreign_key: :created_by_id, dependent: :restrict_with_error
+  has_many :authored_study_modules, class_name: "StudyModule", foreign_key: :created_by_id, dependent: :restrict_with_error
   has_many :classrooms, foreign_key: :teacher_id, dependent: :destroy
   has_many :classroom_enrollments, dependent: :destroy
   has_many :enrolled_classrooms, through: :classroom_enrollments, source: :classroom

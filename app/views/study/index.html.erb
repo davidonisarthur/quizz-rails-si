@@ -16,5 +16,16 @@
         <% end %>
       </article>
     <% end %>
+
+    <% @study_modules.each_with_index do |study_module, index| %>
+      <article class="flex min-h-72 flex-col rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+        <p class="eyebrow text-accent"><%= format("%02d", @topics.size + index + 1) %> · <%= t("study.catalog.available") %></p>
+        <h2 class="type-display mt-5 text-3xl"><%= study_module.title %></h2>
+        <p class="mt-4 text-sm leading-7 text-tx1"><%= study_module.summary %></p>
+        <%= link_to study_topic_path(study_module.slug, locale: I18n.locale), class: "focus-ink editorial-link mt-auto pt-8 text-sm font-bold" do %>
+          <%= t("study.catalog.start") %><span class="ml-2" aria-hidden="true">→</span>
+        <% end %>
+      </article>
+    <% end %>
   </div>
 </section>

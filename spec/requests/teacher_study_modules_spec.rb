@@ -1,0 +1,61 @@
+require "rails_helper"
+
+RSpec.describe "Teacher study modules", type: :request do
+  let!(:teacher) { create(:user, :teacher, email: "teacher-study@example.com", password: "password123") }
+  let!(:student) { create(:user, email: "student-study@example.com", password: "password123") }
+
+  def sign_in(user)
+    post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+  end
+
+  def study_module_params(position: 10)
+    {
+      title_pt: "Lógica para iniciantes", title_en: "Logic for beginners",
+      summary_pt: "Resumo em português", summary_en: "Summary in English",
+      content_pt: "Texto completo em português.", content_en: "Full English text.",
+      libras_content_pt: "Texto curto em português.", libras_content_en: "Short English text.",
+      slug: "logica-iniciantes", position: position, published: "1", video_url: "https://example.com/video"
+    }
+  end
+
+  it "allows a teacher to create, update, and remove their study content" do
+    sign_in(teacher)
+
+    expect {
+      post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params.merge(created_by_id: student.id) }
+    }.to change(StudyModule, :count).by(1)
+
+    study_module = StudyModule.last
+    expect(study_module.created_by).to eq(teacher)
+    expect(study_module).to be_published
+
+    patch teacher_study_module_path(study_module, locale: "pt-BR"), params: { study_module: study_module_params.merge(title_pt: "Lógica atualizada") }
+    expect(response).to redirect_to(teacher_study_module_path(study_module, locale: "pt-BR"))
+    expect(study_module.reload.title_pt).to eq("Lógica atualizada")
+
+    expect {
+      delete teacher_study_module_path(study_module, locale: "pt-BR")
+    }.to change(StudyModule, :count).by(-1)
+  end
+
+  it "does not allow students or other teachers to manage the content" do
+    study_module = create(:study_module, created_by: teacher)
+    sign_in(student)
+    get teacher_study_modules_path(locale: "pt-BR")
+    expect(response).to have_http_status(:forbidden)
+
+    delete session_path(locale: "pt-BR")
+    other_teacher = create(:user, :teacher, email: "other-study@example.com", password: "password123")
+    sign_in(other_teacher)
+    get teacher_study_module_path(study_module, locale: "pt-BR")
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it "rerenders the form when content is incomplete" do
+    sign_in(teacher)
+
+    post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params.merge(content_en: "") }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+end

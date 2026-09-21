@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -106,7 +106,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
     t.index ["position"], name: "index_quiz_modules_on_position", unique: true
     t.index ["published"], name: "index_quiz_modules_on_published"
     t.index ["slug"], name: "index_quiz_modules_on_slug", unique: true
-    t.check_constraint "audience::text = ANY (ARRAY['public'::character varying, 'classroom'::character varying]::text[])", name: "quiz_modules_audience_allowed"
+    t.check_constraint "audience::text = ANY (ARRAY['public'::character varying::text, 'classroom'::character varying::text])", name: "quiz_modules_audience_allowed"
   end
 
   create_table "quiz_responses", force: :cascade do |t|
@@ -122,6 +122,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
     t.check_constraint "selected_index >= 0 AND selected_index <= 3", name: "quiz_responses_selected_index_range"
   end
 
+  create_table "study_modules", force: :cascade do |t|
+    t.text "content_en", null: false
+    t.text "content_pt", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false
+    t.text "libras_content_en", null: false
+    t.text "libras_content_pt", null: false
+    t.integer "position", null: false
+    t.boolean "published", default: false, null: false
+    t.string "slug", null: false
+    t.string "summary_en", null: false
+    t.string "summary_pt", null: false
+    t.string "title_en", null: false
+    t.string "title_pt", null: false
+    t.datetime "updated_at", null: false
+    t.string "video_url"
+    t.index ["created_by_id"], name: "index_study_modules_on_created_by_id"
+    t.index ["position"], name: "index_study_modules_on_position", unique: true
+    t.index ["slug"], name: "index_study_modules_on_slug", unique: true
+  end
+
   create_table "teacher_access_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "reviewed_at"
@@ -132,7 +153,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
     t.index ["reviewed_by_id"], name: "index_teacher_access_requests_on_reviewed_by_id"
     t.index ["user_id"], name: "index_teacher_access_requests_on_user_id"
     t.index ["user_id"], name: "index_teacher_requests_on_pending_user", unique: true, where: "((status)::text = 'pending'::text)"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[])", name: "teacher_access_requests_status_allowed"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'approved'::character varying::text, 'rejected'::character varying::text])", name: "teacher_access_requests_status_allowed"
   end
 
   create_table "teacher_invitations", force: :cascade do |t|
@@ -157,7 +178,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
     t.string "role", default: "student", null: false
     t.datetime "updated_at", null: false
     t.index "lower((email)::text)", name: "index_users_on_lower_email", unique: true
-    t.check_constraint "role::text = ANY (ARRAY['student'::character varying, 'teacher'::character varying, 'admin'::character varying]::text[])", name: "users_role_allowed"
+    t.check_constraint "role::text = ANY (ARRAY['student'::character varying::text, 'teacher'::character varying::text, 'admin'::character varying::text])", name: "users_role_allowed"
   end
 
   add_foreign_key "classroom_enrollments", "classrooms"
@@ -173,6 +194,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_050000) do
   add_foreign_key "quiz_modules", "users", column: "created_by_id"
   add_foreign_key "quiz_responses", "questions", on_delete: :nullify
   add_foreign_key "quiz_responses", "quiz_attempts"
+  add_foreign_key "study_modules", "users", column: "created_by_id"
   add_foreign_key "teacher_access_requests", "users"
   add_foreign_key "teacher_access_requests", "users", column: "reviewed_by_id", on_delete: :nullify
   add_foreign_key "teacher_invitations", "users", column: "accepted_by_id", on_delete: :nullify

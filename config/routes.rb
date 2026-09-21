@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         end
         resources :module_assignments, only: %i[create destroy]
       end
+      resources :study_modules
     end
 
     resources :teacher_access_requests, only: :create

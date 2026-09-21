@@ -43,4 +43,25 @@ RSpec.describe "Study", type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it "lists and renders only published teacher-created study content" do
+    published_module = create(:study_module, published: true, title_pt: "Introdução à lógica", summary_pt: "Um resumo novo", content_pt: "Explicação longa.", libras_content_pt: "Explicação curta.")
+    draft_module = create(:study_module, published: false, title_pt: "Rascunho secreto")
+
+    get study_path(locale: "pt-BR")
+    expect(response.body).to include("Introdução à lógica")
+    expect(response.body).not_to include(draft_module.title_pt)
+
+    get study_topic_path(published_module.slug, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Explicação longa.")
+
+    post toggle_libras_mode_path(locale: "pt-BR")
+    get study_topic_path(published_module.slug, locale: "pt-BR")
+    expect(response.body).to include("Explicação curta.")
+    expect(response.body).not_to include("Explicação longa.")
+
+    get study_topic_path(draft_module.slug, locale: "pt-BR")
+    expect(response).to have_http_status(:not_found)
+  end
 end

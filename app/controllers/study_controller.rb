@@ -5,10 +5,14 @@ class StudyController < ApplicationController
 
   def index
     @topics = TOPICS
+    @study_modules = StudyModule.published.order(:position)
   end
 
   def show
     @topic = TOPICS[params[:slug]]
-    raise ActionController::RoutingError, "Not Found" unless @topic
+    return if @topic
+
+    @study_module = StudyModule.published.find_by!(slug: params[:slug])
+    render :generic
   end
 end
