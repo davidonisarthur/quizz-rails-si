@@ -56,8 +56,11 @@ module Teacher
     end
 
     def destroy
-      @module.destroy
-      redirect_to teacher_quiz_modules_path(locale: I18n.locale), notice: t("teacher.module_deleted")
+      if @module.destroy
+        redirect_to teacher_quiz_modules_path(locale: I18n.locale), notice: t("teacher.module_deleted")
+      else
+        redirect_to teacher_quiz_module_path(@module, locale: I18n.locale), alert: @module.errors.full_messages.to_sentence
+      end
     end
 
     private

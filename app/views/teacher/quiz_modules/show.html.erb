@@ -10,6 +10,7 @@
       <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(@module, locale: I18n.locale), class: "focus-ink rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %>
       <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(@module, locale: I18n.locale), class: "focus-ink rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %>
       <%= link_to t("teacher.new_question"), new_teacher_quiz_module_question_path(@module, locale: I18n.locale), class: "focus-ink rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
+      <%= button_to t("teacher.delete_quiz"), teacher_quiz_module_path(@module, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 rounded-md border border-red/50 px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-red uppercase transition-colors hover:bg-red hover:text-bg2", form: { data: { turbo_confirm: t("teacher.confirm_delete_quiz") } } %>
     </div>
   </div>
 

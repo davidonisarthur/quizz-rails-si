@@ -54,6 +54,8 @@ RSpec.describe "Teacher area", type: :request do
 
     get teacher_quiz_module_path(module_record, locale: "pt-BR")
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Excluir quiz")
+    expect(response.body).to include("_method\" value=\"delete")
     get edit_teacher_quiz_module_path(module_record, locale: "pt-BR")
     expect(response).to have_http_status(:ok)
 
