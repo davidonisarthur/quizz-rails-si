@@ -38,6 +38,24 @@ RSpec.describe "Teacher study modules", type: :request do
     }.to change(StudyModule, :count).by(-1)
   end
 
+  it "persists the fallback text columns when the editor sends rich content" do
+    sign_in(teacher)
+    rich_content = study_module_params(position: 13).except(:content_pt, :content_en).merge(
+      slug: "conteudo-rico",
+      rich_content_pt: "<h1>Algoritmos</h1><div>Texto em português.</div>",
+      rich_content_en: "<h1>Algorithms</h1><div>English text.</div>"
+    )
+
+    expect {
+      post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: rich_content }
+    }.to change(StudyModule, :count).by(1)
+
+    created_module = StudyModule.last
+    expect(created_module.content_pt).to include("Algoritmos")
+    expect(created_module.content_en).to include("Algorithms")
+    expect(created_module.rich_content_pt.to_plain_text).to include("Texto em português")
+  end
+
   it "does not allow students or other teachers to manage the content" do
     study_module = create(:study_module, created_by: teacher)
     sign_in(student)

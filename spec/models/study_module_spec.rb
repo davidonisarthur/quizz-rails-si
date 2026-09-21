@@ -47,7 +47,9 @@ RSpec.describe StudyModule, type: :model do
     study_module.rich_content_pt = "<h1>Seção em português</h1><div>Texto com <strong>destaque</strong>.</div>"
     study_module.rich_content_en = "<h1>English section</h1><div>Text with <strong>emphasis</strong>.</div>"
 
-    expect(study_module).to be_valid
+    expect { study_module.save! }.not_to raise_error
     expect(study_module).to be_rich_content_present
+    expect(study_module.content_pt).to include("Seção em português")
+    expect(study_module.content_en).to include("English section")
   end
 end

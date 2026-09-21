@@ -6,6 +6,8 @@ class StudyModule < ApplicationRecord
   has_rich_text :rich_content_pt
   has_rich_text :rich_content_en
 
+  before_validation :populate_legacy_content_from_rich_text
+
   scope :published, -> { where(published: true) }
 
   validates :title_pt, :title_en, :summary_pt, :summary_en,
@@ -61,5 +63,10 @@ class StudyModule < ApplicationRecord
   def content_is_present_in_both_languages
     errors.add(:content_pt, :blank) if content_pt.blank? && rich_content_pt.body&.to_plain_text.to_s.squish.blank?
     errors.add(:content_en, :blank) if content_en.blank? && rich_content_en.body&.to_plain_text.to_s.squish.blank?
+  end
+
+  def populate_legacy_content_from_rich_text
+    self.content_pt = rich_content_pt.body&.to_plain_text.to_s if content_pt.blank? && rich_content_pt.body.present?
+    self.content_en = rich_content_en.body&.to_plain_text.to_s if content_en.blank? && rich_content_en.body.present?
   end
 end
