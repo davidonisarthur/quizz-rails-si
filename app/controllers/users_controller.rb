@@ -3,20 +3,31 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @invitation_token = params[:invitation_token]
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
+    invitation = TeacherInvitation.find_valid(params[:teacher_invitation_token]) if params[:teacher_invitation_token].present?
+    @user = User.new(user_params.merge(role: invitation ? "teacher" : "student"))
+    if invitation && invitation.email != @user.email
+      @user.errors.add(:email, "does not match the invitation")
+      @invitation_token = params[:teacher_invitation_token]
+      return render :new, status: :unprocessable_entity
+    end
+    if User.transaction { @user.save!; invitation&.update!(accepted_at: Time.current, accepted_by: @user) }
       session[:user_id] = @user.id
       redirect_to root_path(locale: I18n.locale)
     else
       render :new, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordInvalid
+    @invitation_token = params[:teacher_invitation_token]
+    render :new, status: :unprocessable_entity
   end
 
   def profile
     @attempts = current_user.quiz_attempts.includes(:quiz_module).order(created_at: :desc)
+    @teacher_access_request = current_user.teacher_access_requests.pending.first
     @modules = QuizModule.published.includes(:questions).order(:position).to_a
     attempts_by_module = @attempts.group_by(&:quiz_module_id)
 

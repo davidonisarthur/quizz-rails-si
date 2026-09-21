@@ -1,0 +1,26 @@
+<section id="simulator" class="mt-12 scroll-mt-8 border-t ink-rule pt-8" aria-labelledby="simulator-title" data-controller="turing-machine" data-turing-machine-initial-message-value="<%= t("study.simulator.initial_message") %>" data-turing-machine-read-zero-value="<%= t("study.simulator.read_zero") %>" data-turing-machine-read-one-value="<%= t("study.simulator.read_one") %>" data-turing-machine-halted-message-value="<%= t("study.simulator.halted_message") %>">
+  <div class="max-w-3xl">
+    <p class="eyebrow text-accent"><%= t("study.simulator.label") %></p>
+    <h2 id="simulator-title" class="type-display mt-3 text-3xl sm:text-4xl"><%= t("study.simulator.title") %></h2>
+    <p class="mt-4 text-base leading-8 text-tx1"><%= t(libras_study ? "study.simulator.description_libras" : "study.simulator.description") %></p>
+  </div>
+
+  <div class="mt-7 rounded-xl border ink-rule bg-bg2 p-5 sm:p-8">
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b ink-rule pb-5">
+      <div>
+        <p class="eyebrow"><%= t("study.simulator.current_state") %></p>
+        <p class="type-display mt-1 text-3xl text-accent" data-turing-machine-target="state">q0</p>
+      </div>
+      <p class="max-w-xl text-sm leading-6 text-tx1" data-turing-machine-target="rule" aria-live="polite"><%= t("study.simulator.initial_message") %></p>
+    </div>
+    <div class="mt-8 overflow-x-auto pb-2">
+      <div class="flex min-w-max justify-center gap-2" data-turing-machine-target="tape" aria-label="<%= t("study.simulator.tape_label") %>"></div>
+    </div>
+    <div class="mt-7 flex flex-wrap gap-3">
+      <button type="button" data-action="turing-machine#start" data-turing-machine-target="startButton" class="focus-ink cursor-pointer rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0"><%= t("study.simulator.start") %></button>
+      <button type="button" data-action="turing-machine#pause" class="focus-ink cursor-pointer rounded-md border ink-rule px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-tx1 uppercase transition-colors hover:bg-bg1"><%= t("study.simulator.pause") %></button>
+      <button type="button" data-action="turing-machine#step" data-turing-machine-target="stepButton" class="focus-ink cursor-pointer rounded-md border ink-rule px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-tx1 uppercase transition-colors hover:bg-bg1"><%= t("study.simulator.step") %></button>
+      <button type="button" data-action="turing-machine#reset" class="focus-ink cursor-pointer rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-tx2 uppercase transition-colors hover:bg-bg1 hover:text-tx0"><%= t("study.simulator.reset") %></button>
+    </div>
+  </div>
+</section>

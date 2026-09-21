@@ -45,7 +45,7 @@
 
           <div class="flex flex-wrap items-center justify-end gap-x-5 gap-y-3 text-sm font-semibold">
             <div class="flex items-center gap-5">
-              <%= link_to t('ranking.title'), ranking_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+              <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <%= link_to t('about'), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <% if current_user&.teacher? %>
                 <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
@@ -81,8 +81,8 @@
                 <%= t('theme.label') %>
               </button>
               <div class="mt-1 flex gap-2 border-t ink-rule px-3 pt-3 text-xs font-extrabold tracking-[0.08em] uppercase">
-                <%= link_to "PT", { locale: 'pt-BR' }, class: "focus-ink #{I18n.locale == :'pt-BR' ? 'text-accent' : 'text-tx2 hover:text-tx0'}", aria: { current: I18n.locale == :'pt-BR' ? 'page' : nil } %>
-                <%= link_to "EN", { locale: 'en' }, class: "focus-ink #{I18n.locale == :en ? 'text-accent' : 'text-tx2 hover:text-tx0'}", aria: { current: I18n.locale == :en ? 'page' : nil } %>
+                <%= link_to "🇧🇷", { locale: "pt-BR" }, class: "focus-ink text-base leading-none #{I18n.locale == :'pt-BR' ? 'opacity-100' : 'opacity-50 hover:opacity-100'}", aria: { label: "Português (Brasil)", current: I18n.locale == :'pt-BR' ? "page" : nil }, title: "Português (Brasil)" %>
+                <%= link_to "🇺🇸", { locale: "en" }, class: "focus-ink text-base leading-none #{I18n.locale == :en ? 'opacity-100' : 'opacity-50 hover:opacity-100'}", aria: { label: "English", current: I18n.locale == :en ? "page" : nil }, title: "English" %>
               </div>
               </div>
             </details>

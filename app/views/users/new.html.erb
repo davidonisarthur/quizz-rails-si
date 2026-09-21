@@ -3,6 +3,7 @@
   <h1 class="type-display text-5xl sm:text-6xl"><%= t('users.new.title') %></h1>
 
   <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "mt-8 space-y-6 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" do |f| %>
+    <%= hidden_field_tag :teacher_invitation_token, @invitation_token %>
     <% if @user.errors.any? %>
       <div class="border-l-4 border-red bg-red/10 px-5 py-4 text-sm font-medium text-red">
         <ul class="list-disc space-y-1 pl-5"><% @user.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>

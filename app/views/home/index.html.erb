@@ -1,6 +1,19 @@
 <section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <section class="border-l-4 border-accent bg-bg2 px-6 py-8 sm:px-9 sm:py-10">
+    <p class="eyebrow text-accent"><%= t("study.eyebrow") %></p>
+    <div class="mt-4 flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <h1 class="type-display text-3xl leading-tight sm:text-5xl"><%= t("study.home_title") %></h1>
+        <p class="mt-4 text-base leading-8 text-tx1"><%= t("study.home_description") %></p>
+      </div>
+      <%= link_to study_path(locale: I18n.locale), class: "focus-ink inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+        <%= t("study.home_cta") %><span aria-hidden="true">→</span>
+      <% end %>
+    </div>
+  </section>
+
   <div class="max-w-3xl">
-    <p class="eyebrow"><%= t('home.eyebrow') %></p>
+    <p class="eyebrow mt-12"><%= t('home.eyebrow') %></p>
     <h1 class="type-display mt-5 text-4xl leading-tight sm:text-6xl"><%= t('hello') %></h1>
     <p class="mt-7 max-w-2xl text-base leading-8 text-tx1 sm:text-lg"><%= t('home.introduction') %></p>
   </div>

@@ -10,7 +10,7 @@ RSpec.describe "I18n Translations", type: :request do
       get root_path(locale: "pt-BR")
 
       expect(response.body).to include("Entrar")
-      expect(response.body).to include("Ranking")
+      expect(response.body).to include("Estudo")
       expect(response.body).to include("Sobre")
       expect(response.body).to include("Tema")
     end
@@ -19,9 +19,15 @@ RSpec.describe "I18n Translations", type: :request do
       get root_path(locale: "en")
 
       expect(response.body).to include("Sign in")
-      expect(response.body).to include("Ranking")
+      expect(response.body).to include("Study")
       expect(response.body).to include("About")
       expect(response.body).to include("Theme")
+    end
+
+    it "não expõe mais a rota pública de ranking" do
+      get "/pt-BR/ranking"
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it "renderiza botão de Sair em português e Sign out em inglês quando logado" do
@@ -81,24 +87,6 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("Create Account")
       expect(response.body).to include("Full name")
       expect(response.body).to include("Already have an account?")
-    end
-  end
-
-  describe "Ranking" do
-    before do
-      post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
-    end
-
-    it "renderiza colunas da tabela traduzidas" do
-      get ranking_path(locale: "pt-BR")
-      expect(response.body).to include("Posição")
-      expect(response.body).to include("Nome")
-      expect(response.body).to include("Pontuação")
-
-      get ranking_path(locale: "en")
-      expect(response.body).to include("Position")
-      expect(response.body).to include("Name")
-      expect(response.body).to include("Score")
     end
   end
 

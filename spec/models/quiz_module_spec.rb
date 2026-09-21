@@ -39,4 +39,15 @@ RSpec.describe QuizModule, type: :model do
       expect(second_module).to be_available_to(user)
     end
   end
+
+  describe "#owned_by?" do
+    it "matches only its author" do
+      author = create(:user, :teacher)
+      quiz_module = create(:quiz_module, created_by: author)
+
+      expect(quiz_module).to be_owned_by(author)
+      expect(quiz_module).not_to be_owned_by(create(:user, :teacher))
+      expect(quiz_module).not_to be_owned_by(nil)
+    end
+  end
 end

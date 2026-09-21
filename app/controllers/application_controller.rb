@@ -32,6 +32,15 @@ class ApplicationController < ActionController::Base
       return
     end
 
-    head :forbidden unless current_user.teacher?
+    head :forbidden unless current_user.teacher? || current_user.admin?
+  end
+
+  def require_admin
+    unless current_user
+      redirect_to new_session_path(locale: I18n.locale), alert: t("admin.access_required")
+      return
+    end
+
+    head :forbidden unless current_user.admin?
   end
 end

@@ -32,6 +32,58 @@ RSpec.describe "Teacher area", type: :request do
     expect(response.body).to include("Professor")
   end
 
+  it "renders the teacher dashboard and the module index" do
+    module_record = create(:quiz_module, created_by: teacher, title_pt: "Módulo do painel")
+    sign_in(teacher)
+
+    get teacher_root_path(locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(module_record.title_pt)
+
+    get teacher_quiz_modules_path(locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(module_record.title_pt)
+  end
+
+  it "renders module forms, updates a draft, and deletes the module" do
+    module_record = create(:quiz_module, created_by: teacher, published: false, title_pt: "Rascunho inicial")
+    sign_in(teacher)
+
+    get new_teacher_quiz_module_path(locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+
+    get teacher_quiz_module_path(module_record, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    get edit_teacher_quiz_module_path(module_record, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+
+    patch teacher_quiz_module_path(module_record, locale: "pt-BR"), params: {
+      quiz_module: { title_pt: "Rascunho atualizado", title_en: "Updated draft", slug: module_record.slug, position: module_record.position, unlocked: "0", published: "0", audience: "public_audience" }
+    }
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(module_record.reload.title_pt).to eq("Rascunho atualizado")
+
+    expect {
+      delete teacher_quiz_module_path(module_record, locale: "pt-BR")
+    }.to change(QuizModule, :count).by(-1)
+  end
+
+  it "rejects invalid module updates and publishing without a published question" do
+    module_record = create(:quiz_module, created_by: teacher, published: false)
+    sign_in(teacher)
+
+    patch teacher_quiz_module_path(module_record, locale: "pt-BR"), params: {
+      quiz_module: { title_pt: "", title_en: module_record.title_en, slug: module_record.slug, position: module_record.position, unlocked: "0", published: "0", audience: "public_audience" }
+    }
+    expect(response).to have_http_status(:unprocessable_entity)
+
+    patch teacher_quiz_module_path(module_record, locale: "pt-BR"), params: {
+      quiz_module: { title_pt: module_record.title_pt, title_en: module_record.title_en, slug: module_record.slug, position: module_record.position, unlocked: "0", published: "1", audience: "public_audience" }
+    }
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(module_record.reload).not_to be_published
+  end
+
   it "assigns new modules to the signed-in teacher and ignores ownership parameters" do
     sign_in(teacher)
 
@@ -91,6 +143,55 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
     expect(first_question.reload.position).to eq(2)
     expect(second_question.reload.position).to eq(1)
+  end
+
+  it "renders question forms, updates a draft with complete details, and deletes it" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, published: false)
+    sign_in(teacher)
+
+    get new_teacher_quiz_module_question_path(module_record, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    get edit_teacher_quiz_module_question_path(module_record, question, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+
+    patch teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: {
+      question: {
+        body_pt: "Questão atualizada", body_en: "Updated question", context_pt: "Contexto", context_en: "Context", correct_index: "0", published: "0",
+        options_attributes: 4.times.map { |index| { text_pt: "Alternativa #{index}", text_en: "Option #{index}" } },
+        feedbacks_attributes: [ { kind: "correct", body_pt: "Certo", body_en: "Correct" }, { kind: "incorrect", body_pt: "Errado", body_en: "Incorrect" } ]
+      }
+    }
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(question.reload.body_pt).to eq("Questão atualizada")
+
+    expect {
+      delete teacher_quiz_module_question_path(module_record, question, locale: "pt-BR")
+    }.to change(Question, :count).by(-1)
+  end
+
+  it "rerenders the question form when an otherwise draft update fails validation" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, published: false)
+    sign_in(teacher)
+
+    patch teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: {
+      question: { body_pt: "Questão inválida", correct_index: "0", published: "0", libras_video_url: "https://youtu.be/dQw4w9WgXcQ" }
+    }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
+  it "keeps a question in place when it has no neighbour in the requested direction" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, position: 1)
+    sign_in(teacher)
+
+    patch move_teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: { direction: "down" }
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(question.reload.position).to eq(1)
+    expect(flash[:notice]).to be_nil
   end
 
   it "keeps module previews private while showing drafts to their teacher" do

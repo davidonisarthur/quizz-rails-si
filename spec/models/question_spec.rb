@@ -60,11 +60,31 @@ RSpec.describe Question, type: :model do
       expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/exemplo")
     end
 
+    it "returns nil for unsupported video providers" do
+      question = build(:question, libras_video_url: "https://videos.example.com/turing")
+
+      expect(question.libras_embed_url).to be_nil
+    end
+
     it "does not accept the known placeholder video as LIBRAS content" do
       question = build(:question, libras_video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
       expect(question).not_to be_valid
       expect(question.errors[:libras_video_url]).to include("must reference an approved LIBRAS video")
+    end
+  end
+
+  describe "#ready_to_publish?" do
+    it "requires bilingual options and both bilingual feedback messages" do
+      question = create(:question)
+      4.times { create(:option, question: question, text_en: "Option") }
+      create(:feedback, question: question, kind: "correct", body_en: "Correct")
+      create(:feedback, question: question, kind: "incorrect", body_en: "Incorrect")
+
+      expect(question).to be_ready_to_publish
+
+      question.options.first.update!(text_en: nil)
+      expect(question).not_to be_ready_to_publish
     end
   end
 end

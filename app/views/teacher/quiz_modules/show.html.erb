@@ -13,6 +13,12 @@
     </div>
   </div>
 
+  <section class="mt-6 rounded-xl border ink-rule bg-bg2 p-5">
+    <h2 class="font-bold"><%= t("classrooms.assignments") %></h2>
+    <% if @classrooms.any? %><%= form_with url: teacher_quiz_module_module_assignments_path(@module, locale: I18n.locale), class: "mt-4 flex flex-wrap gap-3" do |f| %><%= f.select :classroom_id, @classrooms.map { |classroom| [classroom.name, classroom.id] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %><%= f.submit t("classrooms.assign"), class: "focus-ink cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase" %><% end %><% end %>
+    <div class="mt-4 space-y-2"><% @assignments.each do |assignment| %><div class="flex items-center justify-between text-sm"><span><%= assignment.classroom.name %></span><%= button_to t("teacher.delete"), teacher_quiz_module_module_assignment_path(@module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink text-red" %></div><% end %></div>
+  </section>
+
   <div class="mt-8 space-y-3">
     <% @module.questions.order(:position).each do |question| %>
       <article class="flex flex-wrap items-center justify-between gap-5 rounded-xl border ink-rule bg-bg2 p-5">

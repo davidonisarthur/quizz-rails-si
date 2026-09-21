@@ -13,12 +13,16 @@ Rails.application.routes.draw do
     resources :users, only: [ :new, :create ]
     resource  :session, only: [ :new, :create, :destroy ]
     get  "/profile", to: "users#profile", as: :profile
-    get  "/ranking", to: "ranking#index",  as: :ranking
+    get  "/study",   to: "study#index",    as: :study
+    get  "/study/:slug", to: "study#show",  as: :study_topic
     get  "/about",   to: "about#index",    as: :about
     post "/libras_mode/toggle", to: "libras_mode#toggle", as: :toggle_libras_mode
 
     namespace :teacher do
       root "dashboard#index"
+      resources :classrooms, only: %i[index show create destroy] do
+        resources :classroom_enrollments, only: %i[create destroy]
+      end
       resources :quiz_modules do
         member do
           get :preview
@@ -30,7 +34,16 @@ Rails.application.routes.draw do
             patch :move
           end
         end
+        resources :module_assignments, only: %i[create destroy]
       end
+    end
+
+    resources :teacher_access_requests, only: :create
+    namespace :admin do
+      resources :teacher_access_requests, only: :index do
+        member { patch :approve; patch :reject }
+      end
+      resources :teacher_invitations, only: %i[index create]
     end
   end
 

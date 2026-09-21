@@ -6,7 +6,10 @@ module Teacher
       @modules = current_user.authored_quiz_modules.includes(:questions).order(:position)
     end
 
-    def show; end
+    def show
+      @classrooms = current_user.classrooms.order(:name)
+      @assignments = @module.module_assignments.includes(:classroom)
+    end
 
     def preview
       @questions = @module.questions.includes(:options).order(:position)
@@ -14,15 +17,20 @@ module Teacher
 
     def report
       @question_count = @module.questions.published.count
-      @attempts = @module.quiz_attempts.includes(:user).order(created_at: :desc)
+      @report_classrooms = current_user.classrooms.joins(:module_assignments).where(module_assignments: { quiz_module_id: @module.id }).order(:name)
+      @selected_classroom = @report_classrooms.find(params[:classroom_id]) if params[:classroom_id].present?
+      @report_attempts = @module.quiz_attempts
+      @report_attempts = @report_attempts.where(user_id: @selected_classroom.students.select(:id)) if @selected_classroom
+      @attempts = @report_attempts.includes(:user).order(created_at: :desc)
       @attempts_count = @attempts.count
       @students_count = @attempts.distinct.count(:user_id)
       @average_score = @attempts.average(:score).to_f.round(1)
       @average_percentage = @question_count.positive? ? ((@average_score / @question_count) * 100).round : 0
 
+      filtered_responses = QuizResponse.where(quiz_attempt_id: @report_attempts.select(:id))
       @question_stats = @module.questions.published
-        .left_joins(:quiz_responses)
-        .select("questions.*, COUNT(quiz_responses.id) AS responses_count, COALESCE(SUM(CASE WHEN quiz_responses.correct THEN 1 ELSE 0 END), 0) AS correct_responses_count")
+        .joins("LEFT JOIN (#{filtered_responses.to_sql}) report_responses ON report_responses.question_id = questions.id")
+        .select("questions.*, COUNT(report_responses.id) AS responses_count, COALESCE(SUM(CASE WHEN report_responses.correct THEN 1 ELSE 0 END), 0) AS correct_responses_count")
         .group("questions.id")
         .to_a
         .sort_by do |question|
@@ -59,7 +67,7 @@ module Teacher
     end
 
     def module_params
-      params.require(:quiz_module).permit(:title_pt, :title_en, :slug, :position, :unlocked, :published)
+      params.require(:quiz_module).permit(:title_pt, :title_en, :slug, :position, :unlocked, :published, :audience)
     end
 
     def save_module

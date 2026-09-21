@@ -164,6 +164,21 @@ RSpec.describe "Quizzes", type: :request do
   end
 
   describe "GET /:locale/quiz_modules/:slug/result" do
+    it "redirects a guest without a completed attempt back to the quiz" do
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
+    it "redirects a signed-in user without a completed attempt back to the quiz" do
+      user = create(:user, email: "result-user@example.com", password: "password123")
+      post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
     it "exibe o resultado e limpa a sessão do quiz para convidados" do
       # Inicializa e joga
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
