@@ -18,6 +18,8 @@ RSpec.describe "Study", type: :request do
     expect(response.body).to include("Guided study")
     expect(response.body).to include("The history of the Turing machine")
     expect(response.body).to include("Simple rules, precise steps")
+    expect(response.body).to include("Labels in the diagram")
+    expect(response.body).to include("finite control keeps the current state")
     expect(response.body).to include("Why it matters")
     expect(response.body).to include("A tape in motion")
     expect(response.body).to include("Next step")
@@ -30,6 +32,8 @@ RSpec.describe "Study", type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Modo LIBRAS · conteúdo visual")
     expect(response.body).to include("Alan Turing e uma ideia nova")
+    expect(response.body).to include("Tradução: Tape = fita")
+    expect(response.body).to include("q0, q1 e q2 são estados")
     expect(response.body).to include("alan-turing-1951")
     expect(response.body).not_to include("Antes dos computadores modernos existirem")
   end
