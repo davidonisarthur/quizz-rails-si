@@ -123,6 +123,19 @@ select {
 
 textarea { min-height: 7rem; }
 
+select {
+  background-color: var(--bg2);
+  color: var(--tx0);
+}
+
+/* Native option menus may use a light popup even in dark mode. Set both
+   colours explicitly so unselected classroom names remain readable. */
+select option,
+select optgroup {
+  background-color: #ffffff;
+  color: #142b3a;
+}
+
 trix-toolbar {
   display: block;
   margin-bottom: 0.75rem;
