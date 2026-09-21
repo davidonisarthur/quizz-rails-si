@@ -48,9 +48,9 @@
 
     <div class="space-y-3">
       <% @options.each_with_index do |option, index| %>
-        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink group flex w-full gap-5 rounded-xl border ink-rule bg-bg2 px-5 py-5 text-left text-base font-semibold transition-colors hover:border-accent hover:bg-bg1 cursor-pointer sm:px-6 sm:text-lg" do %>
+        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink group flex min-h-14 w-full items-start gap-3 rounded-xl border ink-rule bg-bg2 px-4 py-4 text-left text-base font-semibold transition-colors hover:border-accent hover:bg-bg1 cursor-pointer sm:gap-5 sm:px-6 sm:py-5 sm:text-lg" do %>
           <span class="module-index text-accent"><%= (index + 65).chr %></span>
-          <span class="pt-0.5"><%= I18n.locale == :en ? option.text_en : option.text_pt %></span>
+          <span class="min-w-0 pt-0.5"><%= I18n.locale == :en ? option.text_en : option.text_pt %></span>
           <span aria-hidden="true" class="ml-auto pt-0.5 text-accent opacity-0 transition-opacity group-hover:opacity-100">→</span>
         <% end %>
       <% end %>

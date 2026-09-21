@@ -24,7 +24,7 @@
           <h3 class="mt-2 text-xl font-bold"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></h3>
           <p class="mt-2 text-sm text-tx2"><%= quiz_module.questions.published.count %> <%= t('teacher.questions') %></p>
         </div>
-        <%= link_to t('profile.start_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
+        <%= link_to t('profile.start_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" %>
       </article>
     <% else %>
       <p class="mt-5 border-y ink-rule py-6 text-tx1"><%= @pending_modules.any? ? t('profile.no_available_module') : t('profile.no_pending_modules') %></p>
@@ -59,7 +59,7 @@
               <p class="eyebrow"><%= t('profile.best_score') %></p>
               <p class="mt-1 text-lg font-bold text-accent"><%= t('profile.score_of', score: best_attempt.score, total: progress[:question_count]) %> <span class="text-sm text-tx2">· <%= progress[:best_percentage] %>%</span></p>
             </div>
-            <%= link_to t('profile.retry_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold sm:justify-self-end" %>
+            <%= link_to t('profile.retry_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold sm:justify-self-end" %>
           </article>
         <% end %>
       </div>

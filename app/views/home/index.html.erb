@@ -6,7 +6,7 @@
         <h1 class="type-display text-3xl leading-tight sm:text-5xl"><%= t("study.home_title") %></h1>
         <p class="mt-4 text-base leading-8 text-tx1"><%= t("study.home_description") %></p>
       </div>
-      <%= link_to study_path(locale: I18n.locale), class: "focus-ink inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+      <%= link_to study_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
         <%= t("study.home_cta") %><span aria-hidden="true">→</span>
       <% end %>
     </div>

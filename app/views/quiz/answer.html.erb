@@ -15,13 +15,13 @@
       <p class="mt-5 max-w-2xl text-base leading-7 text-tx0"><%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %></p>
     </section>
 
-    <div class="mt-8 flex justify-end">
+    <div class="mt-8 flex justify-stretch sm:justify-end">
       <% if @next_question %>
-        <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), class: "focus-ink inline-flex items-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+        <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
           <%= t('quiz.next_question') %><span aria-hidden="true">→</span>
         <% end %>
       <% else %>
-        <%= link_to result_quiz_module_path(@module.slug, locale: I18n.locale), data: { turbo_frame: "_top" }, class: "focus-ink inline-flex items-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+        <%= link_to result_quiz_module_path(@module.slug, locale: I18n.locale), data: { turbo_frame: "_top" }, class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
           <%= t('quiz.see_result') %><span aria-hidden="true">→</span>
         <% end %>
       <% end %>

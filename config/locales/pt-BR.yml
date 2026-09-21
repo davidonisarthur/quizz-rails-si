@@ -193,6 +193,9 @@ pt-BR:
     question_moved: "Ordem da questão atualizada."
   navigation:
     main: "Navegação principal"
+    menu: "Menu"
+    language: "Idioma"
+    skip_to_content: "Pular para o conteúdo"
     profile: "Perfil"
     account: "Conta"
     preferences: "Ajustes"

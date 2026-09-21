@@ -4,7 +4,7 @@
       <p class="eyebrow mb-3"><%= t("teacher.area") %></p>
       <h1 class="type-display text-4xl sm:text-5xl"><%= t("teacher.dashboard") %></h1>
     </div>
-    <div class="flex flex-wrap gap-3"><%= link_to t("classrooms.title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("study.management.title"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("teacher.new_module"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" %></div>
+    <div class="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap"><%= link_to t("classrooms.title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("study.management.title"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase" %><%= link_to t("teacher.new_module"), new_teacher_quiz_module_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" %></div>
   </div>
 
   <% if @modules.any? %>
@@ -18,10 +18,10 @@
             </div>
             <span class="text-sm text-tx2"><%= modulo.questions.count %> <%= t("teacher.questions") %></span>
           </div>
-          <div class="mt-6 flex gap-4 text-sm font-bold">
-            <%= link_to t("teacher.manage"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
-            <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
-            <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link" %>
+          <div class="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold">
+            <%= link_to t("teacher.manage"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
+            <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
+            <%= link_to t("teacher.edit"), edit_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
           </div>
         </article>
       <% end %>

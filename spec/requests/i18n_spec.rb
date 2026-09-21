@@ -13,6 +13,8 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("Estudo")
       expect(response.body).to include("Sobre")
       expect(response.body).to include("Tema")
+      expect(response.body).to include("Pular para o conteúdo")
+      expect(response.body).to include('id="main-content"')
     end
 
     it "renderiza termos em inglês quando locale é en" do
@@ -22,6 +24,7 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("Study")
       expect(response.body).to include("About")
       expect(response.body).to include("Theme")
+      expect(response.body).to include("Skip to content")
     end
 
     it "não expõe mais a rota pública de ranking" do

@@ -193,6 +193,9 @@ en:
     question_moved: "Question order updated."
   navigation:
     main: "Main navigation"
+    menu: "Menu"
+    language: "Language"
+    skip_to_content: "Skip to content"
     profile: "Profile"
     account: "Account"
     preferences: "Settings"

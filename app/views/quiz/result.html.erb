@@ -5,9 +5,9 @@
     <p class="mt-8 text-sm font-extrabold tracking-[0.12em] text-tx1 uppercase"><%= t('quiz.score_label') %></p>
     <p class="type-display mt-1 text-6xl text-accent sm:text-8xl"><%= @score %><span class="text-3xl text-tx1 sm:text-4xl"> / <%= @total %></span></p>
   </div>
-  <div class="mt-7 flex flex-wrap items-center justify-between gap-4">
-    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink editorial-link px-1 py-3 text-xs font-extrabold tracking-[0.12em] uppercase" %>
-    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex items-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+  <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 px-1 py-3 text-center text-xs font-extrabold tracking-[0.12em] uppercase sm:text-left" %>
+    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
       <%= t('quiz.try_again') %><span aria-hidden="true">→</span>
     <% end %>
   </div>

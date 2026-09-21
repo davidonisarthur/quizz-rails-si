@@ -9,7 +9,7 @@
 
   <p class="mt-6 rounded-xl border-l-4 border-accent bg-bg2 p-4 text-sm text-tx1"><%= t("teacher.report_notice") %></p>
 
-  <% if @report_classrooms.any? %><%= form_with url: report_teacher_quiz_module_path(@module, locale: I18n.locale), method: :get, class: "mt-6 flex items-center gap-3" do |f| %><%= f.label :classroom_id, t("classrooms.filter"), class: "text-sm font-bold" %><%= f.select :classroom_id, [[t("classrooms.all"), nil]] + @report_classrooms.map { |classroom| [classroom.name, classroom.id] }, { selected: @selected_classroom&.id }, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %><%= f.submit t("classrooms.apply"), class: "focus-ink cursor-pointer editorial-link text-sm font-bold" %><% end %><% end %>
+  <% if @report_classrooms.any? %><%= form_with url: report_teacher_quiz_module_path(@module, locale: I18n.locale), method: :get, class: "mt-6 flex flex-col gap-3 sm:flex-row sm:items-center" do |f| %><%= f.label :classroom_id, t("classrooms.filter"), class: "text-sm font-bold" %><%= f.select :classroom_id, [[t("classrooms.all"), nil]] + @report_classrooms.map { |classroom| [classroom.name, classroom.id] }, { selected: @selected_classroom&.id }, class: "focus-ink min-h-11 w-full rounded-md border border-bg3 px-3 py-2 sm:w-auto" %><%= f.submit t("classrooms.apply"), class: "focus-ink min-h-11 w-full cursor-pointer rounded-md border border-bg3 px-4 text-sm font-bold sm:w-auto" %><% end %><% end %>
 
   <div class="mt-8 grid gap-4 sm:grid-cols-3">
     <article class="rounded-xl border ink-rule bg-bg2 p-5"><p class="eyebrow"><%= t("teacher.completed_attempts") %></p><p class="type-display mt-3 text-4xl"><%= @attempts_count %></p></article>
@@ -39,8 +39,8 @@
   <section class="mt-10">
     <h2 class="type-display text-3xl"><%= t("teacher.recent_attempts") %></h2>
     <% if @attempts.any? %>
-      <div class="mt-5 overflow-hidden rounded-xl border ink-rule bg-bg2">
-        <table class="w-full text-left text-sm">
+      <div class="mt-5 overflow-x-auto rounded-xl border ink-rule bg-bg2" tabindex="0" role="region" aria-label="<%= t("teacher.recent_attempts") %>">
+        <table class="min-w-[36rem] w-full text-left text-sm">
           <thead class="border-b border-bg3 text-xs font-extrabold tracking-[0.1em] text-tx2 uppercase"><tr><th class="p-4"><%= t("teacher.student") %></th><th class="p-4"><%= t("teacher.score") %></th><th class="p-4"><%= t("teacher.date") %></th></tr></thead>
           <tbody><% @attempts.limit(10).each do |attempt| %><tr class="border-b border-bg3 last:border-0"><td class="p-4 font-bold"><%= attempt.user.name %></td><td class="p-4"><%= attempt.score %> / <%= @question_count %></td><td class="p-4 text-tx2"><%= l(attempt.created_at, format: :short) %></td></tr><% end %></tbody>
         </table>

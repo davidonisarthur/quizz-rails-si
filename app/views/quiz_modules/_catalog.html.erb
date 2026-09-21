@@ -19,7 +19,7 @@
         </div>
 
         <% if available %>
-          <%= link_to play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "focus-ink inline-flex w-fit items-center gap-2 rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+          <%= link_to play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-fit" do %>
             <%= t('modules.play') %><span aria-hidden="true">→</span>
           <% end %>
         <% else %>
