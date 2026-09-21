@@ -76,6 +76,7 @@ RSpec.describe "Teacher study modules", type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("trix-editor")
     expect(response.body).to include("direct-upload-url")
+    expect(response.body).to include('href="/assets/trix-')
   end
 
   it "allows only the teacher's own quizzes to be linked" do
