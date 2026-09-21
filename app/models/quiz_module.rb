@@ -4,6 +4,7 @@ class QuizModule < ApplicationRecord
   has_many :quiz_attempts, dependent: :destroy
   has_many :module_assignments, dependent: :destroy
   has_many :classrooms, through: :module_assignments
+  has_many :study_modules, dependent: :nullify
 
   scope :published, -> { where(published: true) }
   scope :visible_to, ->(user) {

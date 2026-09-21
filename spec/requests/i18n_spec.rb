@@ -134,6 +134,16 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("100%")
       expect(response.body).to include("Última tentativa")
     end
+
+    it "mostra o progresso dos conteúdos de estudo" do
+      StudyProgress.create!(user: user, study_slug: "turing-machine", started_at: Time.current, last_accessed_at: Time.current, completed_at: Time.current)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response.body).to include("Progresso nos estudos")
+      expect(response.body).to include("Máquina de Turing")
+      expect(response.body).to include("1 de 1 conteúdos concluídos")
+    end
   end
 
   describe "Resultado do Quiz" do

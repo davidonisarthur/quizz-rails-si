@@ -118,6 +118,20 @@ pt-BR:
       libras_content_en: "Versão curta para Modo Libras em inglês"
       video_url: "Link de vídeo (HTTPS, opcional)"
       watch_video: "Assistir ao vídeo"
+      related_quiz: "Quiz relacionado"
+      no_related_quiz: "Nenhum quiz relacionado"
+    progress:
+      label: "Seu progresso no estudo"
+      start: "Começar estudo"
+      continue: "Continuar estudo"
+      complete: "Marcar como concluído"
+      in_progress: "Em andamento"
+      completed: "Concluído"
+      saved: "Progresso de estudo atualizado."
+      sign_in: "Entre para salvar seu progresso."
+    related_quiz:
+      label: "Próxima atividade"
+      cta: "Fazer o quiz"
   teacher:
     audience: "Visibilidade"
     audience_public: "Público"
@@ -285,6 +299,9 @@ pt-BR:
     retry_module: "Tentar novamente"
     my_attempts: "Minhas Tentativas"
     no_attempts: "Você ainda não completou nenhum quiz."
+    study_progress: "Progresso nos estudos"
+    study_completion: "%{completed} de %{total} conteúdos concluídos"
+    no_study_progress: "Comece um conteúdo de estudo para acompanhar seu progresso aqui."
   quiz:
     correct: "Correto!"
     incorrect: "Quase!"

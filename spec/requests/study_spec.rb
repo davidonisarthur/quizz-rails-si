@@ -64,4 +64,50 @@ RSpec.describe "Study", type: :request do
     get study_topic_path(draft_module.slug, locale: "pt-BR")
     expect(response).to have_http_status(:not_found)
   end
+
+  it "records started and completed progress for authenticated students" do
+    user = create(:user, password: "password123")
+    post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+    expect {
+      post study_progress_path("turing-machine", locale: "pt-BR", status: "started")
+    }.to change(user.study_progresses, :count).by(1)
+
+    progress = user.study_progresses.find_by!(study_slug: "turing-machine")
+    expect(progress).not_to be_completed
+    expect(response).to redirect_to(study_topic_path("turing-machine", locale: "pt-BR"))
+
+    post study_progress_path("turing-machine", locale: "pt-BR", status: "completed")
+    expect(progress.reload).to be_completed
+
+    get study_path(locale: "pt-BR")
+    expect(response.body).to include("Concluído")
+  end
+
+  it "requires authentication and does not track unpublished or unknown content" do
+    draft_module = create(:study_module, published: false)
+
+    post study_progress_path("turing-machine", locale: "pt-BR", status: "started")
+    expect(response).to redirect_to(new_session_path(locale: "pt-BR"))
+
+    user = create(:user, password: "password123")
+    post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+    post study_progress_path(draft_module.slug, locale: "pt-BR", status: "started")
+    expect(response).to have_http_status(:not_found)
+
+    post study_progress_path("unknown-topic", locale: "pt-BR", status: "started")
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it "offers an available linked quiz after a study module" do
+    quiz_module = create(:quiz_module, created_by: create(:user, :teacher), unlocked: true, published: true, title_pt: "Quiz de lógica")
+    create(:question, quiz_module: quiz_module, published: true)
+    study_module = create(:study_module, published: true, created_by: quiz_module.created_by, quiz_module: quiz_module)
+
+    get study_topic_path(study_module.slug, locale: "pt-BR")
+
+    expect(response.body).to include("Próxima atividade")
+    expect(response.body).to include("Quiz de lógica")
+    expect(response.body).to include(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+  end
 end

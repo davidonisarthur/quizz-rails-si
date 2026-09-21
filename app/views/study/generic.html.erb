@@ -17,6 +17,8 @@
     <h1 class="type-display mt-4 text-4xl leading-tight sm:text-5xl"><%= @study_module.title %></h1>
     <p class="mt-5 text-lg leading-8 text-tx1"><%= @study_module.summary %></p>
 
+    <%= render "progress", study_slug: @study_module.slug, progress: @study_progress %>
+
     <div class="mt-8 border-t ink-rule pt-8 text-base leading-8 text-tx1">
       <%= simple_format(libras_study ? @study_module.libras_content : @study_module.content) %>
     </div>
@@ -25,6 +27,14 @@
       <%= link_to @study_module.video_url, target: "_blank", rel: "noopener noreferrer", class: "focus-ink mt-8 inline-flex rounded-md border border-bg3 px-4 py-3 text-sm font-bold hover:border-accent hover:text-accent" do %>
         <%= t("study.management.watch_video") %><span class="ml-2" aria-hidden="true">↗</span>
       <% end %>
+    <% end %>
+
+    <% if @study_module.quiz_module&.available_to?(current_user) %>
+      <section class="mt-8 border-t ink-rule pt-7" aria-labelledby="related-quiz-title">
+        <p class="eyebrow"><%= t("study.related_quiz.label") %></p>
+        <h2 id="related-quiz-title" class="type-display mt-2 text-2xl"><%= I18n.locale == :en ? @study_module.quiz_module.title_en : @study_module.quiz_module.title_pt %></h2>
+        <%= link_to play_quiz_module_path(@study_module.quiz_module.slug, locale: I18n.locale), class: "focus-ink mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-accent px-4 text-sm font-bold text-bg2 hover:bg-tx0 sm:w-auto" do %><%= t("study.related_quiz.cta") %><span class="ml-2" aria-hidden="true">→</span><% end %>
+      </section>
     <% end %>
   </article>
 </section>

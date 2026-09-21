@@ -9,6 +9,7 @@
     <p class="eyebrow"><%= t("study.eyebrow") %></p>
     <h1 class="type-display mt-4 text-4xl leading-tight sm:text-6xl"><%= t("study.title") %></h1>
     <p class="mt-6 text-base leading-8 text-tx1 sm:text-lg"><%= t(libras_study ? "study.libras.introduction" : "study.description") %></p>
+    <%= render "progress", study_slug: params[:slug], progress: @study_progress %>
   </div>
 
   <% if libras_study %>

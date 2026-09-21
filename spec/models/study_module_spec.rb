@@ -33,4 +33,11 @@ RSpec.describe StudyModule, type: :model do
       expect(study_module.libras_content).to eq(study_module.libras_content_en)
     end
   end
+
+  it "only allows a quiz authored by the same teacher" do
+    study_module.quiz_module = create(:quiz_module, created_by: create(:user, :teacher))
+
+    expect(study_module).to be_invalid
+    expect(study_module.errors[:quiz_module]).to be_present
+  end
 end

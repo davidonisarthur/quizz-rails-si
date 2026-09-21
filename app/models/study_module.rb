@@ -2,6 +2,7 @@ class StudyModule < ApplicationRecord
   RESERVED_SLUGS = %w[turing-machine].freeze
 
   belongs_to :created_by, class_name: "User"
+  belongs_to :quiz_module, optional: true
 
   scope :published, -> { where(published: true) }
 
@@ -11,6 +12,7 @@ class StudyModule < ApplicationRecord
   validates :slug, exclusion: { in: RESERVED_SLUGS }
   validates :position, presence: true, uniqueness: true, numericality: { only_integer: true, greater_than: 0 }
   validate :video_url_uses_https
+  validate :linked_quiz_belongs_to_author
 
   def title
     I18n.locale == :en ? title_en : title_pt
@@ -37,5 +39,11 @@ class StudyModule < ApplicationRecord
     errors.add(:video_url, :invalid) unless uri.is_a?(URI::HTTPS) && uri.host.present?
   rescue URI::InvalidURIError
     errors.add(:video_url, :invalid)
+  end
+
+  def linked_quiz_belongs_to_author
+    return unless quiz_module && quiz_module.created_by_id != created_by_id
+
+    errors.add(:quiz_module, :invalid)
   end
 end

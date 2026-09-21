@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :classroom_enrollments, dependent: :destroy
   has_many :enrolled_classrooms, through: :classroom_enrollments, source: :classroom
   has_many :teacher_access_requests, dependent: :destroy
+  has_many :study_progresses, dependent: :destroy
 
   enum :role, { student: "student", teacher: "teacher", admin: "admin" }, validate: true
 

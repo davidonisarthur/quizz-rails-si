@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -131,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_010000) do
     t.text "libras_content_pt", null: false
     t.integer "position", null: false
     t.boolean "published", default: false, null: false
+    t.bigint "quiz_module_id"
     t.string "slug", null: false
     t.string "summary_en", null: false
     t.string "summary_pt", null: false
@@ -140,7 +141,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_010000) do
     t.string "video_url"
     t.index ["created_by_id"], name: "index_study_modules_on_created_by_id"
     t.index ["position"], name: "index_study_modules_on_position", unique: true
+    t.index ["quiz_module_id"], name: "index_study_modules_on_quiz_module_id"
     t.index ["slug"], name: "index_study_modules_on_slug", unique: true
+  end
+
+  create_table "study_progresses", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "last_accessed_at", null: false
+    t.datetime "started_at", null: false
+    t.string "study_slug", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "study_slug"], name: "index_study_progresses_on_user_id_and_study_slug", unique: true
+    t.index ["user_id"], name: "index_study_progresses_on_user_id"
   end
 
   create_table "teacher_access_requests", force: :cascade do |t|
@@ -194,7 +208,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_010000) do
   add_foreign_key "quiz_modules", "users", column: "created_by_id"
   add_foreign_key "quiz_responses", "questions", on_delete: :nullify
   add_foreign_key "quiz_responses", "quiz_attempts"
+  add_foreign_key "study_modules", "quiz_modules", on_delete: :nullify
   add_foreign_key "study_modules", "users", column: "created_by_id"
+  add_foreign_key "study_progresses", "users"
   add_foreign_key "teacher_access_requests", "users"
   add_foreign_key "teacher_access_requests", "users", column: "reviewed_by_id", on_delete: :nullify
   add_foreign_key "teacher_invitations", "users", column: "accepted_by_id", on_delete: :nullify

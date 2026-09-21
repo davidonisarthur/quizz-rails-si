@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get  "/profile", to: "users#profile", as: :profile
     get  "/study",   to: "study#index",    as: :study
     get  "/study/:slug", to: "study#show",  as: :study_topic
+    post "/study/:slug/progress", to: "study_progresses#create", as: :study_progress
     get  "/about",   to: "about#index",    as: :about
     post "/libras_mode/toggle", to: "libras_mode#toggle", as: :toggle_libras_mode
 

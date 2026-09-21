@@ -58,4 +58,16 @@ RSpec.describe "Teacher study modules", type: :request do
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
+
+  it "allows only the teacher's own quizzes to be linked" do
+    own_quiz = create(:quiz_module, created_by: teacher)
+    other_quiz = create(:quiz_module, created_by: create(:user, :teacher))
+    sign_in(teacher)
+
+    post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params(position: 11).merge(slug: "conteudo-com-quiz", quiz_module_id: own_quiz.id) }
+    expect(StudyModule.last.quiz_module).to eq(own_quiz)
+
+    post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params(position: 12).merge(slug: "conteudo-invalido", quiz_module_id: other_quiz.id) }
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
 end

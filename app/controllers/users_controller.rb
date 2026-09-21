@@ -52,6 +52,18 @@ class UsersController < ApplicationController
     @next_module = @pending_modules.find { |progress| progress[:available] }
     @other_pending_modules = @pending_modules.reject { |progress| progress == @next_module }
     @completion_percentage = @modules.any? ? ((@completed_modules.count.to_f / @modules.count) * 100).round : 0
+
+    @study_progresses = current_user.study_progresses.order(last_accessed_at: :desc)
+    study_modules_by_slug = StudyModule.where(slug: @study_progresses.map(&:study_slug)).index_by(&:slug)
+    @study_progress_items = @study_progresses.map do |progress|
+      title = if progress.study_slug == "turing-machine"
+        t("study.catalog.turing_machine.title")
+      else
+        study_modules_by_slug[progress.study_slug]&.title
+      end
+      { progress: progress, title: title }.compact
+    end.select { |item| item[:title].present? }
+    @completed_studies_count = @study_progresses.count(&:completed?)
   end
 
   private

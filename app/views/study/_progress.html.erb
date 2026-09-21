@@ -1,0 +1,16 @@
+<% if current_user %>
+  <section class="mt-6 border-t ink-rule pt-5" aria-label="<%= t("study.progress.label") %>">
+    <% if progress&.completed? %>
+      <p class="inline-flex min-h-11 items-center rounded-md bg-green/10 px-3 text-sm font-bold text-green" role="status"><%= t("study.progress.completed") %></p>
+    <% elsif progress %>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm font-bold text-accent" role="status"><%= t("study.progress.in_progress") %></p>
+        <%= button_to t("study.progress.complete"), study_progress_path(study_slug, locale: I18n.locale, status: "completed"), class: "focus-ink min-h-11 w-full cursor-pointer rounded-md border border-accent px-4 text-sm font-bold text-accent hover:bg-accent hover:text-bg2 sm:w-auto" %>
+      </div>
+    <% else %>
+      <%= button_to t("study.progress.start"), study_progress_path(study_slug, locale: I18n.locale, status: "started"), class: "focus-ink min-h-11 w-full cursor-pointer rounded-md bg-accent px-4 text-sm font-bold text-bg2 hover:bg-tx0 sm:w-auto" %>
+    <% end %>
+  </section>
+<% else %>
+  <p class="mt-6 border-t ink-rule pt-5 text-sm text-tx1"><%= link_to t("study.progress.sign_in"), new_session_path(locale: I18n.locale), class: "focus-ink editorial-link font-bold" %></p>
+<% end %>

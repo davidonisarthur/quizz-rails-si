@@ -83,4 +83,9 @@
       </details>
     </section>
   <% end %>
+
+  <section class="mt-12">
+    <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow"><%= t("study.eyebrow") %></p><h2 class="type-display mt-2 text-3xl"><%= t("profile.study_progress") %></h2></div><p class="text-sm text-tx2"><%= t("profile.study_completion", completed: @completed_studies_count, total: @study_progress_items.count) %></p></div>
+    <% if @study_progress_items.any? %><div class="mt-5 space-y-3"><% @study_progress_items.each do |item| %><article class="flex flex-wrap items-center justify-between gap-3 border-b ink-rule py-4"><div><h3 class="font-bold"><%= item[:title] %></h3><p class="mt-1 text-sm <%= item[:progress].completed? ? "text-green" : "text-accent" %>"><%= item[:progress].completed? ? t("study.progress.completed") : t("study.progress.in_progress") %></p></div><%= link_to t("study.progress.continue"), study_topic_path(item[:progress].study_slug, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %></article><% end %></div><% else %><p class="mt-5 border-b ink-rule py-6 text-tx1"><%= t("profile.no_study_progress") %></p><% end %>
+  </section>
 </section>

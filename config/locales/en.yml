@@ -118,6 +118,20 @@ en:
       libras_content_en: "Short English version for LIBRAS mode"
       video_url: "Video link (HTTPS, optional)"
       watch_video: "Watch video"
+      related_quiz: "Related quiz"
+      no_related_quiz: "No related quiz"
+    progress:
+      label: "Your study progress"
+      start: "Start studying"
+      continue: "Continue studying"
+      complete: "Mark as completed"
+      in_progress: "In progress"
+      completed: "Completed"
+      saved: "Study progress updated."
+      sign_in: "Sign in to save your progress."
+    related_quiz:
+      label: "Next activity"
+      cta: "Take the quiz"
   teacher:
     audience: "Visibility"
     audience_public: "Public"
@@ -285,6 +299,9 @@ en:
     retry_module: "Try again"
     my_attempts: "My Attempts"
     no_attempts: "You have not completed any quizzes yet."
+    study_progress: "Study progress"
+    study_completion: "%{completed} of %{total} content items completed"
+    no_study_progress: "Start a study topic to track your progress here."
   quiz:
     correct: "Correct!"
     incorrect: "Not quite!"
