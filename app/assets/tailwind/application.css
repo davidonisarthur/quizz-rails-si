@@ -123,6 +123,47 @@ select {
 
 textarea { min-height: 7rem; }
 
+trix-toolbar {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+trix-toolbar .trix-button-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: 0 0.375rem 0.375rem 0;
+  border: 1px solid var(--bg3);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+trix-toolbar .trix-button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 0;
+  border-right: 1px solid var(--bg3);
+  background: var(--bg2);
+  color: var(--tx0);
+}
+
+trix-toolbar .trix-button:last-child { border-right: 0; }
+trix-toolbar .trix-button:hover,
+trix-toolbar .trix-button.trix-active { background: var(--bg1); color: var(--accent); }
+trix-editor {
+  display: block;
+  min-height: 16rem;
+  padding: 1rem;
+  color: var(--tx0);
+  line-height: 1.7;
+}
+.trix-content { overflow-wrap: anywhere; }
+.trix-content h1 { margin: 2rem 0 0.75rem; color: var(--tx0); font-size: 1.65rem; font-weight: 750; line-height: 1.2; }
+.trix-content h1:first-child { margin-top: 0; }
+.trix-content ul, .trix-content ol { margin: 1rem 0; padding-left: 1.5rem; }
+.trix-content blockquote { margin: 1.25rem 0; border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--tx1); }
+.trix-content figure, .trix-content .attachment { margin: 1.5rem auto; }
+.trix-content img { height: auto; max-width: 100%; border-radius: 0.5rem; }
+
 .module-index {
   color: var(--accent);
   font-family: inherit;

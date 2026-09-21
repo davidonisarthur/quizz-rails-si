@@ -20,7 +20,13 @@
     <%= render "progress", study_slug: @study_module.slug, progress: @study_progress %>
 
     <div class="mt-8 border-t ink-rule pt-8 text-base leading-8 text-tx1">
-      <%= simple_format(libras_study ? @study_module.libras_content : @study_module.content) %>
+      <% if libras_study %>
+        <%= simple_format(@study_module.libras_content) %>
+      <% elsif @study_module.rich_content_present? %>
+        <div class="trix-content"><%= @study_module.rich_content %></div>
+      <% else %>
+        <%= simple_format(@study_module.content) %>
+      <% end %>
     </div>
 
     <% if @study_module.video_url.present? %>

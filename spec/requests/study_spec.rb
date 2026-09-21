@@ -110,4 +110,16 @@ RSpec.describe "Study", type: :request do
     expect(response.body).to include("Quiz de lógica")
     expect(response.body).to include(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
   end
+
+  it "renders formatted sections from the rich-text editor" do
+    study_module = build(:study_module, published: true, content_pt: "", content_en: "")
+    study_module.rich_content_pt = "<h1>Uma seção importante</h1><div>Texto com <strong>destaque</strong>.</div>"
+    study_module.rich_content_en = "<h1>An important section</h1><div>Text with <strong>emphasis</strong>.</div>"
+    study_module.save!
+
+    get study_topic_path(study_module.slug, locale: "pt-BR")
+
+    expect(response.body).to include("Uma seção importante")
+    expect(response.body).to include("Texto com <strong>destaque</strong>")
+  end
 end

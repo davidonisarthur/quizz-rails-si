@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  post "/rails/active_storage/direct_uploads", to: "teacher/direct_uploads#create"
+
   scope "/:locale", locale: /pt-BR|en/ do
     root "home#index"
 

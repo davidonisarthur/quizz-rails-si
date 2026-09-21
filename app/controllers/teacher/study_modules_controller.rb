@@ -38,7 +38,8 @@ module Teacher
     def study_module_params
       params.require(:study_module).permit(
         :title_pt, :title_en, :summary_pt, :summary_en, :content_pt, :content_en,
-        :libras_content_pt, :libras_content_en, :video_url, :quiz_module_id, :slug, :position, :published
+        :rich_content_pt, :rich_content_en, :libras_content_pt, :libras_content_en,
+        :video_url, :quiz_module_id, :slug, :position, :published
       )
     end
 

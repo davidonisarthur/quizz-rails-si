@@ -51,12 +51,31 @@ RSpec.describe "Teacher study modules", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "protects image upload URLs from guests and students" do
+    post "/rails/active_storage/direct_uploads"
+    expect(response).to have_http_status(:forbidden)
+
+    sign_in(student)
+    post "/rails/active_storage/direct_uploads"
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it "rerenders the form when content is incomplete" do
     sign_in(teacher)
 
     post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params.merge(content_en: "") }
 
     expect(response).to have_http_status(:unprocessable_entity)
+  end
+
+  it "renders rich-text editors with image upload support" do
+    sign_in(teacher)
+
+    get new_teacher_study_module_path(locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("trix-editor")
+    expect(response.body).to include("direct-upload-url")
   end
 
   it "allows only the teacher's own quizzes to be linked" do
