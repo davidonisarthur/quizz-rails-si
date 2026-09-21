@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   def profile
     @attempts = current_user.quiz_attempts.includes(:quiz_module).order(created_at: :desc)
     @teacher_access_request = current_user.teacher_access_requests.pending.first
-    @modules = QuizModule.published.includes(:questions).order(:position).to_a
+    @modules = QuizModule.published.visible_to(current_user).includes(:questions).order(:position).to_a
     attempts_by_module = @attempts.group_by(&:quiz_module_id)
 
     @module_progress = @modules.map do |quiz_module|
@@ -54,7 +54,7 @@ class UsersController < ApplicationController
     @completion_percentage = @modules.any? ? ((@completed_modules.count.to_f / @modules.count) * 100).round : 0
 
     @study_progresses = current_user.study_progresses.order(last_accessed_at: :desc)
-    study_modules_by_slug = StudyModule.where(slug: @study_progresses.map(&:study_slug)).index_by(&:slug)
+    study_modules_by_slug = StudyModule.visible_to(current_user).where(slug: @study_progresses.map(&:study_slug)).index_by(&:slug)
     @study_progress_items = @study_progresses.map do |progress|
       title = if progress.study_slug == "turing-machine"
         t("study.catalog.turing_machine.title")

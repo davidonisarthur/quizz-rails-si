@@ -8,7 +8,7 @@ class QuizModule < ApplicationRecord
 
   scope :published, -> { where(published: true) }
   scope :visible_to, ->(user) {
-    public_modules = where(audience: :public_audience)
+    public_modules = where(platform_default: true).or(where(audience: :public_audience))
     user ? public_modules.or(where(id: ModuleAssignment.joins(:classroom).where(classrooms: { id: user.enrolled_classrooms.select(:id) }).select(:quiz_module_id))) : public_modules
   }
 
@@ -30,7 +30,7 @@ class QuizModule < ApplicationRecord
   end
 
   def visible_to?(user)
-    audience_public_audience? || (user && user.enrolled_classrooms.joins(:module_assignments).exists?(module_assignments: { quiz_module_id: id }))
+    platform_default? || audience_public_audience? || (user && user.enrolled_classrooms.joins(:module_assignments).exists?(module_assignments: { quiz_module_id: id }))
   end
 
   def owned_by?(user)

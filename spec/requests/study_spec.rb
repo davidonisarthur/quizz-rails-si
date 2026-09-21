@@ -65,6 +65,34 @@ RSpec.describe "Study", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "only exposes classroom study content to students enrolled by its author" do
+    teacher = create(:user, :teacher, password: "password123")
+    enrolled_student = create(:user, email: "enrolled-study@example.com", password: "password123")
+    outside_student = create(:user, email: "outside-study@example.com", password: "password123")
+    classroom = teacher.classrooms.create!(name: "Turma de algoritmos")
+    classroom.classroom_enrollments.create!(user: enrolled_student)
+    restricted_module = create(:study_module, created_by: teacher, published: true, audience: "classroom_audience", title_pt: "Algoritmos da turma")
+    StudyModuleAssignment.create!(classroom: classroom, study_module: restricted_module)
+
+    get study_path(locale: "pt-BR")
+    expect(response.body).not_to include(restricted_module.title_pt)
+    get study_topic_path(restricted_module.slug, locale: "pt-BR")
+    expect(response).to have_http_status(:not_found)
+
+    post session_path(locale: "pt-BR"), params: { email: outside_student.email, password: "password123" }
+    get study_topic_path(restricted_module.slug, locale: "pt-BR")
+    expect(response).to have_http_status(:not_found)
+    post study_progress_path(restricted_module.slug, locale: "pt-BR", status: "started")
+    expect(response).to have_http_status(:not_found)
+
+    delete session_path(locale: "pt-BR")
+    post session_path(locale: "pt-BR"), params: { email: enrolled_student.email, password: "password123" }
+    get study_path(locale: "pt-BR")
+    expect(response.body).to include(restricted_module.title_pt)
+    get study_topic_path(restricted_module.slug, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+  end
+
   it "records started and completed progress for authenticated students" do
     user = create(:user, password: "password123")
     post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }

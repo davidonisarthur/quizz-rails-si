@@ -3,10 +3,13 @@ module Teacher
     before_action :set_study_module, only: %i[show edit update destroy]
 
     def index
-      @study_modules = current_user.authored_study_modules.order(:position)
+      @study_modules = current_user.authored_study_modules.where(platform_default: false).order(:position)
     end
 
-    def show; end
+    def show
+      @classrooms = current_user.classrooms.order(:name)
+      @assignments = @study_module.study_module_assignments.includes(:classroom)
+    end
 
     def new
       @study_module = current_user.authored_study_modules.build(published: false)
@@ -32,14 +35,14 @@ module Teacher
     private
 
     def set_study_module
-      @study_module = current_user.authored_study_modules.find(params[:id])
+      @study_module = current_user.authored_study_modules.where(platform_default: false).find(params[:id])
     end
 
     def study_module_params
       params.require(:study_module).permit(
         :title_pt, :title_en, :summary_pt, :summary_en, :content_pt, :content_en,
         :rich_content_pt, :rich_content_en, :libras_content_pt, :libras_content_en,
-        :video_url, :quiz_module_id, :slug, :position, :published
+        :video_url, :quiz_module_id, :slug, :position, :published, :audience
       )
     end
 

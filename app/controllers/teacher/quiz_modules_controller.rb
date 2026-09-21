@@ -3,7 +3,7 @@ module Teacher
     before_action :set_module, only: %i[show edit update destroy preview report]
 
     def index
-      @modules = current_user.authored_quiz_modules.includes(:questions).order(:position)
+      @modules = current_user.authored_quiz_modules.where(platform_default: false).includes(:questions).order(:position)
     end
 
     def show
@@ -63,7 +63,7 @@ module Teacher
     private
 
     def set_module
-      @module = current_user.authored_quiz_modules.find(params[:id])
+      @module = current_user.authored_quiz_modules.where(platform_default: false).find(params[:id])
     end
 
     def module_params

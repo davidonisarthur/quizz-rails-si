@@ -4,6 +4,7 @@ RSpec.describe StudyModule, type: :model do
   subject(:study_module) { build(:study_module) }
 
   it { is_expected.to belong_to(:created_by).class_name("User") }
+  it { is_expected.to have_many(:study_module_assignments).dependent(:destroy) }
   it { is_expected.to validate_presence_of(:title_pt) }
   it { is_expected.to validate_presence_of(:title_en) }
   it { is_expected.to validate_presence_of(:content_pt) }
@@ -39,6 +40,34 @@ RSpec.describe StudyModule, type: :model do
 
     expect(study_module).to be_invalid
     expect(study_module.errors[:quiz_module]).to be_present
+  end
+
+  it "limits classroom-only content to enrolled students while keeping platform content public" do
+    teacher = create(:user, :teacher)
+    enrolled_student = create(:user)
+    other_student = create(:user)
+    classroom = teacher.classrooms.create!(name: "Turma de estudo")
+    classroom.classroom_enrollments.create!(user: enrolled_student)
+    restricted_module = create(:study_module, created_by: teacher, audience: "classroom_audience")
+    StudyModuleAssignment.create!(classroom: classroom, study_module: restricted_module)
+    platform_module = create(:study_module, created_by: teacher, audience: "classroom_audience", platform_default: true)
+
+    expect(restricted_module).not_to be_visible_to(nil)
+    expect(restricted_module).to be_visible_to(enrolled_student)
+    expect(restricted_module).not_to be_visible_to(other_student)
+    expect(platform_module).to be_visible_to(nil)
+  end
+
+  it "rejects an assignment to a classroom owned by another teacher" do
+    author = create(:user, :teacher)
+    other_teacher = create(:user, :teacher)
+    restricted_module = create(:study_module, created_by: author, audience: "classroom_audience")
+    foreign_classroom = other_teacher.classrooms.create!(name: "Turma externa")
+
+    assignment = StudyModuleAssignment.new(classroom: foreign_classroom, study_module: restricted_module)
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to be_present
   end
 
   it "accepts rich content without requiring the legacy plain-text fields" do

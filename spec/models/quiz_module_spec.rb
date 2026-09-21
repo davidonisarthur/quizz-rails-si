@@ -40,6 +40,27 @@ RSpec.describe QuizModule, type: :model do
     end
   end
 
+  describe "platform defaults" do
+    it "remain visible even if their audience value is changed" do
+      quiz_module = create(:quiz_module, platform_default: true, audience: "classroom_audience")
+
+      expect(quiz_module).to be_visible_to(nil)
+      expect(QuizModule.visible_to(nil)).to include(quiz_module)
+    end
+  end
+
+  it "rejects assigning a quiz to a classroom owned by another teacher" do
+    author = create(:user, :teacher)
+    other_teacher = create(:user, :teacher)
+    quiz_module = create(:quiz_module, created_by: author)
+    foreign_classroom = other_teacher.classrooms.create!(name: "Turma externa")
+
+    assignment = ModuleAssignment.new(classroom: foreign_classroom, quiz_module: quiz_module)
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to be_present
+  end
+
   describe "#owned_by?" do
     it "matches only its author" do
       author = create(:user, :teacher)

@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    @modules = QuizModule.published.includes(:questions).order(:position)
+    @modules = QuizModule.published.visible_to(current_user).includes(:questions).order(:position)
   end
 end

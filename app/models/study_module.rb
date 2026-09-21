@@ -3,12 +3,23 @@ class StudyModule < ApplicationRecord
 
   belongs_to :created_by, class_name: "User"
   belongs_to :quiz_module, optional: true
+  has_many :study_module_assignments, dependent: :destroy
+  has_many :classrooms, through: :study_module_assignments
   has_rich_text :rich_content_pt
   has_rich_text :rich_content_en
 
   before_validation :populate_legacy_content_from_rich_text
 
   scope :published, -> { where(published: true) }
+  scope :visible_to, ->(user) {
+    public_studies = where(platform_default: true).or(where(audience: :public_audience))
+    next public_studies unless user
+
+    assigned_studies = where(id: StudyModuleAssignment.where(classroom_id: user.enrolled_classrooms.select(:id)).select(:study_module_id))
+    public_studies.or(assigned_studies)
+  }
+
+  enum :audience, { public_audience: "public", classroom_audience: "classroom" }, prefix: :audience, validate: true
 
   validates :title_pt, :title_en, :summary_pt, :summary_en,
     :libras_content_pt, :libras_content_en, presence: true
@@ -41,6 +52,12 @@ class StudyModule < ApplicationRecord
 
   def rich_content_present?
     rich_content.body&.to_plain_text.to_s.squish.present?
+  end
+
+  def visible_to?(user)
+    return true if platform_default? || audience_public_audience?
+
+    user && user.enrolled_classrooms.joins(:study_module_assignments).exists?(study_module_assignments: { study_module_id: id })
   end
 
   private

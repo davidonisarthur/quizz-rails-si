@@ -1,1 +1,41 @@
-<section class="mx-auto max-w-3xl py-10 sm:py-16"><%= link_to t("teacher.back"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold" %><article class="mt-8 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8"><p class="eyebrow"><%= @study_module.published? ? t("teacher.published") : t("teacher.draft") %></p><h1 class="type-display mt-3 text-4xl"><%= @study_module.title_pt %></h1><p class="mt-4 text-lg text-tx1"><%= @study_module.summary_pt %></p><p class="mt-8 whitespace-pre-line leading-8 text-tx1"><%= @study_module.content_pt %></p><div class="mt-8 flex flex-wrap gap-4 text-sm font-bold"><%= link_to t("teacher.edit"), edit_teacher_study_module_path(@study_module, locale: I18n.locale), class: "focus-ink editorial-link" %><%= button_to t("teacher.delete"), teacher_study_module_path(@study_module, locale: I18n.locale), method: :delete, class: "focus-ink editorial-link cursor-pointer", form: { data: { turbo_confirm: t("teacher.confirm_delete") } } %></div></article></section>
+<section class="mx-auto max-w-4xl py-10 sm:py-16">
+  <%= link_to t("teacher.back"), teacher_study_modules_path(locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold" %>
+
+  <article class="mt-8 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <p class="eyebrow"><%= @study_module.published? ? t("teacher.published") : t("teacher.draft") %> · <%= @study_module.audience_public_audience? ? t("teacher.audience_public") : t("teacher.audience_classroom") %></p>
+    <h1 class="type-display mt-3 text-4xl"><%= @study_module.title_pt %></h1>
+    <p class="mt-4 text-lg text-tx1"><%= @study_module.summary_pt %></p>
+    <p class="mt-8 whitespace-pre-line leading-8 text-tx1"><%= @study_module.content_pt %></p>
+    <div class="mt-8 flex flex-wrap gap-4 text-sm font-bold">
+      <%= link_to t("teacher.edit"), edit_teacher_study_module_path(@study_module, locale: I18n.locale), class: "focus-ink editorial-link" %>
+      <%= button_to t("teacher.delete"), teacher_study_module_path(@study_module, locale: I18n.locale), method: :delete, class: "focus-ink editorial-link cursor-pointer", form: { data: { turbo_confirm: t("teacher.confirm_delete") } } %>
+    </div>
+  </article>
+
+  <% if @study_module.audience_classroom_audience? %>
+    <section class="mt-6 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+      <h2 class="type-display text-2xl"><%= t("classrooms.assignments") %></h2>
+      <% if @classrooms.any? %>
+        <%= form_with url: teacher_study_module_study_module_assignments_path(@study_module, locale: I18n.locale), class: "mt-4 flex flex-wrap gap-3" do |f| %>
+          <%= f.select :classroom_id, @classrooms.map { |classroom| [classroom.name, classroom.id] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %>
+          <%= f.submit t("classrooms.assign"), class: "focus-ink cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase" %>
+        <% end %>
+      <% end %>
+
+      <% if @assignments.any? %>
+        <div class="mt-5 space-y-2">
+          <% @assignments.each do |assignment| %>
+            <div class="flex items-center justify-between gap-4 text-sm">
+              <span><%= assignment.classroom.name %></span>
+              <%= button_to t("teacher.delete"), teacher_study_module_study_module_assignment_path(@study_module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink text-red" %>
+            </div>
+          <% end %>
+        </div>
+      <% elsif @classrooms.any? %>
+        <p class="mt-5 text-sm text-tx1"><%= t("classrooms.no_study_assignments") %></p>
+      <% else %>
+        <p class="mt-5 text-sm text-tx1"><%= t("classrooms.create_before_assigning") %></p>
+      <% end %>
+    </section>
+  <% end %>
+</section>

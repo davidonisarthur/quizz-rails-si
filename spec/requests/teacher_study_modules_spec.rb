@@ -69,6 +69,28 @@ RSpec.describe "Teacher study modules", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "allows a teacher to assign classroom-only study content to their own classroom" do
+    classroom = teacher.classrooms.create!(name: "Turma privada")
+    study_module = create(:study_module, created_by: teacher, audience: "classroom_audience")
+    sign_in(teacher)
+
+    expect {
+      post teacher_study_module_study_module_assignments_path(study_module, locale: "pt-BR"), params: { classroom_id: classroom.id }
+    }.to change(StudyModuleAssignment, :count).by(1)
+
+    post teacher_study_module_study_module_assignments_path(study_module, locale: "pt-BR"), params: { classroom_id: classroom.id }
+    expect(flash[:alert]).to eq("A turma já possui este conteúdo de estudo.")
+  end
+
+  it "does not let a teacher manage platform study content" do
+    platform_study = create(:study_module, created_by: teacher, platform_default: true)
+    sign_in(teacher)
+
+    get teacher_study_module_path(platform_study, locale: "pt-BR")
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   it "protects image upload URLs from guests and students" do
     post "/rails/active_storage/direct_uploads"
     expect(response).to have_http_status(:forbidden)

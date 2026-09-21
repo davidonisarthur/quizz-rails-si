@@ -72,7 +72,7 @@ module Teacher
     private
 
     def set_module
-      @module = current_user.authored_quiz_modules.find(params[:quiz_module_id])
+      @module = current_user.authored_quiz_modules.where(platform_default: false).find(params[:quiz_module_id])
     end
 
     def set_question

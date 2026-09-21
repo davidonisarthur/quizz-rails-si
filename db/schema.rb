@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_163000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -134,6 +134,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_030000) do
     t.string "audience", default: "public", null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
+    t.boolean "platform_default", default: false, null: false
     t.integer "position", null: false
     t.boolean "published", default: false, null: false
     t.string "slug"
@@ -161,13 +162,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_030000) do
     t.check_constraint "selected_index >= 0 AND selected_index <= 3", name: "quiz_responses_selected_index_range"
   end
 
+  create_table "study_module_assignments", force: :cascade do |t|
+    t.bigint "classroom_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "study_module_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id", "study_module_id"], name: "index_study_assignments_on_classroom_and_module", unique: true
+    t.index ["classroom_id"], name: "index_study_module_assignments_on_classroom_id"
+    t.index ["study_module_id"], name: "index_study_module_assignments_on_study_module_id"
+  end
+
   create_table "study_modules", force: :cascade do |t|
+    t.string "audience", default: "public", null: false
     t.text "content_en", null: false
     t.text "content_pt", null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false
     t.text "libras_content_en", null: false
     t.text "libras_content_pt", null: false
+    t.boolean "platform_default", default: false, null: false
     t.integer "position", null: false
     t.boolean "published", default: false, null: false
     t.bigint "quiz_module_id"
@@ -182,6 +195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_030000) do
     t.index ["position"], name: "index_study_modules_on_position", unique: true
     t.index ["quiz_module_id"], name: "index_study_modules_on_quiz_module_id"
     t.index ["slug"], name: "index_study_modules_on_slug", unique: true
+    t.check_constraint "audience::text = ANY (ARRAY['public'::character varying, 'classroom'::character varying]::text[])", name: "study_modules_audience_allowed"
   end
 
   create_table "study_progresses", force: :cascade do |t|
@@ -249,6 +263,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_030000) do
   add_foreign_key "quiz_modules", "users", column: "created_by_id"
   add_foreign_key "quiz_responses", "questions", on_delete: :nullify
   add_foreign_key "quiz_responses", "quiz_attempts"
+  add_foreign_key "study_module_assignments", "classrooms"
+  add_foreign_key "study_module_assignments", "study_modules"
   add_foreign_key "study_modules", "quiz_modules", on_delete: :nullify
   add_foreign_key "study_modules", "users", column: "created_by_id"
   add_foreign_key "study_progresses", "users"

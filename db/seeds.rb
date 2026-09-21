@@ -35,6 +35,10 @@ modulo4 = QuizModule.find_or_create_by!(slug: "desafio-final") do |m|
   m.unlocked = false
 end
 
+[ modulo1, modulo2, modulo3, modulo4 ].each do |modulo|
+  modulo.update!(platform_default: true, audience: "public")
+end
+
 puts "Criando questões do Módulo 1..."
 
 # Register only reviewed LIBRAS recordings. Until then, the VLibras avatar remains available.

@@ -108,4 +108,13 @@ RSpec.describe "Classroom management", type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it "does not let a teacher manage a platform quiz module" do
+    platform_module = create(:quiz_module, created_by: teacher, platform_default: true)
+    sign_in(teacher)
+
+    get teacher_quiz_module_path(platform_module, locale: "pt-BR")
+
+    expect(response).to have_http_status(:not_found)
+  end
 end

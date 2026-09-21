@@ -18,7 +18,7 @@ class StudyProgressesController < ApplicationController
 
   def ensure_study_is_available!(study_slug)
     return if StudyController::TOPICS.key?(study_slug)
-    return if StudyModule.published.exists?(slug: study_slug)
+    return if StudyModule.published.visible_to(current_user).exists?(slug: study_slug)
 
     raise ActiveRecord::RecordNotFound
   end
