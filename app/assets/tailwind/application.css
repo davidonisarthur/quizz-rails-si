@@ -149,6 +149,12 @@ trix-toolbar .trix-button {
 trix-toolbar .trix-button:last-child { border-right: 0; }
 trix-toolbar .trix-button:hover,
 trix-toolbar .trix-button.trix-active { background: var(--bg1); color: var(--accent); }
+html.dark trix-toolbar .trix-button-group { border-color: var(--bg3); }
+html.dark trix-toolbar .trix-button { border-color: var(--bg3); background: var(--bg2); }
+html.dark trix-toolbar .trix-button--icon::before { filter: invert(1); opacity: 0.9; }
+html.dark trix-toolbar .trix-button.trix-active { background: var(--accent); }
+html.dark trix-toolbar .trix-button.trix-active::before { filter: brightness(0) invert(1); opacity: 1; }
+html.dark trix-toolbar .trix-button:disabled::before { opacity: 0.25; }
 trix-editor {
   display: block;
   min-height: 16rem;
