@@ -1,0 +1,31 @@
+<section class="mx-auto max-w-4xl py-10 sm:py-16">
+  <header class="max-w-2xl">
+    <p class="eyebrow"><%= t("teacher.area") %></p>
+    <h1 class="type-display mt-3 text-4xl sm:text-5xl"><%= t("classrooms.manage_title") %></h1>
+    <p class="mt-4 text-sm leading-7 text-tx1 sm:text-base"><%= t("classrooms.description") %></p>
+  </header>
+
+  <section class="mt-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6" aria-labelledby="new-classroom-title">
+    <h2 id="new-classroom-title" class="type-display text-2xl"><%= t("classrooms.create") %></h2>
+    <%= form_with model: @classroom, url: teacher_classrooms_path(locale: I18n.locale), class: "mt-4 flex flex-col gap-3 sm:flex-row" do |f| %>
+      <%= f.label :name, t("classrooms.name"), class: "sr-only" %>
+      <%= f.text_field :name, placeholder: t("classrooms.name"), class: "focus-ink min-h-11 w-full flex-1 rounded-md border border-bg3 px-3 py-2" %>
+      <%= f.submit t("classrooms.create"), class: "focus-ink min-h-11 w-full cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase sm:w-auto" %>
+    <% end %>
+  </section>
+
+  <div class="mt-8 space-y-3">
+    <% @classrooms.each do |classroom| %>
+      <article class="flex flex-wrap items-center justify-between gap-4 rounded-xl border ink-rule bg-bg2 p-5">
+        <div class="min-w-0">
+          <h2 class="font-bold"><%= classroom.name %></h2>
+          <p class="mt-1 text-sm text-tx2"><%= classroom.students.count %> <%= t("classrooms.students") %></p>
+        </div>
+        <div class="flex flex-wrap items-center gap-4">
+          <%= link_to t("classrooms.manage"), teacher_classroom_path(classroom, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+          <%= button_to t("classrooms.delete"), teacher_classroom_path(classroom, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 text-sm font-bold text-red", form: { data: { turbo_confirm: t("classrooms.confirm_delete") } } %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+</section>

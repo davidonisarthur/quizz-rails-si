@@ -1,21 +1,18 @@
-<div class="max-w-md mx-auto py-10 px-4">
-  <h2 class="text-3xl font-bold mb-6 text-center"><%= t('sessions.title') %></h2>
+<section class="mx-auto max-w-xl py-10 sm:py-16">
+  <p class="eyebrow mb-4"><%= t('brand.subtitle') %></p>
+  <h1 class="type-display text-5xl sm:text-6xl"><%= t('sessions.title') %></h1>
 
-  <%= form_with url: session_path(locale: I18n.locale), class: "space-y-4" do |f| %>
+  <%= form_with url: session_path(locale: I18n.locale), class: "mt-8 space-y-6 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" do |f| %>
     <div>
-      <%= f.label :email, t('sessions.email'), class: "block text-sm font-medium mb-1" %>
-      <%= f.email_field :email, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :email, t('sessions.email'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.email_field :email, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0 placeholder:text-tx2" %>
     </div>
-
     <div>
-      <%= f.label :password, t('sessions.password'), class: "block text-sm font-medium mb-1" %>
-      <%= f.password_field :password, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :password, t('sessions.password'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.password_field :password, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-
-    <%= f.submit t('sessions.submit'), class: "w-full bg-accent text-white py-2.5 rounded-lg font-bold hover:brightness-110 shadow transition cursor-pointer" %>
+    <%= f.submit t('sessions.submit'), class: "focus-ink w-full cursor-pointer rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
   <% end %>
 
-  <p class="mt-4 text-center text-sm text-tx1">
-    <%= t('sessions.no_account') %> <%= link_to t('sessions.sign_up'), new_user_path(locale: I18n.locale), class: "text-accent hover:underline font-semibold" %>
-  </p>
-</div>
+  <p class="mt-6 text-sm text-tx1"><%= t('sessions.no_account') %> <%= link_to t('sessions.sign_up'), new_user_path(locale: I18n.locale), class: "focus-ink editorial-link ml-1 font-bold text-tx0" %></p>
+</section>

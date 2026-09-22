@@ -1,0 +1,24 @@
+<%= form_with model: @question, url: @question.persisted? ? teacher_quiz_module_question_path(@module, @question, locale: I18n.locale) : teacher_quiz_module_questions_path(@module, locale: I18n.locale), class: "mt-8 space-y-7" do |f| %>
+  <% if @question.errors.any? %><div class="rounded-xl border-l-4 border-red bg-red/10 p-4 text-sm text-red"><%= @question.errors.full_messages.to_sentence %></div><% end %>
+
+  <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <h2 class="type-display text-2xl"><%= t("teacher.question_content") %></h2>
+    <div class="mt-5 grid gap-5 sm:grid-cols-2"><div><%= f.label :body_pt, t("teacher.body_pt"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :body_pt, required: true, rows: 5, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><div><%= f.label :body_en, t("teacher.body_en"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :body_en, rows: 5, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div></div>
+    <div class="mt-5 grid gap-5 sm:grid-cols-2"><div><%= f.label :context_pt, t("teacher.context_pt"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :context_pt, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><div><%= f.label :context_en, t("teacher.context_en"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :context_en, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div></div>
+    <div class="mt-5"><%= f.label :libras_video_url, t("teacher.libras_video_url"), class: "mb-2 block text-sm font-bold" %><%= f.url_field :libras_video_url, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div>
+  </section>
+
+  <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <h2 class="type-display text-2xl"><%= t("teacher.options") %></h2>
+    <p class="mt-2 text-sm text-tx1"><%= t("teacher.correct_option_help") %></p>
+    <div class="mt-5 space-y-4"><%= f.fields_for :options do |option_form| %><div class="grid gap-3 sm:grid-cols-[3rem_1fr_1fr]"><span class="pt-3 text-sm font-bold text-tx2"><%= option_form.index + 1 %></span><%= option_form.text_field :text_pt, placeholder: t("teacher.option_pt"), class: "focus-ink rounded-md border border-bg3 px-3 py-2" %><%= option_form.text_field :text_en, placeholder: t("teacher.option_en"), class: "focus-ink rounded-md border border-bg3 px-3 py-2" %></div><% end %></div>
+    <div class="mt-5"><%= f.label :correct_index, t("teacher.correct_option"), class: "mb-2 block text-sm font-bold" %><%= f.select :correct_index, (0..3).map { |index| [index + 1, index] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %></div>
+  </section>
+
+  <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+    <h2 class="type-display text-2xl"><%= t("teacher.feedback") %></h2>
+    <div class="mt-5 space-y-5"><%= f.fields_for :feedbacks do |feedback_form| %><%= feedback_form.hidden_field :kind %><div><%= feedback_form.label :body_pt, feedback_form.object.kind == "correct" ? t("teacher.correct_feedback_pt") : t("teacher.incorrect_feedback_pt"), class: "mb-2 block text-sm font-bold" %><%= feedback_form.text_area :body_pt, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><div><%= feedback_form.label :body_en, feedback_form.object.kind == "correct" ? t("teacher.correct_feedback_en") : t("teacher.incorrect_feedback_en"), class: "mb-2 block text-sm font-bold" %><%= feedback_form.text_area :body_en, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><% end %></div>
+  </section>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl border ink-rule bg-bg2 p-5"><label class="flex items-center gap-2 text-sm font-bold"><%= f.check_box :published %><%= t("teacher.published") %></label><div class="flex gap-4"><%= link_to t("teacher.back"), teacher_quiz_module_path(@module, locale: I18n.locale), class: "focus-ink editorial-link py-3 text-sm font-bold" %><%= f.submit t("teacher.save"), class: "focus-ink cursor-pointer rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase hover:bg-tx0" %></div></div>
+<% end %>

@@ -1,22 +1,24 @@
-<div class="max-w-4xl mx-auto py-10 px-4">
-  <h1 class="text-4xl font-bold mb-8"><%= t('hello', default: 'Bem-vindo ao PrimoQuiz') %></h1>
-  
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <% @modules.each do |modulo| %>
-      <% available = modulo.available_to?(current_user) %>
-      <div class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md hover:shadow-lg transition duration-200">
-        <h2 class="text-xl font-bold mb-2">
-          <%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %>
-        </h2>
-        <p class="text-tx1 mb-4 text-sm font-medium">
-          <%= available ? t('modules.available') : t('modules.complete_previous') %>
-        </p>
-        <% if available %>
-          <%= link_to t('modules.play'), play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "inline-block bg-accent text-white px-5 py-2.5 rounded-lg hover:brightness-110 font-semibold shadow transition duration-200" %>
-        <% else %>
-          <span class="inline-block bg-bg3 text-tx2 px-5 py-2.5 rounded-lg cursor-not-allowed font-semibold"><%= t('modules.locked') %></span>
-        <% end %>
+<section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <section class="border-l-4 border-accent bg-bg2 px-6 py-8 sm:px-9 sm:py-10">
+    <p class="eyebrow text-accent"><%= t("study.eyebrow") %></p>
+    <div class="mt-4 flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <h1 class="type-display text-3xl leading-tight sm:text-5xl"><%= t("study.home_title") %></h1>
+        <p class="mt-4 text-base leading-8 text-tx1"><%= t("study.home_description") %></p>
       </div>
-    <% end %>
+      <%= link_to study_path(locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
+        <%= t("study.home_cta") %><span aria-hidden="true">→</span>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="max-w-3xl">
+    <p class="eyebrow mt-12"><%= t('home.eyebrow') %></p>
+    <h1 class="type-display mt-5 text-4xl leading-tight sm:text-6xl"><%= t('hello') %></h1>
+    <p class="mt-7 max-w-2xl text-base leading-8 text-tx1 sm:text-lg"><%= t('home.introduction') %></p>
   </div>
+</section>
+
+<div class="mx-auto max-w-5xl pb-10 sm:pb-16">
+  <%= render "quiz_modules/catalog", heading: t('home.path_label') %>
 </div>

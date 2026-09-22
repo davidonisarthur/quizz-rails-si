@@ -1,36 +1,29 @@
-<div class="max-w-2xl mx-auto py-10 px-4">
+<div class="mx-auto max-w-3xl py-8 sm:py-14">
   <%= turbo_frame_tag "quiz_content" do %>
-    <!-- Barra de progresso -->
-    <div class="mb-8">
-      <div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+    <% progress = (((@current_index + 1).to_f / @total_questions) * 100).round %>
+    <header class="mb-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
+      <div class="mb-3 flex items-center justify-between gap-4 text-xs font-extrabold tracking-[0.12em] text-tx1 uppercase">
         <span><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %></span>
-        <span><%= (((@current_index + 1).to_f / @total_questions) * 100).round %>%</span>
+        <span class="text-accent"><%= progress %>%</span>
       </div>
-      <div class="w-full bg-bg3 h-2 rounded-full overflow-hidden">
-        <div class="bg-accent h-2 rounded-full transition-all duration-500 ease-out" 
-             style="width: <%= (((@current_index + 1).to_f / @total_questions) * 100).round %>%"></div>
-      </div>
-    </div>
+      <div class="h-[3px] bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500" style="width: <%= progress %>%"></div></div>
+    </header>
 
-    <div class="p-6 rounded-xl border mb-8 <%= @feedback.kind == 'correct' ? 'bg-green/10 border-green/30 text-green' : 'bg-red/10 border-red/30 text-red' %>">
-      <h3 class="text-xl font-bold mb-2">
-        <%= @feedback.kind == 'correct' ? t('quiz.correct', default: 'Correto!') : t('quiz.incorrect', default: 'Quase!') %>
-      </h3>
-      <p class="font-medium">
-        <%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %>
-      </p>
-    </div>
+    <section class="rounded-xl border bg-bg2 p-6 sm:p-9 <%= @feedback.kind == 'correct' ? 'border-green text-green' : 'border-red text-red' %>">
+      <p class="eyebrow mb-3 text-current"><%= @feedback.kind == 'correct' ? t('quiz.correct') : t('quiz.incorrect') %></p>
+      <h1 class="type-display text-4xl leading-tight sm:text-5xl"><%= @feedback.kind == 'correct' ? t('quiz.correct') : t('quiz.incorrect') %></h1>
+      <p class="mt-5 max-w-2xl text-base leading-7 text-tx0"><%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %></p>
+    </section>
 
-    <div class="text-center">
+    <div class="mt-8 flex justify-stretch sm:justify-end">
       <% if @next_question %>
-        <%= link_to t('quiz.next_question', default: 'Próxima questão'), 
-                    play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), 
-                    class: "inline-block bg-accent text-white px-8 py-3 rounded-xl hover:brightness-110 shadow transition duration-200 font-semibold" %>
+        <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
+          <%= t('quiz.next_question') %><span aria-hidden="true">→</span>
+        <% end %>
       <% else %>
-        <%= link_to t('quiz.see_result', default: 'Ver resultado'), 
-                    result_quiz_module_path(@module.slug, locale: I18n.locale), 
-                    data: { turbo_frame: "_top" },
-                    class: "inline-block bg-accent text-white px-8 py-3 rounded-xl hover:brightness-110 shadow transition duration-200 font-semibold" %>
+        <%= link_to result_quiz_module_path(@module.slug, locale: I18n.locale), data: { turbo_frame: "_top" }, class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
+          <%= t('quiz.see_result') %><span aria-hidden="true">→</span>
+        <% end %>
       <% end %>
     </div>
   <% end %>

@@ -1,5 +1,12 @@
 puts "Criando módulos..."
 
+teacher_email = ENV.fetch("TEACHER_EMAIL", "").strip.downcase
+if teacher_email.present?
+  teacher = User.find_by(email: teacher_email)
+  teacher&.update!(role: "teacher")
+  puts "Professor configurado: #{teacher_email}" if teacher
+end
+
 modulo1 = QuizModule.find_or_create_by!(slug: "o-que-e-primo") do |m|
   m.title_pt = "Os Blocos de Construção e os Números Primos"
   m.title_en = "The Building Blocks and Prime Numbers"
@@ -26,6 +33,10 @@ modulo4 = QuizModule.find_or_create_by!(slug: "desafio-final") do |m|
   m.title_en = "Final challenge"
   m.position = 4
   m.unlocked = false
+end
+
+[ modulo1, modulo2, modulo3, modulo4 ].each do |modulo|
+  modulo.update!(platform_default: true, audience: "public")
 end
 
 puts "Criando questões do Módulo 1..."

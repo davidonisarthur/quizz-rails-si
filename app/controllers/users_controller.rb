@@ -3,20 +3,69 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    @invitation_token = params[:invitation_token]
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
-      session[:user_id] = @user.id
-      redirect_to root_path(locale: I18n.locale)
-    else
-      render :new, status: :unprocessable_entity
+    invitation = TeacherInvitation.find_valid(params[:teacher_invitation_token]) if params[:teacher_invitation_token].present?
+    @user = User.new(user_params.merge(role: invitation ? "teacher" : "student"))
+    if invitation && invitation.email != @user.email
+      @user.errors.add(:email, "does not match the invitation")
+      @invitation_token = params[:teacher_invitation_token]
+      return render :new, status: :unprocessable_entity
     end
+    User.transaction do
+      @user.save!
+      invitation&.update!(accepted_at: Time.current, accepted_by: @user)
+    end
+    session[:user_id] = @user.id
+    redirect_to root_path(locale: I18n.locale)
+  rescue ActiveRecord::RecordInvalid
+    @invitation_token = params[:teacher_invitation_token]
+    render :new, status: :unprocessable_entity
   end
 
   def profile
+    return redirect_to teacher_root_path(locale: I18n.locale) if current_user.teacher?
+
     @attempts = current_user.quiz_attempts.includes(:quiz_module).order(created_at: :desc)
+    @teacher_access_request = current_user.teacher_access_requests.pending.first
+    @modules = QuizModule.published.visible_to(current_user).includes(:questions).order(:position).to_a
+    attempts_by_module = @attempts.group_by(&:quiz_module_id)
+
+    @module_progress = @modules.map do |quiz_module|
+      attempts = attempts_by_module.fetch(quiz_module.id, [])
+      question_count = quiz_module.questions.count(&:published?)
+      best_attempt = attempts.max_by { |attempt| [ attempt.score, attempt.created_at ] }
+
+      {
+        quiz_module: quiz_module,
+        question_count: question_count,
+        completed: attempts.any?,
+        available: quiz_module.available_to?(current_user),
+        best_attempt: best_attempt,
+        last_attempt: attempts.first,
+        best_percentage: best_attempt && question_count.positive? ? ((best_attempt.score.to_f / question_count) * 100).round : nil
+      }
+    end
+
+    @completed_modules = @module_progress.select { |progress| progress[:completed] }
+    @pending_modules = @module_progress.reject { |progress| progress[:completed] }
+    @next_module = @pending_modules.find { |progress| progress[:available] }
+    @other_pending_modules = @pending_modules.reject { |progress| progress == @next_module }
+    @completion_percentage = @modules.any? ? ((@completed_modules.count.to_f / @modules.count) * 100).round : 0
+
+    @study_progresses = current_user.study_progresses.order(last_accessed_at: :desc)
+    study_modules_by_slug = StudyModule.visible_to(current_user).where(slug: @study_progresses.map(&:study_slug)).index_by(&:slug)
+    @study_progress_items = @study_progresses.map do |progress|
+      title = if progress.study_slug == "turing-machine"
+        t("study.catalog.turing_machine.title")
+      else
+        study_modules_by_slug[progress.study_slug]&.title
+      end
+      { progress: progress, title: title }.compact
+    end.select { |item| item[:title].present? }
+    @completed_studies_count = @study_progresses.count(&:completed?)
   end
 
   private

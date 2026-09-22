@@ -26,7 +26,7 @@ The solution incorporates **multimodal features and assistive technologies**, in
 
 1. **Desafio da Inclusão na Educação Matemática**: Alunos surdos frequentemente enfrentam barreiras na aprendizagem de matemática devido à escassez de materiais didáticos digitais sinalizados em LIBRAS e à predominância de abordagens estritamente textuais.
 2. **Relevância da Teoria dos Números**: A Teoria dos Números é um pilar da matemática moderna e da Ciência da Computação. O PrimoQuiz contextualiza números primos demonstrando sua utilidade na **segurança digital** (criptografia assimétrica RSA), motivando o aluno a compreender a relevância da disciplina.
-3. **Engajamento por Gamificação e Feedback Pedagógico**: O software aplica técnicas de gamificação (módulos progressivos, pontuação, ranking global) alinhadas a feedbacks explicativos detalhados para cada resposta (correta ou incorreta), estimulando a autonomia e o aprendizado significativo.
+3. **Engajamento por Gamificação e Feedback Pedagógico**: O software aplica técnicas de gamificação (módulos progressivos e pontuação) alinhadas a feedbacks explicativos detalhados para cada resposta (correta ou incorreta), estimulando a autonomia e o aprendizado significativo.
 
 ---
 
@@ -70,7 +70,7 @@ QuizModule (1) ──< QuizAttempt (N) >── User (1)
 - 🌐 **Internacionalização (I18n)**: Suporte completo aos idiomas Português (PT-BR) e Inglês (EN).
 - ⚡ **Interatividade sem Reload**: Utilização de Turbo Frames para navegação rápida e transição fluida entre questões.
 - 🌓 **Tema Adaptativo (Dark / Light Mode)**: Interface visual de alto contraste configurável pelo usuário.
-- 🏆 **Ranking Global e Histórico**: Sistema de classificação de alunos e estatísticas individuais para incentivar a aprendizagem.
+- 📈 **Histórico individual**: Acompanhamento de tentativas e progresso por módulo para incentivar a aprendizagem.
 - 🎓 **Feedbacks Pedagógicos Detalhados**: Explicação teórica imediata após a resposta de cada pergunta.
 
 ---
@@ -116,6 +116,13 @@ QUIZZ_RAILS_DATABASE_PASSWORD=uma-senha-segura
 ```
 
 Em produção, a aplicação exige HTTPS e permite apenas os hosts definidos em `APP_HOSTS` (ou em `APP_HOST`). A configuração Kamal ainda contém valores de exemplo para servidor e registry; substitua-os pelos dados da sua infraestrutura antes de executar um deploy.
+
+### Operação segura
+
+- Configure backup automático e externo do PostgreSQL antes do primeiro deploy; teste uma restauração em ambiente isolado.
+- Crie o primeiro administrador apenas por terminal autenticado do ambiente de produção: `TARGET_EMAIL=admin@exemplo.com TARGET_ROLE=admin bin/rails access:grant_role`.
+- Professores podem solicitar acesso pelo perfil. Administradores aprovam solicitações ou geram convites de uso único, válidos por sete dias.
+- Nunca exponha a tarefa de alteração de papel, o `RAILS_MASTER_KEY` ou senhas do banco por rotas públicas.
 
 ---
 

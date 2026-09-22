@@ -68,6 +68,16 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["question_index"]).to eq(0)
       expect(response.body).to include("Qual destes números é primo?")
     end
+
+    it "envia uma tentativa obsoleta para o resultado quando a próxima questão deixa de estar publicada" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      q2.update!(published: false)
+
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(result_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
   end
 
   describe "POST /:locale/quiz_modules/:slug/answer" do
@@ -152,6 +162,16 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["score"]).to eq(1)
     end
 
+    it "reinicia o fluxo quando a próxima questão deixa de estar disponível" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      q2.update!(published: false)
+
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
     it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do
       q1.feedbacks.destroy_all
 
@@ -164,6 +184,21 @@ RSpec.describe "Quizzes", type: :request do
   end
 
   describe "GET /:locale/quiz_modules/:slug/result" do
+    it "redirects a guest without a completed attempt back to the quiz" do
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
+    it "redirects a signed-in user without a completed attempt back to the quiz" do
+      user = create(:user, email: "result-user@example.com", password: "password123")
+      post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+      get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
+
     it "exibe o resultado e limpa a sessão do quiz para convidados" do
       # Inicializa e joga
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
@@ -193,11 +228,16 @@ RSpec.describe "Quizzes", type: :request do
         # Responde Q2 (finaliza o quiz)
         post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q2.id)
       }.to change(QuizAttempt, :count).by(1)
+        .and change(QuizResponse, :count).by(2)
 
       attempt = QuizAttempt.last
       expect(attempt.user).to eq(user)
       expect(attempt.quiz_module).to eq(quiz_module)
       expect(attempt.score).to eq(1)
+      expect(attempt.quiz_responses.order(:question_id).pluck(:question_id, :selected_index, :correct)).to contain_exactly(
+        [ q1.id, 1, true ],
+        [ q2.id, 1, false ]
+      )
 
       # Agora acessa o resultado
       get result_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")

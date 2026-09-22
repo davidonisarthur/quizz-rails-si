@@ -5,5 +5,6 @@ FactoryBot.define do
     sequence(:slug) { |n| "modulo-#{n}" }
     sequence(:position) { |n| n }
     unlocked { true }
+    published { true }
   end
 end

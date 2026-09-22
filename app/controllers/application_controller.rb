@@ -25,4 +25,22 @@ class ApplicationController < ActionController::Base
   def require_login
     redirect_to new_session_path(locale: I18n.locale) unless current_user
   end
+
+  def require_teacher
+    unless current_user
+      redirect_to new_session_path(locale: I18n.locale), alert: t("teacher.access_required")
+      return
+    end
+
+    head :forbidden unless current_user.teacher? || current_user.admin?
+  end
+
+  def require_admin
+    unless current_user
+      redirect_to new_session_path(locale: I18n.locale), alert: t("admin.access_required")
+      return
+    end
+
+    head :forbidden unless current_user.admin?
+  end
 end

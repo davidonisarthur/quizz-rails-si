@@ -1,41 +1,32 @@
-<div class="max-w-md mx-auto py-10 px-4">
-  <h2 class="text-3xl font-bold mb-6 text-center"><%= t('users.new.title') %></h2>
+<section class="mx-auto max-w-xl py-10 sm:py-16">
+  <p class="eyebrow mb-4"><%= t('brand.subtitle') %></p>
+  <h1 class="type-display text-5xl sm:text-6xl"><%= t('users.new.title') %></h1>
 
-  <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "space-y-4" do |f| %>
+  <%= form_with model: @user, url: users_path(locale: I18n.locale), class: "mt-8 space-y-6 rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" do |f| %>
+    <%= hidden_field_tag :teacher_invitation_token, @invitation_token %>
     <% if @user.errors.any? %>
-      <div class="bg-red/10 text-red border border-red/30 p-4 rounded-xl mb-4 text-sm font-medium">
-        <ul class="list-disc pl-5 space-y-1">
-          <% @user.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-        </ul>
+      <div class="border-l-4 border-red bg-red/10 px-5 py-4 text-sm font-medium text-red">
+        <ul class="list-disc space-y-1 pl-5"><% @user.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
       </div>
     <% end %>
-
     <div>
-      <%= f.label :name, t('users.new.name'), class: "block text-sm font-medium mb-1" %>
-      <%= f.text_field :name, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :name, t('users.new.name'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.text_field :name, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-
     <div>
-      <%= f.label :email, t('users.new.email'), class: "block text-sm font-medium mb-1" %>
-      <%= f.email_field :email, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :email, t('users.new.email'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.email_field :email, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-
     <div>
-      <%= f.label :password, t('users.new.password'), class: "block text-sm font-medium mb-1" %>
-      <%= f.password_field :password, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :password, t('users.new.password'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.password_field :password, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-
     <div>
-      <%= f.label :password_confirmation, t('users.new.password_confirmation'), class: "block text-sm font-medium mb-1" %>
-      <%= f.password_field :password_confirmation, required: true, class: "w-full p-2.5 rounded-lg border border-bg3 bg-bg2 text-tx0 focus:ring-2 focus:ring-accent focus:outline-none" %>
+      <%= f.label :password_confirmation, t('users.new.password_confirmation'), class: "mb-2 block text-xs font-extrabold tracking-[0.12em] uppercase" %>
+      <%= f.password_field :password_confirmation, required: true, class: "focus-ink w-full border border-bg3 bg-bg2 px-4 py-3 text-tx0" %>
     </div>
-
-    <%= f.submit t('users.new.submit'), class: "w-full bg-accent text-white py-2.5 rounded-lg font-bold hover:brightness-110 shadow transition cursor-pointer" %>
+    <%= f.submit t('users.new.submit'), class: "focus-ink w-full cursor-pointer rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" %>
   <% end %>
 
-  <p class="mt-4 text-center text-sm text-tx1">
-    <%= t('users.new.already_have_account') %> <%= link_to t('users.new.sign_in'), new_session_path(locale: I18n.locale), class: "text-accent hover:underline font-semibold" %>
-  </p>
-</div>
+  <p class="mt-6 text-sm text-tx1"><%= t('users.new.already_have_account') %> <%= link_to t('users.new.sign_in'), new_session_path(locale: I18n.locale), class: "focus-ink editorial-link ml-1 font-bold text-tx0" %></p>
+</section>

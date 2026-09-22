@@ -10,18 +10,27 @@ RSpec.describe "I18n Translations", type: :request do
       get root_path(locale: "pt-BR")
 
       expect(response.body).to include("Entrar")
-      expect(response.body).to include("Ranking")
+      expect(response.body).to include("Estudo")
       expect(response.body).to include("Sobre")
       expect(response.body).to include("Tema")
+      expect(response.body).to include("Pular para o conteúdo")
+      expect(response.body).to include('id="main-content"')
     end
 
     it "renderiza termos em inglês quando locale é en" do
       get root_path(locale: "en")
 
       expect(response.body).to include("Sign in")
-      expect(response.body).to include("Ranking")
+      expect(response.body).to include("Study")
       expect(response.body).to include("About")
       expect(response.body).to include("Theme")
+      expect(response.body).to include("Skip to content")
+    end
+
+    it "não expõe mais a rota pública de ranking" do
+      get "/pt-BR/ranking"
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it "renderiza botão de Sair em português e Sign out em inglês quando logado" do
@@ -84,37 +93,67 @@ RSpec.describe "I18n Translations", type: :request do
     end
   end
 
-  describe "Ranking" do
-    before do
-      post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
-    end
-
-    it "renderiza colunas da tabela traduzidas" do
-      get ranking_path(locale: "pt-BR")
-      expect(response.body).to include("Posição")
-      expect(response.body).to include("Nome")
-      expect(response.body).to include("Pontuação")
-
-      get ranking_path(locale: "en")
-      expect(response.body).to include("Position")
-      expect(response.body).to include("Name")
-      expect(response.body).to include("Score")
-    end
-  end
-
   describe "Perfil do Usuário" do
     before do
       post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
     end
 
-    it "renderiza cabeçalho e estado vazio traduzidos" do
+    it "renderiza progresso e estado inicial traduzidos" do
       get profile_path(locale: "pt-BR")
-      expect(response.body).to include("Minhas Tentativas")
-      expect(response.body).to include("Você ainda não completou nenhum quiz.")
+      expect(response.body).to include("Meu progresso")
+      expect(response.body).to include("Explorar conteúdos de estudo")
+      expect(response.body).not_to include("Módulos concluídos")
 
       get profile_path(locale: "en")
-      expect(response.body).to include("My Attempts")
-      expect(response.body).to include("You have not completed any quizzes yet.")
+      expect(response.body).to include("My progress")
+      expect(response.body).to include("Explore study topics")
+      expect(response.body).not_to include("Completed modules")
+    end
+
+    it "formata a data das tentativas nos dois idiomas" do
+      attempt = create(:quiz_attempt, user: user, quiz_module: quiz_module, created_at: Time.zone.local(2026, 1, 2, 15, 30))
+
+      get profile_path(locale: "pt-BR")
+      expect(response.body).to include(I18n.l(attempt.created_at, format: :short, locale: :"pt-BR"))
+
+      get profile_path(locale: "en")
+      expect(response.body).to include(I18n.l(attempt.created_at, format: :short, locale: :en))
+    end
+
+    it "mostra progresso, melhor resultado e módulos pendentes" do
+      completed_module = create(:quiz_module, position: 1, title_pt: "Módulo concluído", title_en: "Completed module")
+      pending_module = create(:quiz_module, position: 2, title_pt: "Próximo módulo", title_en: "Next module")
+      create(:question, quiz_module: completed_module, position: 1)
+      create(:question, quiz_module: pending_module, position: 1)
+      create(:quiz_attempt, user: user, quiz_module: completed_module, score: 1, created_at: 2.days.ago)
+      create(:quiz_attempt, user: user, quiz_module: completed_module, score: 0, created_at: 1.day.ago)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response.body).to include("1 de 3 módulos concluídos")
+      expect(response.body).to include("Próximo módulo")
+      expect(response.body).to include("Melhor resultado")
+      expect(response.body).to include("100%")
+      expect(response.body).to include("Última tentativa")
+    end
+
+    it "mostra o progresso dos conteúdos de estudo" do
+      StudyProgress.create!(user: user, study_slug: "turing-machine", started_at: Time.current, last_accessed_at: Time.current, completed_at: Time.current)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response.body).to include("Progresso nos estudos")
+      expect(response.body).to include("Máquina de Turing")
+      expect(response.body).to include("1 de 1 conteúdos concluídos")
+    end
+
+    it "does not show progress whose study content is no longer available" do
+      StudyProgress.create!(user: user, study_slug: "conteudo-removido", started_at: Time.current, last_accessed_at: Time.current)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("conteudo-removido")
     end
   end
 

@@ -1,48 +1,61 @@
-<div class="max-w-3xl mx-auto py-12 px-4">
-  <div class="mb-10 text-center">
-    <h1 class="text-4xl font-extrabold mb-4 tracking-tight">
-      <%= I18n.locale == :en ? "About PrimoQuiz" : "Sobre o PrimoQuiz" %>
-    </h1>
-    <p class="text-tx1 max-w-xl mx-auto text-base">
-      <%= I18n.locale == :en ? "An interactive and accessible project designed to teach Number Theory and Prime Numbers through sign language." : "Um projeto interativo e acessível projetado para o ensino de Teoria dos Números e Números Primos através de línguas de sinais." %>
-    </p>
+<% portuguese = I18n.locale == :"pt-BR" %>
+
+<section class="mx-auto max-w-5xl py-8 sm:py-14">
+  <header class="grid gap-8 border-b ink-rule pb-10 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
+    <div>
+      <p class="eyebrow mb-4"><%= portuguese ? "Pesquisa, educação e acessibilidade" : "Research, education and accessibility" %></p>
+      <h1 class="type-display max-w-3xl text-4xl leading-[1.02] sm:text-6xl"><%= portuguese ? "Sobre o PrimoQuiz" : "About PrimoQuiz" %></h1>
+      <p class="mt-6 max-w-2xl text-base leading-8 text-tx1 sm:text-lg">
+        <%= portuguese ? "Uma plataforma de aprendizagem interativa para aproximar estudantes de matemática, computação e seus usos no cotidiano." : "An interactive learning platform that brings students closer to mathematics, computing, and their everyday applications." %>
+      </p>
+    </div>
+
+    <aside class="rounded-xl border ink-rule bg-bg1 p-5 sm:p-6" aria-label="<%= portuguese ? "Vínculo institucional" : "Institutional affiliation" %>">
+      <div class="rounded-lg bg-white p-4">
+        <%= image_tag "utfpr-logo.png",
+                      alt: "Universidade Tecnológica Federal do Paraná",
+                      class: "h-auto w-full max-w-[16rem]",
+                      loading: "lazy" %>
+      </div>
+      <p class="mt-4 text-xs font-bold leading-5 text-tx1">
+        <%= portuguese ? "Universidade Tecnológica Federal do Paraná" : "Federal University of Technology – Paraná" %>
+      </p>
+    </aside>
+  </header>
+
+  <div class="mt-10 grid gap-5 lg:grid-cols-3">
+    <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-7 lg:col-span-2">
+      <p class="eyebrow"><%= portuguese ? "Origem do projeto" : "Project origin" %></p>
+      <h2 class="type-display mt-3 text-2xl sm:text-3xl"><%= portuguese ? "Uma pesquisa que vira aprendizagem" : "Research turned into learning" %></h2>
+      <div class="mt-5 max-w-2xl space-y-4 text-sm leading-7 text-tx1">
+        <p><%= portuguese ? "O PrimoQuiz foi desenvolvido no contexto de um projeto de Iniciação Científica da Universidade Tecnológica Federal do Paraná (UTFPR). A iniciativa investiga como recursos digitais podem tornar o aprendizado de conceitos de matemática e computação mais próximo, visual e significativo." : "PrimoQuiz was developed as part of an Undergraduate Scientific Initiation project at the Federal University of Technology – Paraná (UTFPR). It investigates how digital resources can make mathematics and computing concepts more approachable, visual, and meaningful." %></p>
+        <p><%= portuguese ? "O projeto é realizado sob orientação da Professora Dra. Renata da Silva Dessbesel, unindo pesquisa acadêmica, desenvolvimento de software e práticas de inclusão." : "The project is conducted under the supervision of Professor Dr. Renata da Silva Dessbesel, bringing together academic research, software development, and inclusive practices." %></p>
+      </div>
+    </section>
+
+    <section class="rounded-xl border border-accent/40 bg-accent/10 p-6 sm:p-7">
+      <p class="eyebrow"><%= portuguese ? "Propósito" : "Purpose" %></p>
+      <p class="type-display mt-3 text-2xl leading-tight text-tx0"><%= portuguese ? "Aprender conceitos. Resolver problemas. Participar." : "Learn concepts. Solve problems. Participate." %></p>
+      <p class="mt-5 text-sm leading-7 text-tx1"><%= portuguese ? "Conteúdos de estudo, atividades e acompanhamento de progresso em uma experiência pensada para a sala de aula." : "Study content, activities, and progress tracking in an experience designed for the classroom." %></p>
+    </section>
   </div>
 
-  <div class="space-y-8">
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "Project Origin" : "Origem do Projeto" %>
-      </h2>
-      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
-        <%= I18n.locale == :en ? "PrimoQuiz is a Scientific Initiation project developed to explore how technology can facilitate the teaching of Mathematics. Our primary focus is deaf students in high school." : "O PrimoQuiz é um projeto de Iniciação Científica desenvolvido para explorar como a tecnologia pode facilitar o ensino de Matemática. Nosso foco primordial são os alunos surdos no ensino médio." %>
-      </p>
-      <p class="text-tx0 leading-relaxed text-sm font-medium">
-        <%= I18n.locale == :en ? "By connecting fascinating topics like prime numbers, cryptography, bank security, and WhatsApp protocols, we aim to engage students and show that mathematics is present in their daily lives." : "Conectando temas fascinantes como números primos, criptografia, segurança bancária e protocolos do WhatsApp, buscamos engajar os estudantes e mostrar que a matemática está presente no seu dia a dia." %>
-      </p>
+  <div class="mt-5 grid gap-5 md:grid-cols-2">
+    <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-7">
+      <p class="eyebrow"><%= portuguese ? "Acessibilidade" : "Accessibility" %></p>
+      <h2 class="type-display mt-3 text-2xl"><%= portuguese ? "LIBRAS como parte da experiência" : "LIBRAS as part of the experience" %></h2>
+      <p class="mt-4 text-sm leading-7 text-tx1"><%= portuguese ? "O Modo LIBRAS reduz textos extensos, prioriza mensagens diretas e integra o VLibras. Navegação por teclado, contraste adequado e interface responsiva ampliam o acesso ao conteúdo." : "LIBRAS Mode reduces lengthy text, prioritizes direct messages, and integrates VLibras. Keyboard navigation, appropriate contrast, and a responsive interface broaden access to the content." %></p>
     </section>
 
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "LIBRAS & Accessibility" : "LIBRAS e Acessibilidade" %>
-      </h2>
-      <p class="text-tx0 leading-relaxed mb-4 text-sm font-medium">
-        <%= I18n.locale == :en ? "Mathematics instruction often faces communication barriers. LIBRAS Mode offers a VLibras avatar translation for the written content and supports reviewed Brazilian Sign Language videos when they are registered for a question." : "O ensino de matemática muitas vezes enfrenta barreiras de comunicação. O Modo LIBRAS oferece tradução do conteúdo escrito com o avatar VLibras e suporta vídeos revisados em Língua Brasileira de Sinais quando eles são cadastrados para uma questão." %>
-      </p>
-      <p class="text-tx0 leading-relaxed text-sm font-medium">
-        <%= I18n.locale == :en ? "This supports bilingual literacy (Portuguese and LIBRAS) with responsive modals, keyboard interaction, ARIA labels, and clean visual layouts." : "Isso apoia a alfabetização bilíngue (Português e LIBRAS) com modais responsivos, interação por teclado, tags ARIA e um design limpo." %>
-      </p>
-    </section>
-
-    <section class="p-6 bg-bg2 rounded-xl border border-bg3 shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-accent">
-        <%= I18n.locale == :en ? "Technology Stack" : "Tecnologia Utilizada" %>
-      </h2>
-      <ul class="list-disc pl-5 space-y-2 text-tx0 text-sm font-medium">
-        <li><strong>Ruby on Rails:</strong> <%= I18n.locale == :en ? "Reliable and robust backend." : "Backend robusto e confiável." %></li>
-        <li><strong>Hotwire (Turbo & Stimulus):</strong> <%= I18n.locale == :en ? "Responsive, single-page application feel without complex JS frameworks." : "Sensação de aplicação de página única altamente interativa sem frameworks JS complexos." %></li>
-        <li><strong>Tailwind CSS:</strong> <%= I18n.locale == :en ? "Clean dark-first design system inspired by Notion." : "Design system dark-first moderno e limpo, inspirado no Notion." %></li>
-        <li><strong>PostgreSQL:</strong> <%= I18n.locale == :en ? "Reliable database structure for storing modules, questions, and attempts." : "Estrutura estável para salvar os módulos, questões e progresso dos alunos." %></li>
+    <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-7">
+      <p class="eyebrow"><%= portuguese ? "Tecnologia" : "Technology" %></p>
+      <h2 class="type-display mt-3 text-2xl"><%= portuguese ? "Feito para evoluir com a turma" : "Built to evolve with the class" %></h2>
+      <ul class="mt-4 grid gap-2 text-sm leading-7 text-tx1 sm:grid-cols-2">
+        <li><strong class="text-tx0">Ruby on Rails</strong> · <%= portuguese ? "dados e regras" : "data and rules" %></li>
+        <li><strong class="text-tx0">Hotwire</strong> · <%= portuguese ? "interações" : "interactions" %></li>
+        <li><strong class="text-tx0">Tailwind CSS</strong> · <%= portuguese ? "interface responsiva" : "responsive interface" %></li>
+        <li><strong class="text-tx0">PostgreSQL</strong> · <%= portuguese ? "progresso e conteúdo" : "progress and content" %></li>
       </ul>
     </section>
   </div>
-</div>
+</section>

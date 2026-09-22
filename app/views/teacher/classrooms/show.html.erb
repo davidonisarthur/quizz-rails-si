@@ -1,0 +1,32 @@
+<section class="mx-auto max-w-4xl py-10 sm:py-16">
+  <%= link_to t("teacher.back"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+
+  <header class="mt-5 flex flex-wrap items-end justify-between gap-5 border-b ink-rule pb-6">
+    <div>
+      <p class="eyebrow"><%= t("classrooms.title") %></p>
+      <h1 class="type-display mt-3 text-4xl"><%= @classroom.name %></h1>
+    </div>
+    <%= button_to t("classrooms.delete"), teacher_classroom_path(@classroom, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 rounded-md border border-red/50 px-4 text-xs font-extrabold tracking-[0.08em] text-red uppercase transition-colors hover:bg-red hover:text-bg2", form: { data: { turbo_confirm: t("classrooms.confirm_delete") } } %>
+  </header>
+
+  <section class="mt-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6" aria-labelledby="add-student-title">
+    <h2 id="add-student-title" class="type-display text-2xl"><%= t("classrooms.add_student") %></h2>
+    <%= form_with url: teacher_classroom_classroom_enrollments_path(@classroom, locale: I18n.locale), class: "mt-4 flex flex-col gap-3 sm:flex-row" do |f| %>
+      <%= f.label :email, t("classrooms.student_email"), class: "sr-only" %>
+      <%= f.email_field :email, placeholder: t("classrooms.student_email"), class: "focus-ink min-h-11 w-full flex-1 rounded-md border border-bg3 px-3 py-2" %>
+      <%= f.submit t("classrooms.add_student"), class: "focus-ink min-h-11 w-full cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase sm:w-auto" %>
+    <% end %>
+  </section>
+
+  <section class="mt-8" aria-labelledby="enrolled-students-title">
+    <h2 id="enrolled-students-title" class="type-display text-2xl"><%= t("classrooms.students") %></h2>
+    <div class="mt-4 space-y-3">
+      <% @classroom.classroom_enrollments.includes(:user).each do |enrollment| %>
+        <article class="flex flex-wrap items-center justify-between gap-3 rounded-xl border ink-rule bg-bg2 p-4">
+          <span class="min-w-0 break-all"><%= enrollment.user.name %> · <%= enrollment.user.email %></span>
+          <%= button_to t("teacher.delete"), teacher_classroom_classroom_enrollment_path(@classroom, enrollment, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 cursor-pointer px-2 text-red" %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+</section>

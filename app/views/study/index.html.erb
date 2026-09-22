@@ -1,0 +1,33 @@
+<section class="mx-auto max-w-5xl py-10 sm:py-16">
+  <div class="max-w-3xl">
+    <p class="eyebrow"><%= t("study.eyebrow") %></p>
+    <h1 class="type-display mt-4 text-4xl leading-tight sm:text-6xl"><%= t("study.catalog_title") %></h1>
+    <p class="mt-6 text-base leading-8 text-tx1 sm:text-lg"><%= t("study.catalog_description") %></p>
+  </div>
+
+  <div class="mt-10 grid gap-5 md:grid-cols-2">
+    <% @topics.each_with_index do |(slug, topic), index| %>
+      <article class="flex min-h-72 flex-col rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+        <p class="eyebrow text-accent"><%= format("%02d", index + 1) %> · <%= t("study.catalog.available") %></p>
+        <h2 class="type-display mt-5 text-3xl"><%= t("study.catalog.#{topic}.title") %></h2>
+        <p class="mt-4 text-sm leading-7 text-tx1"><%= t("study.catalog.#{topic}.description") %></p>
+        <% if (progress = @study_progresses[slug]) %><p class="mt-4 text-sm font-bold <%= progress.completed? ? "text-green" : "text-accent" %>"><%= progress.completed? ? t("study.progress.completed") : t("study.progress.in_progress") %></p><% end %>
+        <%= link_to study_topic_path(slug, locale: I18n.locale), class: "focus-ink editorial-link mt-auto pt-8 text-sm font-bold" do %>
+          <%= progress ? t("study.progress.continue") : t("study.catalog.start") %><span class="ml-2" aria-hidden="true">→</span>
+        <% end %>
+      </article>
+    <% end %>
+
+    <% @study_modules.each_with_index do |study_module, index| %>
+      <article class="flex min-h-72 flex-col rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
+        <p class="eyebrow text-accent"><%= format("%02d", @topics.size + index + 1) %> · <%= t("study.catalog.available") %></p>
+        <h2 class="type-display mt-5 text-3xl"><%= study_module.title %></h2>
+        <p class="mt-4 text-sm leading-7 text-tx1"><%= study_module.summary %></p>
+        <% if (progress = @study_progresses[study_module.slug]) %><p class="mt-4 text-sm font-bold <%= progress.completed? ? "text-green" : "text-accent" %>"><%= progress.completed? ? t("study.progress.completed") : t("study.progress.in_progress") %></p><% end %>
+        <%= link_to study_topic_path(study_module.slug, locale: I18n.locale), class: "focus-ink editorial-link mt-auto pt-8 text-sm font-bold" do %>
+          <%= progress ? t("study.progress.continue") : t("study.catalog.start") %><span class="ml-2" aria-hidden="true">→</span>
+        <% end %>
+      </article>
+    <% end %>
+  </div>
+</section>
