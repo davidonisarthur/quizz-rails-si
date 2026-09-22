@@ -101,11 +101,13 @@ RSpec.describe "I18n Translations", type: :request do
     it "renderiza progresso e estado inicial traduzidos" do
       get profile_path(locale: "pt-BR")
       expect(response.body).to include("Meu progresso")
-      expect(response.body).to include("Conclua seu primeiro módulo para acompanhar seus resultados aqui.")
+      expect(response.body).to include("Explorar conteúdos de estudo")
+      expect(response.body).not_to include("Módulos concluídos")
 
       get profile_path(locale: "en")
       expect(response.body).to include("My progress")
-      expect(response.body).to include("Complete your first module to track your results here.")
+      expect(response.body).to include("Explore study topics")
+      expect(response.body).not_to include("Completed modules")
     end
 
     it "formata a data das tentativas nos dois idiomas" do
@@ -143,6 +145,15 @@ RSpec.describe "I18n Translations", type: :request do
       expect(response.body).to include("Progresso nos estudos")
       expect(response.body).to include("Máquina de Turing")
       expect(response.body).to include("1 de 1 conteúdos concluídos")
+    end
+
+    it "does not show progress whose study content is no longer available" do
+      StudyProgress.create!(user: user, study_slug: "conteudo-removido", started_at: Time.current, last_accessed_at: Time.current)
+
+      get profile_path(locale: "pt-BR")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include("conteudo-removido")
     end
   end
 

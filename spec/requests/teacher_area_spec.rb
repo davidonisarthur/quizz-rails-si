@@ -21,15 +21,23 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
-  it "shows the teacher navigation only to teachers" do
+  it "keeps the student profile for students and sends teachers to their dashboard" do
     sign_in(student)
     get root_path(locale: "pt-BR")
-    expect(response.body).not_to include("Área do professor")
+    expect(response.body).to include("Perfil")
+    expect(response.body).not_to include("Meu painel")
 
     delete session_path(locale: "pt-BR")
     sign_in(teacher)
     get root_path(locale: "pt-BR")
-    expect(response.body).to include("Área do professor")
+    expect(response).to redirect_to(teacher_root_path(locale: "pt-BR"))
+
+    follow_redirect!
+    expect(response.body).to include("Meu painel")
+    expect(response.body).not_to include('href="/pt-BR/profile"')
+
+    get profile_path(locale: "pt-BR")
+    expect(response).to redirect_to(teacher_root_path(locale: "pt-BR"))
   end
 
   it "renders the teacher dashboard and the module index" do
@@ -43,6 +51,40 @@ RSpec.describe "Teacher area", type: :request do
     get teacher_quiz_modules_path(locale: "pt-BR")
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(module_record.title_pt)
+  end
+
+  it "summarizes authored content, classes, and enrolled students on the teacher dashboard" do
+    teacher.classrooms.create!(name: "Turma do painel").classroom_enrollments.create!(user: student)
+    create(:quiz_module, created_by: teacher, published: false)
+    create(:study_module, created_by: teacher, published: true)
+    sign_in(teacher)
+
+    get teacher_root_path(locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Turmas")
+    expect(response.body).to include("Alunos")
+    expect(response.body).to include("Conteúdos publicados")
+    expect(response.body).to include("Rascunhos")
+  end
+
+  it "prevents teachers from recording quiz attempts through learner routes" do
+    module_record = create(:quiz_module, created_by: teacher)
+    create(:question, quiz_module: module_record)
+    sign_in(teacher)
+
+    get play_quiz_module_path(module_record.slug, locale: "pt-BR")
+    expect(response).to redirect_to(teacher_root_path(locale: "pt-BR"))
+
+    expect {
+      post answer_quiz_module_path(module_record.slug, locale: "pt-BR", question_id: 1, option_index: 0)
+    }.not_to change(QuizAttempt, :count)
+
+    expect(response).to redirect_to(teacher_root_path(locale: "pt-BR"))
+    expect(flash[:alert]).to eq("Professores revisam quizzes pela pré-visualização no painel do professor.")
+
+    get quiz_modules_path(locale: "pt-BR")
+    expect(response).to redirect_to(teacher_root_path(locale: "pt-BR"))
   end
 
   it "renders module forms, updates a draft, and deletes the module" do
@@ -68,6 +110,22 @@ RSpec.describe "Teacher area", type: :request do
     expect {
       delete teacher_quiz_module_path(module_record, locale: "pt-BR")
     }.to change(QuizModule, :count).by(-1)
+  end
+
+  it "keeps a quiz and reports an error when its deletion is blocked" do
+    module_record = create(:quiz_module, created_by: teacher, published: false)
+    sign_in(teacher)
+    allow_any_instance_of(QuizModule).to receive(:destroy) do |record|
+      record.errors.add(:base, "O quiz não pode ser excluído agora")
+      false
+    end
+
+    expect {
+      delete teacher_quiz_module_path(module_record, locale: "pt-BR")
+    }.not_to change(QuizModule, :count)
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("O quiz não pode ser excluído agora")
   end
 
   it "rejects invalid module updates and publishing without a published question" do

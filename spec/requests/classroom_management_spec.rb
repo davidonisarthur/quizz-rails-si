@@ -49,6 +49,22 @@ RSpec.describe "Classroom management", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "keeps the classroom and reports an error when its deletion is blocked" do
+    classroom = teacher.classrooms.create!(name: "Turma protegida contra exclusão")
+    sign_in(teacher)
+    allow_any_instance_of(Classroom).to receive(:destroy) do |record|
+      record.errors.add(:base, "A turma não pode ser excluída agora")
+      false
+    end
+
+    expect {
+      delete teacher_classroom_path(classroom, locale: "pt-BR")
+    }.not_to change(Classroom, :count)
+
+    expect(response).to redirect_to(teacher_classroom_path(classroom, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("A turma não pode ser excluída agora")
+  end
+
   it "enrolls a student by normalized email, prevents duplicates, and removes the enrollment" do
     classroom = teacher.classrooms.create!(name: "Turma de matrículas")
     sign_in(teacher)

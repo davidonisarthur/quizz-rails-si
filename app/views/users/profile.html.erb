@@ -1,91 +1,98 @@
-<section class="mx-auto max-w-4xl py-10 sm:py-16">
-  <header class="border-b ink-rule pb-8">
-    <p class="eyebrow"><%= current_user.email %></p>
-    <h1 class="type-display mt-3 text-4xl sm:text-5xl"><%= current_user.name %></h1>
-    <div class="mt-8 max-w-xl">
-      <div class="flex items-center justify-between gap-4">
-        <p class="text-sm font-bold"><%= t('profile.progress') %></p>
-        <p class="text-sm text-tx2"><%= t('profile.completion', completed: @completed_modules.count, total: @modules.count) %></p>
-      </div>
-      <div class="mt-3 h-2 bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500" style="width: <%= @completion_percentage %>%"></div></div>
+<section class="mx-auto max-w-5xl py-8 sm:py-12">
+  <header class="grid gap-5 border-b ink-rule pb-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
+    <div>
+      <p class="eyebrow"><%= current_user.email %></p>
+      <h1 class="type-display mt-3 text-4xl sm:text-5xl"><%= current_user.name %></h1>
     </div>
-    <% if current_user.student? %>
-      <div class="mt-6"><% if @teacher_access_request %><p class="text-sm text-tx2"><%= t("teacher_requests.already_pending") %></p><% else %><%= button_to t("teacher_requests.title"), teacher_access_requests_path(locale: I18n.locale), class: "focus-ink editorial-link text-sm font-bold" %><% end %></div>
-    <% end %>
+
+    <section class="rounded-xl border ink-rule bg-bg2 p-5" aria-label="<%= t('profile.progress') %>">
+      <div class="flex items-end justify-between gap-4">
+        <p class="eyebrow"><%= t('profile.progress') %></p>
+        <p class="type-display text-3xl text-accent"><%= @completion_percentage %>%</p>
+      </div>
+      <p class="mt-2 text-sm text-tx1"><%= t('profile.completion', completed: @completed_modules.count, total: @modules.count) %></p>
+      <div class="mt-4 h-2 overflow-hidden rounded-full bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500" style="width: <%= @completion_percentage %>%"></div></div>
+    </section>
   </header>
 
-  <section class="mt-10">
-    <h2 class="type-display text-3xl"><%= t('profile.to_continue') %></h2>
+  <% if current_user.student? %>
+    <aside class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-bg3 bg-bg2 px-5 py-4" aria-label="<%= t('profile.teacher_access') %>">
+      <div>
+        <p class="eyebrow"><%= t('profile.teacher_access') %></p>
+        <p class="mt-1 text-sm text-tx1"><%= @teacher_access_request ? t('teacher_requests.already_pending') : t('profile.teacher_access_description') %></p>
+      </div>
+      <% unless @teacher_access_request %>
+        <%= button_to t('teacher_requests.title'), teacher_access_requests_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 px-1 text-sm font-bold" %>
+      <% end %>
+    </aside>
+  <% end %>
+
+  <section class="mt-10" aria-labelledby="next-step-title">
+    <div>
+      <p class="eyebrow"><%= t('profile.learning_path') %></p>
+      <h2 id="next-step-title" class="type-display mt-2 text-3xl"><%= t('profile.to_continue') %></h2>
+    </div>
+
     <% if @next_module %>
       <% quiz_module = @next_module[:quiz_module] %>
-      <article class="mt-5 flex flex-wrap items-center justify-between gap-5 border-y ink-rule py-6">
-        <div class="max-w-2xl">
-          <p class="eyebrow"><%= t('profile.available') %></p>
-          <h3 class="mt-2 text-xl font-bold"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></h3>
-          <p class="mt-2 text-sm text-tx2"><%= quiz_module.questions.published.count %> <%= t('teacher.questions') %></p>
+      <article class="mt-5 grid gap-5 rounded-xl border ink-rule bg-bg2 p-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:p-6">
+        <span class="module-index" aria-hidden="true"><%= format('%02d', quiz_module.position) %></span>
+        <div>
+          <p class="eyebrow text-accent"><%= t('profile.available') %></p>
+          <h3 class="type-display mt-2 text-2xl"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></h3>
+          <p class="mt-2 text-sm text-tx1"><%= quiz_module.questions.published.count %> <%= t('teacher.questions') %></p>
         </div>
-        <%= link_to t('profile.start_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" %>
+        <%= link_to t('profile.start_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" %>
       </article>
     <% else %>
-      <p class="mt-5 border-y ink-rule py-6 text-tx1"><%= @pending_modules.any? ? t('profile.no_available_module') : t('profile.no_pending_modules') %></p>
+      <div class="mt-5 rounded-xl border ink-rule bg-bg2 p-6 text-sm leading-7 text-tx1"><%= @pending_modules.any? ? t('profile.no_available_module') : t('profile.no_pending_modules') %></div>
     <% end %>
 
     <% if @other_pending_modules.any? %>
-      <details class="group border-b ink-rule">
-        <summary class="focus-ink flex cursor-pointer list-none items-center justify-between py-5 text-sm font-bold text-tx1 hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('profile.show_pending_modules', count: @other_pending_modules.count) %><span class="group-open:text-accent" aria-hidden="true">+</span></summary>
-        <div class="pb-5">
+      <details class="group mt-4 rounded-xl border ink-rule bg-bg2 px-5">
+        <summary class="focus-ink flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-tx1 hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('profile.other_modules') %><span class="text-xl group-open:text-accent" aria-hidden="true">+</span></summary>
+        <div class="border-t ink-rule py-2">
           <% @other_pending_modules.each do |progress| %>
             <% quiz_module = progress[:quiz_module] %>
-            <div class="flex items-center justify-between gap-4 py-3 text-sm"><span><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></span><span class="text-tx2"><%= progress[:available] ? t('profile.available') : t('profile.locked') %></span></div>
+            <div class="flex items-center justify-between gap-4 py-3 text-sm"><span class="font-semibold"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></span><span class="text-tx2"><%= progress[:available] ? t('profile.available') : t('profile.locked') %></span></div>
           <% end %>
         </div>
       </details>
     <% end %>
   </section>
 
-  <section class="mt-12">
-    <h2 class="type-display text-3xl"><%= t('profile.completed_modules') %></h2>
-    <% if @completed_modules.any? %>
-      <div class="mt-5">
+  <% if @completed_modules.any? %>
+    <section class="mt-12" aria-labelledby="completed-modules-title">
+      <div class="flex items-end justify-between gap-4"><div><p class="eyebrow"><%= t('profile.history') %></p><h2 id="completed-modules-title" class="type-display mt-2 text-3xl"><%= t('profile.completed_modules') %></h2></div><p class="text-sm text-tx2"><%= t('profile.completion', completed: @completed_modules.count, total: @modules.count) %></p></div>
+      <div class="mt-5 overflow-hidden rounded-xl border ink-rule bg-bg2">
         <% @completed_modules.each do |progress| %>
           <% quiz_module = progress[:quiz_module] %>
           <% best_attempt = progress[:best_attempt] %>
-          <article class="grid gap-4 border-b ink-rule py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-            <div>
-              <h3 class="font-bold"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></h3>
-              <p class="mt-1 text-sm text-tx2"><%= t('profile.last_attempt') %>: <%= l(progress[:last_attempt].created_at, format: :short) %></p>
-            </div>
-            <div class="sm:text-right">
-              <p class="eyebrow"><%= t('profile.best_score') %></p>
-              <p class="mt-1 text-lg font-bold text-accent"><%= t('profile.score_of', score: best_attempt.score, total: progress[:question_count]) %> <span class="text-sm text-tx2">· <%= progress[:best_percentage] %>%</span></p>
-            </div>
+          <article class="grid gap-4 border-b ink-rule p-5 last:border-b-0 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:p-6">
+            <div><h3 class="font-bold"><%= I18n.locale == :en ? quiz_module.title_en : quiz_module.title_pt %></h3><p class="mt-1 text-sm text-tx2"><%= t('profile.last_attempt') %>: <%= l(progress[:last_attempt].created_at, format: :short) %></p></div>
+            <div class="sm:text-right"><p class="eyebrow"><%= t('profile.best_score') %></p><p class="mt-1 text-lg font-bold text-accent"><%= t('profile.score_of', score: best_attempt.score, total: progress[:question_count]) %> <span class="text-sm text-tx2">· <%= progress[:best_percentage] %>%</span></p></div>
             <%= link_to t('profile.retry_module'), play_quiz_module_path(quiz_module.slug, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold sm:justify-self-end" %>
           </article>
         <% end %>
       </div>
-    <% else %>
-      <p class="mt-5 border-b ink-rule py-6 text-tx1"><%= t('profile.no_completed_modules') %></p>
-    <% end %>
-  </section>
+    </section>
+  <% end %>
 
   <% if @attempts.any? %>
-    <section class="mt-12">
-      <details class="group border-y ink-rule">
-        <summary class="focus-ink flex cursor-pointer list-none items-center justify-between py-5 text-sm font-bold text-tx1 hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('profile.attempts_history', count: @attempts.count) %><span class="group-open:text-accent" aria-hidden="true">+</span></summary>
-        <div class="pb-5">
-          <% @attempts.each do |attempt| %>
-            <article class="grid grid-cols-[1fr_auto] gap-4 border-t ink-rule py-4">
-              <div><h3 class="font-bold"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h3><p class="mt-1 text-xs text-tx2"><%= l attempt.created_at, format: :short %></p></div>
-              <p class="text-lg font-bold text-accent"><%= attempt.score %></p>
-            </article>
-          <% end %>
-        </div>
+    <section class="mt-6">
+      <details class="group rounded-xl border ink-rule bg-bg2 px-5">
+        <summary class="focus-ink flex min-h-14 cursor-pointer list-none items-center justify-between text-sm font-bold text-tx1 hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('profile.attempts_history', count: @attempts.count) %><span class="text-xl group-open:text-accent" aria-hidden="true">+</span></summary>
+        <div class="border-t ink-rule py-2"><% @attempts.each do |attempt| %><article class="grid grid-cols-[1fr_auto] gap-4 border-b ink-rule py-4 last:border-b-0"><div><h3 class="font-bold"><%= I18n.locale == :en ? attempt.quiz_module.title_en : attempt.quiz_module.title_pt %></h3><p class="mt-1 text-xs text-tx2"><%= l attempt.created_at, format: :short %></p></div><p class="text-lg font-bold text-accent"><%= attempt.score %></p></article><% end %></div>
       </details>
     </section>
   <% end %>
 
-  <section class="mt-12">
-    <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow"><%= t("study.eyebrow") %></p><h2 class="type-display mt-2 text-3xl"><%= t("profile.study_progress") %></h2></div><p class="text-sm text-tx2"><%= t("profile.study_completion", completed: @completed_studies_count, total: @study_progress_items.count) %></p></div>
-    <% if @study_progress_items.any? %><div class="mt-5 space-y-3"><% @study_progress_items.each do |item| %><article class="flex flex-wrap items-center justify-between gap-3 border-b ink-rule py-4"><div><h3 class="font-bold"><%= item[:title] %></h3><p class="mt-1 text-sm <%= item[:progress].completed? ? "text-green" : "text-accent" %>"><%= item[:progress].completed? ? t("study.progress.completed") : t("study.progress.in_progress") %></p></div><%= link_to t("study.progress.continue"), study_topic_path(item[:progress].study_slug, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %></article><% end %></div><% else %><p class="mt-5 border-b ink-rule py-6 text-tx1"><%= t("profile.no_study_progress") %></p><% end %>
+  <section class="mt-12 border-t ink-rule pt-8" aria-labelledby="study-progress-title">
+    <% if @study_progress_items.any? %>
+      <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="eyebrow"><%= t('study.eyebrow') %></p><h2 id="study-progress-title" class="type-display mt-2 text-3xl"><%= t('profile.study_progress') %></h2></div><p class="text-sm text-tx2"><%= t('profile.study_completion', completed: @completed_studies_count, total: @study_progress_items.count) %></p></div>
+      <div class="mt-5 overflow-hidden rounded-xl border ink-rule bg-bg2"><% @study_progress_items.each do |item| %><article class="flex flex-wrap items-center justify-between gap-3 border-b ink-rule p-5 last:border-b-0"><div><h3 class="font-bold"><%= item[:title] %></h3><p class="mt-1 text-sm <%= item[:progress].completed? ? 'text-green' : 'text-accent' %>"><%= item[:progress].completed? ? t('study.progress.completed') : t('study.progress.in_progress') %></p></div><%= link_to t('study.progress.continue'), study_topic_path(item[:progress].study_slug, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %></article><% end %></div>
+    <% else %>
+      <div class="rounded-xl border ink-rule bg-bg2 p-6 sm:flex sm:items-center sm:justify-between sm:gap-6"><div><p class="eyebrow"><%= t('study.eyebrow') %></p><h2 id="study-progress-title" class="type-display mt-2 text-2xl"><%= t('profile.study_cta_title') %></h2><p class="mt-2 max-w-2xl text-sm leading-7 text-tx1"><%= t('profile.study_cta_description') %></p></div><%= link_to t('profile.explore_study'), study_path(locale: I18n.locale), class: "focus-ink editorial-link mt-4 inline-flex min-h-11 items-center py-3 text-sm font-bold sm:mt-0" %></div>
+    <% end %>
   </section>
 </section>

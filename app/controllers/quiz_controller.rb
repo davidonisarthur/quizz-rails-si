@@ -111,6 +111,10 @@ class QuizController < ApplicationController
   end
 
   def ensure_module_playable
+    if current_user&.teacher?
+      redirect_to teacher_root_path(locale: I18n.locale), alert: t("quiz.teacher_play_disabled") and return
+    end
+
     if @module.questions.published.none?
       redirect_to root_path(locale: I18n.locale), alert: t("quiz.no_questions") and return
     end

@@ -68,6 +68,16 @@ RSpec.describe "Quizzes", type: :request do
       expect(session[:quiz]["question_index"]).to eq(0)
       expect(response.body).to include("Qual destes números é primo?")
     end
+
+    it "envia uma tentativa obsoleta para o resultado quando a próxima questão deixa de estar publicada" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      q2.update!(published: false)
+
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+
+      expect(response).to redirect_to(result_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
+    end
   end
 
   describe "POST /:locale/quiz_modules/:slug/answer" do
@@ -150,6 +160,16 @@ RSpec.describe "Quizzes", type: :request do
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
       expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR", question_index: 1))
       expect(session[:quiz]["score"]).to eq(1)
+    end
+
+    it "reinicia o fluxo quando a próxima questão deixa de estar disponível" do
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+      q2.update!(published: false)
+
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q2.id)
+
+      expect(response).to redirect_to(play_quiz_module_path(quiz_module.slug, locale: "pt-BR"))
     end
 
     it "usa o feedback fallback se nenhum feedback correspondente estiver no banco de dados" do

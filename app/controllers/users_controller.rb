@@ -14,18 +14,20 @@ class UsersController < ApplicationController
       @invitation_token = params[:teacher_invitation_token]
       return render :new, status: :unprocessable_entity
     end
-    if User.transaction { @user.save!; invitation&.update!(accepted_at: Time.current, accepted_by: @user) }
-      session[:user_id] = @user.id
-      redirect_to root_path(locale: I18n.locale)
-    else
-      render :new, status: :unprocessable_entity
+    User.transaction do
+      @user.save!
+      invitation&.update!(accepted_at: Time.current, accepted_by: @user)
     end
+    session[:user_id] = @user.id
+    redirect_to root_path(locale: I18n.locale)
   rescue ActiveRecord::RecordInvalid
     @invitation_token = params[:teacher_invitation_token]
     render :new, status: :unprocessable_entity
   end
 
   def profile
+    return redirect_to teacher_root_path(locale: I18n.locale) if current_user.teacher?
+
     @attempts = current_user.quiz_attempts.includes(:quiz_module).order(created_at: :desc)
     @teacher_access_request = current_user.teacher_access_requests.pending.first
     @modules = QuizModule.published.visible_to(current_user).includes(:questions).order(:position).to_a

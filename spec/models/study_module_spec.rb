@@ -27,6 +27,13 @@ RSpec.describe StudyModule, type: :model do
     expect(study_module).to be_valid
   end
 
+  it "rejects malformed video links without raising a URI error" do
+    study_module.video_url = "https://[invalid-url"
+
+    expect(study_module).to be_invalid
+    expect(study_module.errors[:video_url]).to be_present
+  end
+
   it "selects the content for the current locale" do
     I18n.with_locale(:en) do
       expect(study_module.title).to eq(study_module.title_en)

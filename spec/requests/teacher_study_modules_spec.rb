@@ -74,12 +74,28 @@ RSpec.describe "Teacher study modules", type: :request do
     study_module = create(:study_module, created_by: teacher, audience: "classroom_audience")
     sign_in(teacher)
 
+    get teacher_study_modules_path(locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(study_module.title_pt)
+
     expect {
       post teacher_study_module_study_module_assignments_path(study_module, locale: "pt-BR"), params: { classroom_id: classroom.id }
     }.to change(StudyModuleAssignment, :count).by(1)
 
+    assignment = StudyModuleAssignment.last
+    get teacher_study_module_path(study_module, locale: "pt-BR")
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(classroom.name)
+
     post teacher_study_module_study_module_assignments_path(study_module, locale: "pt-BR"), params: { classroom_id: classroom.id }
     expect(flash[:alert]).to eq("A turma já possui este conteúdo de estudo.")
+
+    expect {
+      delete teacher_study_module_study_module_assignment_path(study_module, assignment, locale: "pt-BR")
+    }.to change(StudyModuleAssignment, :count).by(-1)
+
+    expect(response).to redirect_to(teacher_study_module_path(study_module, locale: "pt-BR"))
+    expect(flash[:notice]).to eq("Atribuição removida.")
   end
 
   it "does not let a teacher manage platform study content" do

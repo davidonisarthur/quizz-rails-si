@@ -51,7 +51,7 @@
               <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <% if current_user&.teacher? %>
-                <%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+                <%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
               <% end %>
             </div>
 
@@ -59,7 +59,9 @@
               <details class="group relative border-l ink-rule pl-5">
                 <summary class="focus-ink cursor-pointer list-none text-tx1 transition-colors hover:text-accent [&::-webkit-details-marker]:hidden"><%= t('navigation.account') %><span class="ml-1.5 text-tx2 group-open:text-accent" aria-hidden="true">+</span></summary>
                 <div class="absolute right-0 z-20 mt-4 min-w-36 border ink-rule bg-bg2 p-2 shadow-lg">
-                  <%= link_to t('navigation.profile'), profile_path(locale: I18n.locale), class: "focus-ink block px-3 py-2 text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+                  <% unless current_user.teacher? %>
+                    <%= link_to t('navigation.profile'), profile_path(locale: I18n.locale), class: "focus-ink block px-3 py-2 text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+                  <% end %>
                   <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "focus-ink w-full cursor-pointer px-3 py-2 text-left text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
                 </div>
               </details>
@@ -99,9 +101,11 @@
             <div class="grid gap-1 pb-1 pt-3 text-base font-semibold">
               <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
               <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
-              <% if current_user&.teacher? %><%= link_to t("teacher.nav"), teacher_root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %><% end %>
+              <% if current_user&.teacher? %><%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %><% end %>
               <% if current_user %>
-                <%= link_to t("navigation.profile"), profile_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <% unless current_user.teacher? %>
+                  <%= link_to t("navigation.profile"), profile_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <% end %>
                 <%= button_to t("sessions.sign_out"), session_path(locale: I18n.locale), method: :delete, class: "focus-ink flex min-h-11 w-full cursor-pointer items-center rounded-md px-3 text-left text-tx1 hover:bg-bg1 hover:text-accent" %>
               <% else %>
                 <%= link_to t("sessions.sign_in"), new_session_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
