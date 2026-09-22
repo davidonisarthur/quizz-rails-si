@@ -231,6 +231,8 @@ pt-BR:
     manage_title: "Gerenciar turmas"
     description: "Crie turmas, adicione alunos e depois atribua quizzes ou conteúdos de estudo."
     manage: "Ver turma e alunos"
+    delete: "Excluir turma"
+    confirm_delete: "Excluir esta turma e suas matrículas? Os conteúdos e quizzes criados continuarão existindo."
     name: "Nome da turma"
     create: "Criar turma"
     students: "alunos"

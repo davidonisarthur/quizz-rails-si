@@ -21,7 +21,10 @@
           <h2 class="font-bold"><%= classroom.name %></h2>
           <p class="mt-1 text-sm text-tx2"><%= classroom.students.count %> <%= t("classrooms.students") %></p>
         </div>
-        <%= link_to t("classrooms.manage"), teacher_classroom_path(classroom, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+        <div class="flex flex-wrap items-center gap-4">
+          <%= link_to t("classrooms.manage"), teacher_classroom_path(classroom, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3 text-sm font-bold" %>
+          <%= button_to t("classrooms.delete"), teacher_classroom_path(classroom, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 text-sm font-bold text-red", form: { data: { turbo_confirm: t("classrooms.confirm_delete") } } %>
+        </div>
       </article>
     <% end %>
   </div>

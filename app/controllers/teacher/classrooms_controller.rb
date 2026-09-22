@@ -20,8 +20,11 @@ module Teacher
     end
 
     def destroy
-      @classroom.destroy
-      redirect_to teacher_classrooms_path(locale: I18n.locale), notice: t("classrooms.deleted")
+      if @classroom.destroy
+        redirect_to teacher_classrooms_path(locale: I18n.locale), notice: t("classrooms.deleted")
+      else
+        redirect_to teacher_classroom_path(@classroom, locale: I18n.locale), alert: @classroom.errors.full_messages.to_sentence
+      end
     end
 
     private

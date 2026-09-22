@@ -231,6 +231,8 @@ en:
     manage_title: "Manage classes"
     description: "Create classes, add students, then assign quizzes or study content."
     manage: "View class and students"
+    delete: "Delete class"
+    confirm_delete: "Delete this class and its enrollments? Created content and quizzes will remain available."
     name: "Class name"
     create: "Create class"
     students: "students"

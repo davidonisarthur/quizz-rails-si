@@ -23,6 +23,11 @@ RSpec.describe "Classroom management", type: :request do
     get teacher_classrooms_path(locale: "pt-BR")
     expect(response.body).to include("Turma A")
     expect(response.body).not_to include(other_classroom.name)
+    expect(response.body).to include("Excluir turma")
+
+    get teacher_classroom_path(classroom, locale: "pt-BR")
+    expect(response.body).to include("Excluir turma")
+    expect(response.body).to include("_method\" value=\"delete")
 
     expect {
       delete teacher_classroom_path(classroom, locale: "pt-BR")
