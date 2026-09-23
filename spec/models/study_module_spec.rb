@@ -37,8 +37,20 @@ RSpec.describe StudyModule, type: :model do
   it "selects the content for the current locale" do
     I18n.with_locale(:en) do
       expect(study_module.title).to eq(study_module.title_en)
+      expect(study_module.summary).to eq(study_module.summary_en)
       expect(study_module.content).to eq(study_module.content_en)
       expect(study_module.libras_content).to eq(study_module.libras_content_en)
+    end
+  end
+
+  it "selects the Portuguese title, summary, and rich content by default" do
+    study_module.rich_content_pt = "<div>Texto rico em português.</div>"
+    study_module.rich_content_en = "<div>Rich English text.</div>"
+
+    I18n.with_locale(:"pt-BR") do
+      expect(study_module.title).to eq(study_module.title_pt)
+      expect(study_module.summary).to eq(study_module.summary_pt)
+      expect(study_module.rich_content.to_plain_text).to include("Texto rico em português")
     end
   end
 
@@ -75,6 +87,39 @@ RSpec.describe StudyModule, type: :model do
 
     expect(assignment).to be_invalid
     expect(assignment.errors[:classroom]).to be_present
+  end
+
+  it "rejects assigning platform study content to the classroom of its author" do
+    teacher = create(:user, :teacher)
+    classroom = teacher.classrooms.create!(name: "Turma da plataforma")
+    platform_study = create(:study_module, created_by: teacher, platform_default: true)
+
+    assignment = StudyModuleAssignment.new(classroom: classroom, study_module: platform_study)
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to be_present
+  end
+
+  it "does not run the classroom ownership validation before both records exist" do
+    assignment = StudyModuleAssignment.new
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to contain_exactly("must exist")
+  end
+
+  it "requires both plain or rich content fields to contain text" do
+    study_module.content_pt = ""
+    study_module.content_en = ""
+
+    expect(study_module).to be_invalid
+    expect(study_module.errors[:content_pt]).to be_present
+    expect(study_module.errors[:content_en]).to be_present
+  end
+
+  it "keeps legacy text when it is already provided" do
+    expect(study_module).to be_valid
+    expect(study_module.content_pt).to be_present
+    expect(study_module.content_en).to be_present
   end
 
   it "accepts rich content without requiring the legacy plain-text fields" do

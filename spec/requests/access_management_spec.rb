@@ -22,6 +22,17 @@ RSpec.describe "Access management", type: :request do
     expect(TeacherAccessRequest.count).to eq(1)
   end
 
+  it "does not let an existing teacher create an access request" do
+    sign_in(teacher)
+
+    expect {
+      post teacher_access_requests_path(locale: "pt-BR")
+    }.not_to change(TeacherAccessRequest, :count)
+
+    expect(response).to redirect_to(profile_path(locale: "pt-BR"))
+    expect(flash[:alert]).to eq("Sua conta já possui acesso docente.")
+  end
+
   it "requires an admin to approve teacher requests" do
     request = create(:teacher_access_request, user: student)
     sign_in(teacher)

@@ -38,6 +38,15 @@ RSpec.describe QuizModule, type: :model do
 
       expect(second_module).to be_available_to(user)
     end
+
+    it "does not make a classroom-only quiz available to someone outside its classroom" do
+      teacher = create(:user, :teacher)
+      quiz_module = create(:quiz_module, created_by: teacher, audience: "classroom_audience", unlocked: true)
+      create(:question, quiz_module: quiz_module)
+
+      expect(quiz_module).not_to be_available_to(nil)
+      expect(quiz_module).not_to be_available_to(create(:user))
+    end
   end
 
   describe "platform defaults" do
@@ -59,6 +68,24 @@ RSpec.describe QuizModule, type: :model do
 
     expect(assignment).to be_invalid
     expect(assignment.errors[:classroom]).to be_present
+  end
+
+  it "rejects assigning a platform quiz to the classroom of its author" do
+    teacher = create(:user, :teacher)
+    classroom = teacher.classrooms.create!(name: "Turma da plataforma")
+    platform_quiz = create(:quiz_module, created_by: teacher, platform_default: true)
+
+    assignment = ModuleAssignment.new(classroom: classroom, quiz_module: platform_quiz)
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to be_present
+  end
+
+  it "does not run the ownership validation until both assignment records exist" do
+    assignment = ModuleAssignment.new
+
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:classroom]).to contain_exactly("must exist")
   end
 
   describe "#owned_by?" do

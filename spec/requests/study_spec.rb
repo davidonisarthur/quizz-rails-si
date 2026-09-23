@@ -112,6 +112,21 @@ RSpec.describe "Study", type: :request do
     expect(response.body).to include("Concluído")
   end
 
+  it "records progress for a published teacher-created study module" do
+    user = create(:user, password: "password123")
+    study_module = create(:study_module, published: true, slug: "progresso-personalizado")
+    post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+    expect {
+      post study_progress_path(study_module.slug, locale: "pt-BR", status: "started")
+    }.to change { user.study_progresses.where(study_slug: study_module.slug).count }.from(0).to(1)
+
+    expect(response).to redirect_to(study_topic_path(study_module.slug, locale: "pt-BR"))
+
+    get profile_path(locale: "pt-BR")
+    expect(response.body).to include(study_module.title_pt)
+  end
+
   it "requires authentication and does not track unpublished or unknown content" do
     draft_module = create(:study_module, published: false)
 

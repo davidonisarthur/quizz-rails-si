@@ -116,10 +116,27 @@ RSpec.describe "Teacher study modules", type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it "allows a teacher through the direct-upload authorization layer" do
+    sign_in(teacher)
+
+    post "/rails/active_storage/direct_uploads"
+
+    expect(response).not_to have_http_status(:forbidden)
+  end
+
   it "rerenders the form when content is incomplete" do
     sign_in(teacher)
 
     post teacher_study_modules_path(locale: "pt-BR"), params: { study_module: study_module_params.merge(content_en: "") }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
+  it "rerenders the edit form when an update is invalid" do
+    study_module = create(:study_module, created_by: teacher)
+    sign_in(teacher)
+
+    patch teacher_study_module_path(study_module, locale: "pt-BR"), params: { study_module: study_module_params.merge(title_pt: "") }
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
