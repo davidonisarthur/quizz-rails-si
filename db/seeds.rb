@@ -7,33 +7,37 @@ if teacher_email.present?
   puts "Professor configurado: #{teacher_email}" if teacher
 end
 
-modulo1 = QuizModule.find_or_create_by!(slug: "o-que-e-primo") do |m|
-  m.title_pt = "Os Blocos de Construção e os Números Primos"
-  m.title_en = "The Building Blocks and Prime Numbers"
-  m.position = 1
-  m.unlocked = true
-end
+modulo1 = QuizModule.find_or_initialize_by(slug: "o-que-e-primo")
+modulo1.update!(
+  title_pt: "Introdução à Lógica e Números Primos",
+  title_en: "Introduction to Logic and Prime Numbers",
+  position: 1,
+  unlocked: true
+)
 
-modulo2 = QuizModule.find_or_create_by!(slug: "crivo-de-eratostenes") do |m|
-  m.title_pt = "Engrenagens Matemáticas: Fatoração, MMC e MDC"
-  m.title_en = "Mathematical Gears: Factorization, LCM, and GCD"
-  m.position = 2
-  m.unlocked = false
-end
+modulo2 = QuizModule.find_or_initialize_by(slug: "crivo-de-eratostenes")
+modulo2.update!(
+  title_pt: "Teoria dos Números",
+  title_en: "Number Theory",
+  position: 2,
+  unlocked: false
+)
 
-modulo3 = QuizModule.find_or_create_by!(slug: "primos-e-criptografia") do |m|
-  m.title_pt = "Desvendando Enigmas: A Lógica da Criptografia"
-  m.title_en = "Unraveling Enigmas: The Logic of Cryptography"
-  m.position = 3
-  m.unlocked = false
-end
+modulo3 = QuizModule.find_or_initialize_by(slug: "primos-e-criptografia")
+modulo3.update!(
+  title_pt: "A Lógica dos Códigos Secretos",
+  title_en: "The Logic of Secret Codes",
+  position: 3,
+  unlocked: false
+)
 
-modulo4 = QuizModule.find_or_create_by!(slug: "desafio-final") do |m|
-  m.title_pt = "Desafio final"
-  m.title_en = "Final challenge"
-  m.position = 4
-  m.unlocked = false
-end
+modulo4 = QuizModule.find_or_initialize_by(slug: "desafio-final")
+modulo4.update!(
+  title_pt: "Desafio final",
+  title_en: "Final challenge",
+  position: 4,
+  unlocked: false
+)
 
 [ modulo1, modulo2, modulo3, modulo4 ].each do |modulo|
   modulo.update!(platform_default: true, audience: "public")
