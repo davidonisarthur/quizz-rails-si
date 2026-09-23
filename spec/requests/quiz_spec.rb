@@ -181,6 +181,16 @@ RSpec.describe "Quizzes", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Sem feedback cadastrado.")
     end
+
+    it "usa o feedback fallback apropriado para uma resposta incorreta" do
+      q1.feedbacks.destroy_all
+
+      get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Sem feedback cadastrado.")
+    end
   end
 
   describe "GET /:locale/quiz_modules/:slug/result" do

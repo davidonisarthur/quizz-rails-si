@@ -27,6 +27,14 @@ RSpec.describe "Sessions", type: :request do
         expect(response).to redirect_to(root_path(locale: "pt-BR"))
         expect(session[:user_id]).to eq(user.id)
       end
+
+      it "autentica sem gravar preferências que não existiam antes do login" do
+        post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+        expect(response).to redirect_to(root_path(locale: "pt-BR"))
+        expect(session[:user_id]).to eq(user.id)
+        expect(session[:libras_mode]).to be_nil
+      end
     end
 
     context "com credenciais inválidas" do
@@ -35,6 +43,14 @@ RSpec.describe "Sessions", type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(session[:user_id]).to be_nil
+      end
+
+      it "rejeita um email ausente ou que não pertence a uma conta" do
+        post session_path(locale: "pt-BR"), params: { password: "password123" }
+        expect(response).to have_http_status(:unprocessable_entity)
+
+        post session_path(locale: "pt-BR"), params: { email: "missing@example.com", password: "password123" }
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

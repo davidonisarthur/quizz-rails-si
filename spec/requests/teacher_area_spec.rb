@@ -144,6 +144,20 @@ RSpec.describe "Teacher area", type: :request do
     expect(module_record.reload).not_to be_published
   end
 
+  it "rerenders the new module form for invalid drafts and incomplete published modules" do
+    sign_in(teacher)
+
+    post teacher_quiz_modules_path(locale: "pt-BR"), params: {
+      quiz_module: { title_pt: "", title_en: "Invalid", slug: "invalid-draft", position: 81, unlocked: "0", published: "0", audience: "public_audience" }
+    }
+    expect(response).to have_http_status(:unprocessable_entity)
+
+    post teacher_quiz_modules_path(locale: "pt-BR"), params: {
+      quiz_module: { title_pt: "Publicado sem questão", title_en: "Published without question", slug: "published-without-question", position: 82, unlocked: "0", published: "1", audience: "public_audience" }
+    }
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
   it "assigns new modules to the signed-in teacher and ignores ownership parameters" do
     sign_in(teacher)
 
@@ -242,6 +256,29 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to have_http_status(:unprocessable_entity)
   end
 
+  it "rerenders the edit form when an incomplete question is marked as published" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, published: false)
+    sign_in(teacher)
+
+    patch teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: {
+      question: { body_pt: question.body_pt, body_en: question.body_en, correct_index: "0", published: "1" }
+    }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
+  it "rerenders the new question form when a draft question fails validation" do
+    module_record = create(:quiz_module, created_by: teacher)
+    sign_in(teacher)
+
+    post teacher_quiz_module_questions_path(module_record, locale: "pt-BR"), params: {
+      question: { body_pt: "", body_en: "", correct_index: "0", published: "0" }
+    }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
   it "keeps a question in place when it has no neighbour in the requested direction" do
     module_record = create(:quiz_module, created_by: teacher)
     question = create(:question, quiz_module: module_record, position: 1)
@@ -252,6 +289,17 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
     expect(question.reload.position).to eq(1)
     expect(flash[:notice]).to be_nil
+  end
+
+  it "keeps a question in place for an unsupported move direction" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, position: 1)
+    sign_in(teacher)
+
+    patch move_teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: { direction: "sideways" }
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(question.reload.position).to eq(1)
   end
 
   it "keeps module previews private while showing drafts to their teacher" do
@@ -290,6 +338,28 @@ RSpec.describe "Teacher area", type: :request do
     get report_teacher_quiz_module_path(module_record, locale: "pt-BR")
 
     expect(response).to have_http_status(:not_found)
+  end
+
+  it "reports zero averages and unanswered questions without attempts" do
+    module_record = create(:quiz_module, created_by: teacher, published: false)
+    create(:question, quiz_module: module_record, published: true, body_pt: "Ainda sem tentativas")
+    sign_in(teacher)
+
+    get report_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("0%")
+    expect(response.body).to include("Ainda sem tentativas")
+  end
+
+  it "reports a zero percentage when a quiz has no published questions" do
+    module_record = create(:quiz_module, created_by: teacher, published: false)
+    sign_in(teacher)
+
+    get report_teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("0%")
   end
 
   it "does not publish an incomplete question" do

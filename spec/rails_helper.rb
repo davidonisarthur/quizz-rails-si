@@ -6,6 +6,10 @@ SimpleCov.start "rails" do
   skip "/bin/"
   skip "/config/"
   skip "/db/"
+  # These are framework base classes; the application currently defines no
+  # concrete jobs or mailers to exercise.
+  skip "/app/jobs/"
+  skip "/app/mailers/"
 end
 
 require 'spec_helper'
