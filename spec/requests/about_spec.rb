@@ -9,7 +9,7 @@ RSpec.describe "About", type: :request do
       expect(response.body).to include("Sobre o PrimoQuiz")
       expect(response.body).to include("Iniciação Científica")
       expect(response.body).to include("Professora Dra. Renata da Silva Dessbesel")
-      expect(response.body).to match(%r{src="/assets/utfpr-logo-[^"]+\.png"})
+      expect(response.body).to match(%r{src="/assets/utfpr-institutional-logo-[^"]+\.png"})
     end
 
     it "renders the about page successfully in English" do
