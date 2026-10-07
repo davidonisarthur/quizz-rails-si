@@ -1,10 +1,12 @@
-require 'rails_helper'
+require "rails_helper"
+require "stringio"
 
 RSpec.describe Question, type: :model do
   describe 'associations' do
     it { should belong_to(:quiz_module) }
     it { should have_many(:options).dependent(:destroy) }
     it { should have_many(:feedbacks).dependent(:destroy) }
+    it { should have_one_attached(:libras_video) }
   end
 
   describe 'validations' do
@@ -34,43 +36,30 @@ RSpec.describe Question, type: :model do
     it { should validate_inclusion_of(:correct_index).in_range(0..3) }
   end
 
-  describe '#libras_embed_url' do
-    it "returns nil if libras_video_url is nil or blank" do
-      expect(build(:question, libras_video_url: nil).libras_embed_url).to be_nil
-      expect(build(:question, libras_video_url: "").libras_embed_url).to be_nil
+  describe "LIBRAS video attachment" do
+    it "accepts a platform-hosted MP4 video" do
+      question = build(:question)
+      question.libras_video.attach(io: StringIO.new("video"), filename: "libras.mp4", content_type: "video/mp4")
+
+      expect(question).to be_valid
+      expect(question.libras_video).to be_attached
     end
 
-    it "correctly parses standard watch URLs" do
-      question = build(:question, libras_video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-      expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/dQw4w9WgXcQ")
-    end
-
-    it "correctly parses youtu.be short URLs" do
-      question = build(:question, libras_video_url: "https://youtu.be/dQw4w9WgXcQ?t=12")
-      expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/dQw4w9WgXcQ")
-    end
-
-    it "correctly parses embed URLs directly" do
-      question = build(:question, libras_video_url: "https://www.youtube.com/embed/dQw4w9WgXcQ")
-      expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/dQw4w9WgXcQ")
-    end
-
-    it "handles non-standard test IDs from factory" do
-      question = build(:question, libras_video_url: "https://youtube.com/watch?v=exemplo")
-      expect(question.libras_embed_url).to eq("https://www.youtube.com/embed/exemplo")
-    end
-
-    it "returns nil for unsupported video providers" do
-      question = build(:question, libras_video_url: "https://videos.example.com/turing")
-
-      expect(question.libras_embed_url).to be_nil
-    end
-
-    it "does not accept the known placeholder video as LIBRAS content" do
-      question = build(:question, libras_video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+    it "rejects files that are not supported video formats" do
+      question = build(:question)
+      question.libras_video.attach(io: StringIO.new("not a video"), filename: "notes.txt", content_type: "text/plain")
 
       expect(question).not_to be_valid
-      expect(question.errors[:libras_video_url]).to include("must reference an approved LIBRAS video")
+      expect(question.errors[:libras_video]).to include(I18n.t("uploads.libras_video.invalid_type"))
+    end
+
+    it "rejects videos larger than the upload limit" do
+      question = build(:question)
+      question.libras_video.attach(io: StringIO.new("video"), filename: "large.mp4", content_type: "video/mp4")
+      allow(question.libras_video.blob).to receive(:byte_size).and_return(LibrasVideoAttachment::MAX_LIBRAS_VIDEO_SIZE + 1)
+
+      expect(question).not_to be_valid
+      expect(question.errors[:libras_video]).to include(I18n.t("uploads.libras_video.too_large", size: 150))
     end
   end
 

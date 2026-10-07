@@ -1,0 +1,22 @@
+<% if video.attached? %>
+  <% modal_id = "libras-video-#{dom_id(video.record)}" %>
+  <div data-controller="libras-modal">
+    <button type="button" data-action="click->libras-modal#open" data-video-url="<%= url_for(video) %>" aria-controls="<%= modal_id %>" class="<%= button_class %>">
+      <span aria-hidden="true">▶</span><%= button_label %>
+    </button>
+
+    <div id="<%= modal_id %>" data-libras-modal-target="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-tx0/75 p-4" role="dialog" aria-modal="true" aria-labelledby="<%= modal_id %>-title" tabindex="-1" data-action="click->libras-modal#closeOnBackdrop keydown@window->libras-modal#handleKeydown">
+      <div class="w-full max-w-3xl border-2 border-tx0 bg-bg2">
+        <div class="flex items-center justify-between border-b-2 ink-rule px-5 py-4">
+          <h2 id="<%= modal_id %>-title" class="type-display text-2xl"><%= modal_title %></h2>
+          <button type="button" data-action="click->libras-modal#close" data-libras-modal-target="closeButton" class="focus-ink editorial-link cursor-pointer text-xs font-extrabold tracking-[0.1em] uppercase"><%= t("quiz.close") %></button>
+        </div>
+        <div class="aspect-video w-full bg-tx0">
+          <video data-libras-modal-target="video" class="h-full w-full" controls playsinline preload="metadata" title="<%= modal_title %>">
+            <%= t("study.libras.video_not_supported") %>
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

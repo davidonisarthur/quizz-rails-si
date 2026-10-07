@@ -1,11 +1,20 @@
 <%= form_with model: @question, url: @question.persisted? ? teacher_quiz_module_question_path(@module, @question, locale: I18n.locale) : teacher_quiz_module_questions_path(@module, locale: I18n.locale), class: "mt-8 space-y-7" do |f| %>
   <% if @question.errors.any? %><div class="rounded-xl border-l-4 border-red bg-red/10 p-4 text-sm text-red"><%= @question.errors.full_messages.to_sentence %></div><% end %>
 
+  <aside class="rounded-xl border-l-4 border-accent bg-bg1 p-4 text-sm leading-6 text-tx1"><strong class="text-tx0"><%= t("teacher.question_setup_title") %>.</strong> <%= t("teacher.question_setup_steps") %></aside>
+
   <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
     <h2 class="type-display text-2xl"><%= t("teacher.question_content") %></h2>
     <div class="mt-5 grid gap-5 sm:grid-cols-2"><div><%= f.label :body_pt, t("teacher.body_pt"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :body_pt, required: true, rows: 5, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><div><%= f.label :body_en, t("teacher.body_en"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :body_en, rows: 5, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div></div>
     <div class="mt-5 grid gap-5 sm:grid-cols-2"><div><%= f.label :context_pt, t("teacher.context_pt"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :context_pt, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div><div><%= f.label :context_en, t("teacher.context_en"), class: "mb-2 block text-sm font-bold" %><%= f.text_area :context_en, rows: 3, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div></div>
-    <div class="mt-5"><%= f.label :libras_video_url, t("teacher.libras_video_url"), class: "mb-2 block text-sm font-bold" %><%= f.url_field :libras_video_url, class: "focus-ink w-full rounded-md border border-bg3 px-3 py-2" %></div>
+    <div class="mt-5 rounded-lg border ink-rule bg-bg1 p-4">
+      <%= f.label :libras_video, t("teacher.libras_video"), class: "mb-2 block text-sm font-bold" %>
+      <%= f.file_field :libras_video, accept: "video/mp4,video/webm,video/ogg", direct_upload: true, class: "focus-ink block w-full text-sm" %>
+      <p class="mt-2 text-xs leading-5 text-tx2"><%= t("teacher.libras_video_hint") %></p>
+      <% if @question.libras_video.attached? %>
+        <p class="mt-3 text-sm text-tx1"><%= t("teacher.current_libras_video", filename: @question.libras_video.filename) %></p>
+      <% end %>
+    </div>
   </section>
 
   <section class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">

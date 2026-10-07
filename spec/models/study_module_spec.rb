@@ -1,10 +1,12 @@
 require "rails_helper"
+require "stringio"
 
 RSpec.describe StudyModule, type: :model do
   subject(:study_module) { build(:study_module) }
 
   it { is_expected.to belong_to(:created_by).class_name("User") }
   it { is_expected.to have_many(:study_module_assignments).dependent(:destroy) }
+  it { is_expected.to have_one_attached(:libras_video) }
   it { is_expected.to validate_presence_of(:title_pt) }
   it { is_expected.to validate_presence_of(:title_en) }
   it { is_expected.to validate_presence_of(:content_pt) }
@@ -19,19 +21,11 @@ RSpec.describe StudyModule, type: :model do
     expect(study_module.errors[:slug]).to be_present
   end
 
-  it "accepts only HTTPS video links" do
-    study_module.video_url = "http://example.com/video"
-    expect(study_module).to be_invalid
+  it "accepts a platform-hosted WebM LIBRAS video" do
+    study_module.libras_video.attach(io: StringIO.new("video"), filename: "libras.webm", content_type: "video/webm")
 
-    study_module.video_url = "https://example.com/video"
     expect(study_module).to be_valid
-  end
-
-  it "rejects malformed video links without raising a URI error" do
-    study_module.video_url = "https://[invalid-url"
-
-    expect(study_module).to be_invalid
-    expect(study_module.errors[:video_url]).to be_present
+    expect(study_module.libras_video).to be_attached
   end
 
   it "selects the content for the current locale" do
@@ -104,7 +98,7 @@ RSpec.describe StudyModule, type: :model do
     assignment = StudyModuleAssignment.new
 
     expect(assignment).to be_invalid
-    expect(assignment.errors[:classroom]).to contain_exactly("must exist")
+    expect(assignment.errors[:classroom]).to contain_exactly(I18n.t("errors.messages.required"))
   end
 
   it "requires both plain or rich content fields to contain text" do

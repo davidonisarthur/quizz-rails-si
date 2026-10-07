@@ -45,9 +45,6 @@ end
 
 puts "Criando questões do Módulo 1..."
 
-# Register only reviewed LIBRAS recordings. Until then, the VLibras avatar remains available.
-libras_url = nil
-
 # ==============================================================================
 # QUESTÃO 1 — Conceito Básico
 # ==============================================================================
@@ -56,7 +53,6 @@ q1 = modulo1.questions.find_or_create_by!(body_pt: "Um número primo é um núme
   q.context_pt = "Conceito básico e definição de números primos."
   q.context_en = "Basic concept and definition of prime numbers."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q1.options.find_or_create_by!(text_pt: "12") { |o| o.text_en = "12" }
@@ -81,7 +77,6 @@ q2 = modulo1.questions.find_or_create_by!(body_pt: "Um número primo possui exat
   q.context_pt = "Propriedade dos Divisores - Identificação de divisores."
   q.context_en = "Divisor Property - Identifying divisors."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q2.options.find_or_create_by!(text_pt: "1 e 31") { |o| o.text_en = "1 and 31" }
@@ -106,7 +101,6 @@ q3 = modulo1.questions.find_or_create_by!(body_pt: "Observe a sequência:\n2, 3,
   q.context_pt = "Padrões e Sequências - Reconhecimento de números primos."
   q.context_en = "Patterns and Sequences - Recognition of prime numbers."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q3.options.find_or_create_by!(text_pt: "Todos os números da sequência são pares.") { |o| o.text_en = "All numbers in the sequence are even." }
@@ -131,7 +125,6 @@ q4 = modulo1.questions.find_or_create_by!(body_pt: "Observe os números abaixo:\
   q.context_pt = "Identificação em Lista Curta - Filtragem básica."
   q.context_en = "Short List Identification - Basic filtering."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q4.options.find_or_create_by!(text_pt: "1") { |o| o.text_en = "1" }
@@ -156,7 +149,6 @@ q5 = modulo1.questions.find_or_create_by!(body_pt: "Considere o seguinte conjunt
   q.context_pt = "Identificação em Lista Longa - Filtragem intermediária."
   q.context_en = "Long List Identification - Intermediate filtering."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q5.options.find_or_create_by!(text_pt: "18 e 29") { |o| o.text_en = "18 and 29" }
@@ -181,7 +173,6 @@ q6 = modulo1.questions.find_or_create_by!(body_pt: "Pedro fez a seguinte afirma�
   q.context_pt = "Lógica e Contraexemplo - Pensamento crítico matemático."
   q.context_en = "Logic and Counterexample - Critical mathematical thinking."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q6.options.find_or_create_by!(text_pt: "2") { |o| o.text_en = "2" }
@@ -206,7 +197,6 @@ q7 = modulo1.questions.find_or_create_by!(body_pt: "Para verificar se um número
   q.context_pt = "Teste de Primalidade - Compreensão conceitual."
   q.context_en = "Primality Test - Conceptual understanding."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q7.options.find_or_create_by!(text_pt: "1 e 37") { |o| o.text_en = "1 and 37" }
@@ -231,7 +221,6 @@ q8 = modulo1.questions.find_or_create_by!(body_pt: "Lucas analisou quatro númer
   q.context_pt = "Interpretação de Dados - Extração de informação tabular."
   q.context_en = "Data Interpretation - Extraction of tabular information."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q8.options.find_or_create_by!(text_pt: "Apenas 13") { |o| o.text_en = "Only 13" }
@@ -256,7 +245,6 @@ q9 = modulo1.questions.find_or_create_by!(body_pt: "Observe as afirmações mate
   q.context_pt = "Síntese Teórica - Verdadeiro ou Falso múltiplo."
   q.context_en = "Theoretical Synthesis - Multiple True or False."
   q.correct_index = 3
-  q.libras_video_url = libras_url
 end
 
 q9.options.find_or_create_by!(text_pt: "Apenas I.") { |o| o.text_en = "Only I." }
@@ -281,7 +269,6 @@ q10 = modulo1.questions.find_or_create_by!(body_pt: "Na computação e na cripto
   q.context_pt = "Contextualização Prática - Conexão com tecnologia."
   q.context_en = "Practical Contextualization - Connection to technology."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q10.options.find_or_create_by!(text_pt: "17, 23 e 31") { |o| o.text_en = "17, 23, and 31" }
@@ -302,8 +289,6 @@ end
 # MODULO 2
 #=============================================
 
-libras_url = nil
-
 # ==============================================================================
 # QUESTÃO 1 — Fatoração (Inteligência Artificial)
 # ==============================================================================
@@ -312,7 +297,6 @@ q1 = modulo2.questions.find_or_create_by!(body_pt: "Uma inteligência artificial
   q.context_pt = "Fatoração Prima - Inteligência Artificial."
   q.context_en = "Prime Factorization - Artificial Intelligence."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q1.options.find_or_create_by!(text_pt: "2⁴ × 3") { |o| o.text_en = "2⁴ × 3" }
@@ -337,7 +321,6 @@ q2 = modulo2.questions.find_or_create_by!(body_pt: "Durante o desenvolvimento de
   q.context_pt = "Fatoração Prima - Desenvolvimento de Jogos."
   q.context_en = "Prime Factorization - Game Development."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q2.options.find_or_create_by!(text_pt: "2 × 3³") { |o| o.text_en = "2 × 3³" }
@@ -362,7 +345,6 @@ q3 = modulo2.questions.find_or_create_by!(body_pt: "Uma empresa está testando u
   q.context_pt = "Recomposição de Fatores - Segurança Digital."
   q.context_en = "Factor Recomposition - Digital Security."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q3.options.find_or_create_by!(text_pt: "30") { |o| o.text_en = "30" }
@@ -387,7 +369,6 @@ q4 = modulo2.questions.find_or_create_by!(body_pt: "Durante a geração de uma c
   q.context_pt = "Recomposição de Fatores - Múltiplos Primos."
   q.context_en = "Factor Recomposition - Multiple Primes."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q4.options.find_or_create_by!(text_pt: "180") { |o| o.text_en = "180" }
@@ -412,7 +393,6 @@ q5 = modulo2.questions.find_or_create_by!(body_pt: "Um sistema de IA precisa ver
   q.context_pt = "Validação de Fatores Primos - IA."
   q.context_en = "Prime Factors Validation - AI."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q5.options.find_or_create_by!(text_pt: "2 × 3² × 5") { |o| o.text_en = "2 × 3² × 5" }
@@ -437,7 +417,6 @@ q6 = modulo2.questions.find_or_create_by!(body_pt: "Uma IA de auditoria analisou
   q.context_pt = "Auditoria e Detecção de Erros - IA."
   q.context_en = "Auditing and Error Detection - AI."
   q.correct_index = 3
-  q.libras_video_url = libras_url
 end
 
 q6.options.find_or_create_by!(text_pt: "72 = 2³ × 3²") { |o| o.text_en = "72 = 2³ × 3²" }
@@ -462,7 +441,6 @@ q7 = modulo2.questions.find_or_create_by!(body_pt: "Para criar uma chave de aces
   q.context_pt = "MDC - Segurança Digital."
   q.context_en = "GCD - Digital Security."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q7.options.find_or_create_by!(text_pt: "6") { |o| o.text_en = "6" }
@@ -487,7 +465,6 @@ q8 = modulo2.questions.find_or_create_by!(body_pt: "Em um jogo, duas habilidades
   q.context_pt = "MMC - Sincronização em Jogos."
   q.context_en = "LCM - Synchronization in Games."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q8.options.find_or_create_by!(text_pt: "24 segundos") { |o| o.text_en = "24 seconds" }
@@ -512,7 +489,6 @@ q9 = modulo2.questions.find_or_create_by!(body_pt: "Um desenvolvedor está crian
   q.context_pt = "MDC - Divisão de Recursos em Jogos."
   q.context_en = "GCD - Resource Division in Games."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q9.options.find_or_create_by!(text_pt: "10 baús") { |o| o.text_en = "10 chests" }
@@ -537,7 +513,6 @@ q10 = modulo2.questions.find_or_create_by!(body_pt: "Você faz parte da equipe d
   q.context_pt = "Missão Final - MDC e MMC combinados."
   q.context_en = "Final Mission - GCD and LCM combined."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q10.options.find_or_create_by!(text_pt: "MDC = 12 e MMC = 24") { |o| o.text_en = "GCD = 12 and LCM = 24" }
@@ -565,7 +540,6 @@ q1 = modulo3.questions.find_or_create_by!(body_pt: "Do ponto de vista lógico, o
   q.context_pt = "Conceito Prático - Regra de transformação e reversibilidade."
   q.context_en = "Practical Concept - Transformation rule and reversibility."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q1.options.find_or_create_by!(text_pt: "Aplicar a mesma regra de transformação novamente.") { |o| o.text_en = "Apply the same transformation rule again." }
@@ -590,7 +564,6 @@ q2 = modulo3.questions.find_or_create_by!(body_pt: "Uma das formas mais antigas 
   q.context_pt = "A Cifra de César - Regra de deslocamento positivo."
   q.context_en = "The Caesar Cipher - Positive shift rule."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q2.options.find_or_create_by!(text_pt: "ERD") { |o| o.text_en = "ERD" }
@@ -615,7 +588,6 @@ q3 = modulo3.questions.find_or_create_by!(body_pt: "Se para esconder uma mensage
   q.context_pt = "Descriptografando - Regra de deslocamento negativo (inversa)."
   q.context_en = "Decrypting - Negative shift rule (inverse)."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q3.options.find_or_create_by!(text_pt: "BOLO") { |o| o.text_en = "BOLO" }
@@ -640,7 +612,6 @@ q4 = modulo3.questions.find_or_create_by!(body_pt: "O nosso alfabeto tem 26 letr
   q.context_pt = "Limite do Alfabeto - Comportamento cíclico."
   q.context_en = "Alphabet Limit - Cyclic behavior."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q4.options.find_or_create_by!(text_pt: "A") { |o| o.text_en = "A" }
@@ -665,7 +636,6 @@ q5 = modulo3.questions.find_or_create_by!(body_pt: "Um programador de jogos esta
   q.context_pt = "Descobrindo o Padrão - Identificação de regras."
   q.context_en = "Finding the Pattern - Identification of rules."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q5.options.find_or_create_by!(text_pt: "Avançar 1 posição (+1) em cada letra.") { |o| o.text_en = "Advance 1 position (+1) for each letter." }
@@ -690,7 +660,6 @@ q6 = modulo3.questions.find_or_create_by!(body_pt: "Um hacker descobriu que um u
   q.context_pt = "Contando Possibilidades - Análise combinatória simples."
   q.context_en = "Counting Possibilities - Simple combinatorics."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q6.options.find_or_create_by!(text_pt: "10 opções") { |o| o.text_en = "10 options" }
@@ -715,7 +684,6 @@ q7 = modulo3.questions.find_or_create_by!(body_pt: "Outra forma simples de cript
   q.context_pt = "Criptografia com Números - Substituição algébrica simples."
   q.context_en = "Number Cryptography - Simple algebraic substitution."
   q.correct_index = 2
-  q.libras_video_url = libras_url
 end
 
 q7.options.find_or_create_by!(text_pt: "[4, 1, 4, 15]") { |o| o.text_en = "[4, 1, 4, 15]" }
@@ -740,7 +708,6 @@ q8 = modulo3.questions.find_or_create_by!(body_pt: "Na nossa língua portuguesa,
   q.context_pt = "Estatística Visual - Análise de frequência e padrões."
   q.context_en = "Visual Statistics - Frequency and pattern analysis."
   q.correct_index = 0
-  q.libras_video_url = libras_url
 end
 
 q8.options.find_or_create_by!(text_pt: "O símbolo @ representa a letra A.") { |o| o.text_en = "The symbol @ represents the letter A." }
@@ -765,7 +732,6 @@ q9 = modulo3.questions.find_or_create_by!(body_pt: "Hoje em dia, os computadores
   q.context_pt = "Mundo Real - Conexão computacional com números primos."
   q.context_en = "Real World - Computational connection to prime numbers."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q9.options.find_or_create_by!(text_pt: "Gráficos cheios de barras coloridas.") { |o| o.text_en = "Charts full of colorful bars." }
@@ -790,7 +756,6 @@ q10 = modulo3.questions.find_or_create_by!(body_pt: "Para garantir a segurança 
   q.context_pt = "Missão Final - Aplicação de criptografia direta."
   q.context_en = "Final Mission - Direct cryptography application."
   q.correct_index = 1
-  q.libras_video_url = libras_url
 end
 
 q10.options.find_or_create_by!(text_pt: "HBUP") { |o| o.text_en = "HBUP" }
@@ -878,7 +843,6 @@ final_questions.each do |attributes|
     record.context_pt = attributes[:context_pt]
     record.context_en = attributes[:context_en]
     record.correct_index = attributes[:correct_index]
-    record.libras_video_url = libras_url
   end
 
   attributes[:options].each do |text_pt, text_en|

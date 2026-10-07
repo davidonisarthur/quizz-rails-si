@@ -25,8 +25,11 @@ module Teacher
     end
 
     def destroy
-      @question.destroy
-      redirect_to teacher_quiz_module_path(@module, locale: I18n.locale), notice: t("teacher.question_deleted")
+      if @question.destroy
+        redirect_to teacher_quiz_module_path(@module, locale: I18n.locale), notice: t("teacher.question_deleted")
+      else
+        redirect_to teacher_quiz_module_path(@module, locale: I18n.locale), alert: @question.errors.full_messages.to_sentence
+      end
     end
 
     def duplicate
@@ -81,7 +84,7 @@ module Teacher
 
     def question_params
       params.require(:question).permit(
-        :body_pt, :body_en, :context_pt, :context_en, :libras_video_url, :correct_index, :published,
+        :body_pt, :body_en, :context_pt, :context_en, :libras_video, :correct_index, :published,
         options_attributes: %i[id text_pt text_en],
         feedbacks_attributes: %i[id kind body_pt body_en]
       )

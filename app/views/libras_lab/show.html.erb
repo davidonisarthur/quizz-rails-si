@@ -1,0 +1,71 @@
+<% content_for :title, "#{t("libras_lab.title")} · PrimoQuiz" %>
+
+<section class="mx-auto max-w-5xl py-10 sm:py-16"
+         data-controller="hand-gesture"
+         data-hand-gesture-required-frames-value="10"
+         data-hand-gesture-messages-value="<%= {
+           state_idle: t("libras_lab.state_idle"),
+           state_loading: t("libras_lab.state_loading"),
+           state_no_hand: t("libras_lab.state_no_hand"),
+           state_hand_detected: t("libras_lab.state_hand_detected"),
+           state_partial: t("libras_lab.state_partial"),
+           state_recognized: t("libras_lab.state_recognized"),
+           state_error: t("libras_lab.state_error"),
+           progress: t("libras_lab.progress", current: "%{current}", required: "%{required}"),
+           error_insecure_context: t("libras_lab.error.insecure_context"),
+           error_unsupported: t("libras_lab.error.unsupported"),
+           error_permission_denied: t("libras_lab.error.permission_denied"),
+           error_not_found: t("libras_lab.error.not_found"),
+           error_mediapipe_load: t("libras_lab.error.mediapipe_load"),
+           error_camera: t("libras_lab.error.camera"),
+           error_detection: t("libras_lab.error.detection")
+         }.to_json %>">
+  <div class="max-w-3xl">
+    <p class="eyebrow text-accent"><%= t("libras_lab.eyebrow") %></p>
+    <h1 class="type-display mt-4 text-4xl leading-tight sm:text-6xl"><%= t("libras_lab.title") %></h1>
+    <p class="mt-6 text-base leading-8 text-tx1 sm:text-lg"><%= t("libras_lab.description") %></p>
+  </div>
+
+  <aside class="mt-8 border-l-4 border-accent bg-bg2 p-5 text-sm leading-7 text-tx1" aria-labelledby="libras-lab-privacy-title">
+    <h2 id="libras-lab-privacy-title" class="font-bold text-tx0"><%= t("libras_lab.privacy_title") %></h2>
+    <p class="mt-1"><%= t("libras_lab.privacy_description") %></p>
+  </aside>
+
+  <div class="mt-10 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
+    <section class="overflow-hidden rounded-xl border ink-rule bg-bg2" aria-labelledby="libras-lab-camera-title">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b ink-rule px-5 py-4 sm:px-6">
+        <div>
+          <p class="eyebrow"><%= t("libras_lab.gesture_label") %></p>
+          <h2 id="libras-lab-camera-title" class="type-display mt-1 text-2xl text-accent"><%= t("libras_lab.gesture_name") %></h2>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" data-hand-gesture-target="startButton" data-action="hand-gesture#start" class="focus-ink min-h-11 cursor-pointer rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-bg2 uppercase transition-colors hover:bg-tx0"><%= t("libras_lab.start") %></button>
+          <button type="button" data-hand-gesture-target="stopButton" data-action="hand-gesture#stop" class="focus-ink min-h-11 cursor-pointer rounded-md border border-bg3 px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-tx1 uppercase transition-colors hover:border-accent hover:text-accent" disabled><%= t("libras_lab.stop") %></button>
+        </div>
+      </div>
+
+      <div class="relative aspect-video bg-tx0">
+        <video data-hand-gesture-target="video" class="h-full w-full -scale-x-100 object-cover" autoplay muted playsinline aria-label="Webcam"></video>
+        <canvas data-hand-gesture-target="canvas" class="pointer-events-none absolute inset-0 h-full w-full -scale-x-100" aria-hidden="true"></canvas>
+        <div data-hand-gesture-target="cameraPlaceholder" class="absolute inset-0 flex items-center justify-center p-8 text-center text-sm leading-7 text-tx2">
+          <p><%= t("libras_lab.state_idle") %></p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" aria-labelledby="libras-lab-state-title">
+      <p class="eyebrow text-accent"><%= t("libras_lab.status_label") %></p>
+      <h2 id="libras-lab-state-title" data-hand-gesture-target="status" class="type-display mt-3 text-3xl" aria-live="polite"><%= t("libras_lab.state_idle") %></h2>
+      <p data-hand-gesture-target="detail" class="mt-4 text-sm leading-7 text-tx1" aria-live="polite"><%= t("libras_lab.progress", current: 0, required: 10) %></p>
+
+      <div class="mt-8 border-t ink-rule pt-7">
+        <h3 class="type-display text-2xl"><%= t("libras_lab.instructions_title") %></h3>
+        <ol class="mt-5 space-y-4 text-sm leading-7 text-tx1">
+          <% %w[one two three four].each_with_index do |step, index| %>
+            <li class="flex gap-3"><span class="module-index text-accent"><%= format("%02d", index + 1) %></span><span><%= t("libras_lab.instructions.#{step}") %></span></li>
+          <% end %>
+        </ol>
+      </div>
+    </aside>
+  </div>
+</section>

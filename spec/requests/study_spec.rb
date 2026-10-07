@@ -1,4 +1,5 @@
 require "rails_helper"
+require "stringio"
 
 RSpec.describe "Study", type: :request do
   it "lists Portuguese study modules" do
@@ -8,6 +9,8 @@ RSpec.describe "Study", type: :request do
     expect(response.body).to include("Estudo guiado")
     expect(response.body).to include("Conteúdos para estudar")
     expect(response.body).to include("Máquina de Turing")
+    expect(response.body).to include("Laboratório de visão computacional")
+    expect(response.body).to include(libras_lab_path(locale: "pt-BR"))
     expect(response.body).to include(study_topic_path("turing-machine", locale: "pt-BR"))
   end
 
@@ -25,15 +28,16 @@ RSpec.describe "Study", type: :request do
     expect(response.body).to include("Next step")
   end
 
-  it "uses the reduced visual content when LIBRAS mode is enabled" do
+  it "shows the reduced Turing content and avatar support when LIBRAS mode is enabled" do
     post toggle_libras_mode_path(locale: "pt-BR")
     get study_topic_path("turing-machine", locale: "pt-BR")
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Modo LIBRAS · conteúdo visual")
     expect(response.body).to include("Alan Turing e uma ideia nova")
-    expect(response.body).to include("Tradução: Tape = fita")
-    expect(response.body).to include("q0, q1 e q2 são estados")
+    expect(response.body).to include("Vídeo e avatar")
+    expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+    expect(response.body).to include("O vídeo em LIBRAS deste conteúdo ainda será disponibilizado")
     expect(response.body).to include("alan-turing-1951")
     expect(response.body).not_to include("Antes dos computadores modernos existirem")
   end
@@ -46,6 +50,7 @@ RSpec.describe "Study", type: :request do
 
   it "lists and renders only published teacher-created study content" do
     published_module = create(:study_module, published: true, title_pt: "Introdução à lógica", summary_pt: "Um resumo novo", content_pt: "Explicação longa.", libras_content_pt: "Explicação curta.")
+    published_module.libras_video.attach(io: StringIO.new("video"), filename: "logica.mp4", content_type: "video/mp4")
     draft_module = create(:study_module, published: false, title_pt: "Rascunho secreto")
 
     get study_path(locale: "pt-BR")
@@ -55,11 +60,16 @@ RSpec.describe "Study", type: :request do
     get study_topic_path(published_module.slug, locale: "pt-BR")
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Explicação longa.")
+    expect(response.body).not_to include("Vídeo e avatar")
 
     post toggle_libras_mode_path(locale: "pt-BR")
     get study_topic_path(published_module.slug, locale: "pt-BR")
     expect(response.body).to include("Explicação curta.")
     expect(response.body).not_to include("Explicação longa.")
+    expect(response.body).to include("Vídeo e avatar")
+    expect(response.body).to include("Traduzir em LIBRAS (Avatar 3D)")
+    expect(response.body).to include('data-libras-modal-target="video"')
+    expect(response.body).not_to include("youtube.com")
 
     get study_topic_path(draft_module.slug, locale: "pt-BR")
     expect(response).to have_http_status(:not_found)

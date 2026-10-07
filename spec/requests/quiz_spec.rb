@@ -1,9 +1,10 @@
-require 'rails_helper'
+require "rails_helper"
+require "stringio"
 
 RSpec.describe "Quizzes", type: :request do
   let!(:quiz_module) { create(:quiz_module, slug: "o-que-e-primo") }
-  let!(:q1) { create(:question, quiz_module: quiz_module, correct_index: 1, body_pt: "Qual destes números é primo?", libras_video_url: "https://youtube.com/watch?v=exemplo") }
-  let!(:q2) { create(:question, quiz_module: quiz_module, correct_index: 0, body_pt: "O número 1 é primo?", libras_video_url: "") }
+  let!(:q1) { create(:question, quiz_module: quiz_module, correct_index: 1, body_pt: "Qual destes números é primo?") }
+  let!(:q2) { create(:question, quiz_module: quiz_module, correct_index: 0, body_pt: "O número 1 é primo?") }
 
   let!(:o1_q1) { create(:option, question: q1, text_pt: "15") }
   let!(:o2_q1) { create(:option, question: q1, text_pt: "17") } # Correct choice for q1 is index 1
@@ -282,6 +283,7 @@ RSpec.describe "Quizzes", type: :request do
     end
 
     it "shows the VLibras 3D Avatar translation button when LIBRAS mode is enabled" do
+      q1.libras_video.attach(io: StringIO.new("video"), filename: "primos.mp4", content_type: "video/mp4")
       # Initialize play session
       get play_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR")
 
@@ -297,6 +299,8 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include('data-action="click->vlibras#translate"')
       expect(response.body).to include('data-vlibras-text-value="Qual destes números é primo? Um número primo tem exatamente 2 divisores."')
       expect(response.body).to include("Vídeo Gravado em LIBRAS")
+      expect(response.body).to include('data-libras-modal-target="video"')
+      expect(response.body).not_to include("youtube.com")
     end
 
     it "shows VLibras 3D translation button even if question does not have a pre-recorded video" do

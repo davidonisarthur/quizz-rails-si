@@ -6,6 +6,15 @@
   </div>
 
   <div class="mt-10 grid gap-5 md:grid-cols-2">
+    <article class="flex min-h-72 flex-col rounded-xl border-2 border-accent bg-bg2 p-6 sm:p-8">
+      <p class="eyebrow text-accent"><%= t("libras_lab.eyebrow") %></p>
+      <h2 class="type-display mt-5 text-3xl"><%= t("libras_lab.card_title") %></h2>
+      <p class="mt-4 text-sm leading-7 text-tx1"><%= t("libras_lab.card_description") %></p>
+      <%= link_to libras_lab_path(locale: I18n.locale), class: "focus-ink editorial-link mt-auto pt-8 text-sm font-bold" do %>
+        <%= t("libras_lab.card_cta") %><span class="ml-2" aria-hidden="true">→</span>
+      <% end %>
+    </article>
+
     <% @topics.each_with_index do |(slug, topic), index| %>
       <article class="flex min-h-72 flex-col rounded-xl border ink-rule bg-bg2 p-6 sm:p-8">
         <p class="eyebrow text-accent"><%= format("%02d", index + 1) %> · <%= t("study.catalog.available") %></p>

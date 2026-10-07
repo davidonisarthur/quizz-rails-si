@@ -1,10 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "modal", "iframe", "closeButton" ]
+  static targets = [ "modal", "video", "closeButton" ]
 
   connect() {
     this.triggerElement = null
+  }
+
+  disconnect() {
+    this.stopVideo()
   }
 
   open(event) {
@@ -13,10 +17,10 @@ export default class extends Controller {
     this.modalTarget.classList.remove("hidden")
     this.modalTarget.classList.add("flex")
     
-    // Set the iframe src if stored in data-video-url
     const url = event.currentTarget.dataset.videoUrl
-    if (url && this.hasIframeTarget) {
-      this.iframeTarget.src = url
+    if (url && this.hasVideoTarget) {
+      this.videoTarget.src = url
+      this.videoTarget.load()
     }
 
     requestAnimationFrame(() => this.closeButtonTarget.focus())
@@ -27,16 +31,21 @@ export default class extends Controller {
     this.modalTarget.classList.add("hidden")
     this.modalTarget.classList.remove("flex")
     
-    // Stop the video playing by resetting src
-    if (this.hasIframeTarget) {
-      this.iframeTarget.src = ""
-    }
+    this.stopVideo()
 
     this.triggerElement?.focus()
   }
 
   closeOnBackdrop(event) {
     if (event.target === this.modalTarget) this.close(event)
+  }
+
+  stopVideo() {
+    if (!this.hasVideoTarget) return
+
+    this.videoTarget.pause()
+    this.videoTarget.removeAttribute("src")
+    this.videoTarget.load()
   }
 
   handleKeydown(event) {
@@ -50,7 +59,7 @@ export default class extends Controller {
     if (event.key !== "Tab") return
 
     const focusable = this.modalTarget.querySelectorAll(
-      "button:not([disabled]), iframe, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+      "button:not([disabled]), video[controls], [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
     )
     const elements = Array.from(focusable)
     if (elements.length === 0) {

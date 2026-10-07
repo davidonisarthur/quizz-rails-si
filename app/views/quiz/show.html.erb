@@ -23,25 +23,7 @@
             <span aria-hidden="true">↗</span><%= t('quiz.translate_with_vlibras') %>
           </button>
 
-          <% if @question.libras_embed_url.present? %>
-            <div data-controller="libras-modal">
-              <button type="button" data-action="click->libras-modal#open" data-video-url="<%= @question.libras_embed_url %>" class="focus-ink inline-flex items-center gap-2 border border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase transition-colors hover:bg-tx0 hover:text-bg2 cursor-pointer" aria-label="<%= t('quiz.watch_in_libras') %>">
-                <span aria-hidden="true">▶</span><%= t('quiz.watch_video_libras') %>
-              </button>
-
-              <div data-libras-modal-target="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-tx0/75 p-4" role="dialog" aria-modal="true" aria-labelledby="libras-video-title" tabindex="-1" data-action="click->libras-modal#closeOnBackdrop keydown@window->libras-modal#handleKeydown">
-                <div class="w-full max-w-3xl border-2 border-tx0 bg-bg2">
-                  <div class="flex items-center justify-between border-b-2 ink-rule px-5 py-4">
-                    <h2 id="libras-video-title" class="type-display text-2xl"><%= t('quiz.libras_mode') %></h2>
-                    <button type="button" data-action="click->libras-modal#close" data-libras-modal-target="closeButton" class="focus-ink editorial-link cursor-pointer text-xs font-extrabold tracking-[0.1em] uppercase"><%= t('quiz.close') %></button>
-                  </div>
-                  <div class="aspect-video w-full bg-tx0">
-                    <iframe data-libras-modal-target="iframe" src="" class="h-full w-full" loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="<%= t('quiz.libras_mode') %>"></iframe>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <% end %>
+          <%= render "shared/libras_video_player", video: @question.libras_video, button_label: t("quiz.watch_video_libras"), modal_title: t("quiz.libras_mode"), button_class: "focus-ink inline-flex items-center gap-2 border border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase transition-colors hover:bg-tx0 hover:text-bg2 cursor-pointer" %>
         </div>
       <% end %>
     </section>

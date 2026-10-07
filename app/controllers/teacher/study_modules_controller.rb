@@ -28,8 +28,11 @@ module Teacher
     end
 
     def destroy
-      @study_module.destroy
-      redirect_to teacher_study_modules_path(locale: I18n.locale), notice: t("study.management.deleted")
+      if @study_module.destroy
+        redirect_to teacher_study_modules_path(locale: I18n.locale), notice: t("study.management.deleted")
+      else
+        redirect_to teacher_study_module_path(@study_module, locale: I18n.locale), alert: @study_module.errors.full_messages.to_sentence
+      end
     end
 
     private
@@ -42,7 +45,7 @@ module Teacher
       params.require(:study_module).permit(
         :title_pt, :title_en, :summary_pt, :summary_en, :content_pt, :content_en,
         :rich_content_pt, :rich_content_en, :libras_content_pt, :libras_content_en,
-        :video_url, :quiz_module_id, :slug, :position, :published, :audience
+        :libras_video, :quiz_module_id, :slug, :position, :published, :audience
       )
     end
 

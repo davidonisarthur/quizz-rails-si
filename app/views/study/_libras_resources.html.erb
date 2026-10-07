@@ -1,0 +1,17 @@
+<section class="mt-8 border-t ink-rule pt-8" aria-labelledby="study-libras-resources-title">
+  <p class="eyebrow text-accent"><%= t("study.libras.resources_label") %></p>
+  <h2 id="study-libras-resources-title" class="type-display mt-3 text-2xl sm:text-3xl"><%= t("study.libras.resources_title") %></h2>
+  <p class="mt-3 max-w-2xl text-sm leading-7 text-tx1"><%= t("study.libras.resources_description") %></p>
+
+  <div class="mt-5 flex flex-wrap gap-3">
+    <button type="button" data-controller="vlibras" data-action="click->vlibras#translate" data-vlibras-text-value="<%= libras_text %>" class="focus-ink inline-flex min-h-11 items-center gap-2 rounded-md border border-amber px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-amber uppercase transition-colors hover:bg-amber hover:text-bg2" aria-label="<%= t("quiz.translate_with_vlibras") %>">
+      <span aria-hidden="true">↗</span><%= t("quiz.translate_with_vlibras") %>
+    </button>
+
+    <% if video&.attached? %>
+      <%= render "shared/libras_video_player", video: video, button_label: t("study.libras.watch_video"), modal_title: t("study.libras.video_title"), button_class: "focus-ink inline-flex min-h-11 items-center gap-2 rounded-md border border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase transition-colors hover:bg-tx0 hover:text-bg2" %>
+    <% else %>
+      <p class="max-w-lg border-l-2 border-amber bg-bg1 px-4 py-3 text-sm leading-6 text-tx1"><%= t("study.libras.video_pending") %></p>
+    <% end %>
+  </div>
+</section>

@@ -1,4 +1,6 @@
 class StudyModule < ApplicationRecord
+  include LibrasVideoAttachment
+
   RESERVED_SLUGS = %w[turing-machine].freeze
 
   belongs_to :created_by, class_name: "User"
@@ -26,7 +28,6 @@ class StudyModule < ApplicationRecord
   validates :slug, presence: true, uniqueness: true, format: { with: /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/ }
   validates :slug, exclusion: { in: RESERVED_SLUGS }
   validates :position, presence: true, uniqueness: true, numericality: { only_integer: true, greater_than: 0 }
-  validate :video_url_uses_https
   validate :linked_quiz_belongs_to_author
   validate :content_is_present_in_both_languages
 
@@ -61,15 +62,6 @@ class StudyModule < ApplicationRecord
   end
 
   private
-
-  def video_url_uses_https
-    return if video_url.blank?
-
-    uri = URI.parse(video_url)
-    errors.add(:video_url, :invalid) unless uri.is_a?(URI::HTTPS) && uri.host.present?
-  rescue URI::InvalidURIError
-    errors.add(:video_url, :invalid)
-  end
 
   def linked_quiz_belongs_to_author
     return unless quiz_module && quiz_module.created_by_id != created_by_id

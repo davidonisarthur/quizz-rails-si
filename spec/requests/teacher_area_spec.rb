@@ -250,7 +250,7 @@ RSpec.describe "Teacher area", type: :request do
     sign_in(teacher)
 
     patch teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: {
-      question: { body_pt: "Questão inválida", correct_index: "0", published: "0", libras_video_url: "https://youtu.be/dQw4w9WgXcQ" }
+      question: { body_pt: "", correct_index: "0", published: "0" }
     }
 
     expect(response).to have_http_status(:unprocessable_entity)

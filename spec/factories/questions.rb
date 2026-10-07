@@ -6,7 +6,6 @@ FactoryBot.define do
     context_pt { "Um número primo tem exatamente 2 divisores." }
     context_en { "A prime number has exactly 2 divisors." }
     correct_index { 1 }
-    libras_video_url { "https://youtube.com/watch?v=exemplo" }
     published { true }
   end
 end
