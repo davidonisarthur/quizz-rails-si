@@ -9,6 +9,7 @@ RSpec.describe "About", type: :request do
       expect(response.body).to include("Sobre o PrimoQuiz")
       expect(response.body).to include("Iniciação Científica")
       expect(response.body).to include("Professora Dra. Renata da Silva Dessbesel")
+      expect(response.body).to include("Professor Renan de Bastos Andrade")
       expect(response.body).to match(%r{src="/assets/utfpr-institutional-logo-[^"]+\.png"})
     end
 
@@ -19,6 +20,7 @@ RSpec.describe "About", type: :request do
       expect(response.body).to include("About PrimoQuiz")
       expect(response.body).to include("Scientific Initiation")
       expect(response.body).to include("Professor Dr. Renata da Silva Dessbesel")
+      expect(response.body).to include("Professor Renan de Bastos Andrade")
     end
   end
 end
