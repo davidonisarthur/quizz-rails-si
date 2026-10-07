@@ -18,6 +18,40 @@
       <div class="bg-bg2 p-5"><dt class="eyebrow"><%= t("teacher.dashboard_published") %></dt><dd class="type-display mt-2 text-3xl"><%= @published_content_count %></dd></div>
       <div class="bg-bg2 p-5"><dt class="eyebrow"><%= t("teacher.dashboard_drafts") %></dt><dd class="type-display mt-2 text-3xl"><%= @drafts_count %></dd></div>
     </dl>
+
+    <section class="mt-8 rounded-xl border-l-4 border-accent bg-bg1 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6" aria-labelledby="teacher-next-step-title">
+      <div class="max-w-2xl">
+        <p class="eyebrow text-accent"><%= t("teacher.next_step.label") %></p>
+        <% case @next_step %>
+        <% when :create_classroom %>
+          <h2 id="teacher-next-step-title" class="type-display mt-2 text-2xl"><%= t("teacher.next_step.create_classroom.title") %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.next_step.create_classroom.description") %></p>
+          <% next_step_path = teacher_classrooms_path(locale: I18n.locale) %>
+          <% next_step_label = t("teacher.next_step.create_classroom.cta") %>
+        <% when :create_content %>
+          <h2 id="teacher-next-step-title" class="type-display mt-2 text-2xl"><%= t("teacher.next_step.create_content.title") %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.next_step.create_content.description") %></p>
+          <% next_step_path = new_teacher_quiz_module_path(locale: I18n.locale) %>
+          <% next_step_label = t("teacher.next_step.create_content.cta") %>
+        <% when :add_questions %>
+          <h2 id="teacher-next-step-title" class="type-display mt-2 text-2xl"><%= t("teacher.next_step.add_questions.title") %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.next_step.add_questions.description") %></p>
+          <% next_step_path = teacher_quiz_modules_path(locale: I18n.locale) %>
+          <% next_step_label = t("teacher.next_step.add_questions.cta") %>
+        <% when :review_drafts %>
+          <h2 id="teacher-next-step-title" class="type-display mt-2 text-2xl"><%= t("teacher.next_step.review_drafts.title") %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.next_step.review_drafts.description", count: @drafts_count) %></p>
+          <% next_step_path = teacher_quiz_modules_path(locale: I18n.locale) %>
+          <% next_step_label = t("teacher.next_step.review_drafts.cta") %>
+        <% else %>
+          <h2 id="teacher-next-step-title" class="type-display mt-2 text-2xl"><%= t("teacher.next_step.review_results.title") %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t("teacher.next_step.review_results.description") %></p>
+          <% next_step_path = teacher_quiz_modules_path(locale: I18n.locale) %>
+          <% next_step_label = t("teacher.next_step.review_results.cta") %>
+        <% end %>
+      </div>
+      <%= link_to next_step_label, next_step_path, class: "focus-ink mt-5 inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.08em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:mt-0" %>
+    </section>
   </header>
 
   <section class="mt-9" aria-labelledby="teacher-quizzes-title">
@@ -39,8 +73,11 @@
                 <p class="eyebrow"><%= modulo.published? ? t("teacher.published") : t("teacher.draft") %> · <%= modulo.audience_public_audience? ? t("teacher.audience_public") : t("teacher.audience_classroom") %></p>
                 <h3 class="type-display mt-2 text-2xl"><%= modulo.title_pt %></h3>
               </div>
-              <span class="rounded-full bg-bg1 px-3 py-1 text-xs font-bold text-tx1"><%= modulo.questions.count %> <%= t("teacher.questions") %></span>
+              <span class="rounded-full bg-bg1 px-3 py-1 text-xs font-bold text-tx1"><%= t("teacher.question_status", published: modulo.questions.count(&:published?), total: modulo.questions.count) %></span>
             </div>
+            <% if modulo.questions.none? %>
+              <p class="mt-4 text-sm leading-6 text-tx1"><%= t("teacher.add_questions_hint") %></p>
+            <% end %>
             <div class="mt-6 flex flex-wrap gap-x-4 gap-y-1 text-sm font-bold">
               <%= link_to t("teacher.manage_quiz"), teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
               <%= link_to t("teacher.reports"), report_teacher_quiz_module_path(modulo, locale: I18n.locale), class: "focus-ink editorial-link min-h-11 py-3" %>
@@ -72,6 +109,7 @@
           <article class="rounded-xl border ink-rule bg-bg2 p-5">
             <p class="eyebrow"><%= study_module.published? ? t("teacher.published") : t("teacher.draft") %> · <%= study_module.audience_public_audience? ? t("teacher.audience_public") : t("teacher.audience_classroom") %></p>
             <h3 class="type-display mt-2 text-xl"><%= study_module.title_pt %></h3>
+            <p class="mt-3 text-sm leading-6 text-tx1"><%= study_module.summary_pt %></p>
             <%= link_to t("teacher.manage_study"), teacher_study_module_path(study_module, locale: I18n.locale), class: "focus-ink editorial-link mt-5 inline-block text-sm font-bold" %>
           </article>
         <% end %>

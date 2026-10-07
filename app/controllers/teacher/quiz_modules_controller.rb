@@ -9,6 +9,8 @@ module Teacher
     def show
       @classrooms = current_user.classrooms.order(:name)
       @assignments = @module.module_assignments.includes(:classroom)
+      @questions = @module.questions.order(:position)
+      @published_questions_count = @questions.count(&:published?)
     end
 
     def preview

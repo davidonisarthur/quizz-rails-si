@@ -1,4 +1,5 @@
 require "rails_helper"
+require "stringio"
 
 RSpec.describe "Teacher study modules", type: :request do
   let!(:teacher) { create(:user, :teacher, email: "teacher-study@example.com", password: "password123") }
@@ -14,7 +15,7 @@ RSpec.describe "Teacher study modules", type: :request do
       summary_pt: "Resumo em português", summary_en: "Summary in English",
       content_pt: "Texto completo em português.", content_en: "Full English text.",
       libras_content_pt: "Texto curto em português.", libras_content_en: "Short English text.",
-      slug: "logica-iniciantes", position: position, published: "1", video_url: "https://example.com/video"
+      slug: "logica-iniciantes", position: position, published: "1"
     }
   end
 
@@ -54,6 +55,22 @@ RSpec.describe "Teacher study modules", type: :request do
     expect(created_module.content_pt).to include("Algoritmos")
     expect(created_module.content_en).to include("Algorithms")
     expect(created_module.rich_content_pt.to_plain_text).to include("Texto em português")
+  end
+
+  it "attaches a teacher-uploaded LIBRAS video to study content" do
+    sign_in(teacher)
+    video = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("video"), filename: "logica.mp4", content_type: "video/mp4"
+    )
+
+    post teacher_study_modules_path(locale: "pt-BR"), params: {
+      study_module: study_module_params(position: 14).merge(slug: "logica-com-video", libras_video: video.signed_id)
+    }
+
+    created_module = StudyModule.last
+    expect(response).to redirect_to(teacher_study_module_path(created_module, locale: "pt-BR"))
+    expect(created_module.libras_video).to be_attached
+    expect(created_module.libras_video.filename.to_s).to eq("logica.mp4")
   end
 
   it "does not allow students or other teachers to manage the content" do
@@ -96,6 +113,41 @@ RSpec.describe "Teacher study modules", type: :request do
 
     expect(response).to redirect_to(teacher_study_module_path(study_module, locale: "pt-BR"))
     expect(flash[:notice]).to eq("Atribuição removida.")
+  end
+
+  it "renders rich study content and guides restricted content without a classroom" do
+    study_module = create(:study_module, created_by: teacher, audience: "classroom_audience")
+    study_module.update!(rich_content_pt: "<h2>Conteúdo com imagem e formatação</h2><p>Texto de apoio.</p>")
+    sign_in(teacher)
+
+    get teacher_study_module_path(study_module, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Conteúdo com imagem e formatação")
+    expect(response.body).to include("Crie uma turma antes de restringir o acesso a este conteúdo.")
+  end
+
+  it "keeps study content and assignments when their removal is blocked" do
+    classroom = teacher.classrooms.create!(name: "Turma de conteúdo protegido")
+    study_module = create(:study_module, created_by: teacher, audience: "classroom_audience")
+    assignment = StudyModuleAssignment.create!(classroom: classroom, study_module: study_module)
+    sign_in(teacher)
+
+    allow_any_instance_of(StudyModuleAssignment).to receive(:destroy) do |record|
+      record.errors.add(:base, "A atribuição de estudo não pode ser removida agora")
+      false
+    end
+    delete teacher_study_module_study_module_assignment_path(study_module, assignment, locale: "pt-BR")
+    expect(response).to redirect_to(teacher_study_module_path(study_module, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("A atribuição de estudo não pode ser removida agora")
+
+    allow_any_instance_of(StudyModule).to receive(:destroy) do |record|
+      record.errors.add(:base, "O conteúdo não pode ser excluído agora")
+      false
+    end
+    delete teacher_study_module_path(study_module, locale: "pt-BR")
+    expect(response).to redirect_to(teacher_study_module_path(study_module, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("O conteúdo não pode ser excluído agora")
   end
 
   it "does not let a teacher manage platform study content" do

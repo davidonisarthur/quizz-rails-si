@@ -1,4 +1,5 @@
 require "rails_helper"
+require "stringio"
 
 RSpec.describe "Teacher area", type: :request do
   let!(:teacher) { create(:user, :teacher, email: "teacher@example.com", password: "password123") }
@@ -66,6 +67,41 @@ RSpec.describe "Teacher area", type: :request do
     expect(response.body).to include("Alunos")
     expect(response.body).to include("Conteúdos publicados")
     expect(response.body).to include("Rascunhos")
+  end
+
+  it "guides a teacher through the next content-management action" do
+    sign_in(teacher)
+
+    get teacher_root_path(locale: "pt-BR")
+    expect(response.body).to include("Comece organizando uma turma")
+
+    teacher.classrooms.create!(name: "Turma guiada")
+    get teacher_root_path(locale: "pt-BR")
+    expect(response.body).to include("Crie seu primeiro material")
+
+    module_record = create(:quiz_module, created_by: teacher, published: false)
+    get teacher_root_path(locale: "pt-BR")
+    expect(response.body).to include("Complete um quiz com perguntas")
+
+    create(:question, quiz_module: module_record, published: true)
+    get teacher_root_path(locale: "pt-BR")
+    expect(response.body).to include("Revise seus rascunhos")
+
+    module_record.update!(published: true)
+    get teacher_root_path(locale: "pt-BR")
+    expect(response.body).to include("Acompanhe a aprendizagem")
+  end
+
+  it "explains missing questions and classroom access on a restricted quiz" do
+    module_record = create(:quiz_module, created_by: teacher, audience: "classroom_audience", published: false)
+    sign_in(teacher)
+
+    get teacher_quiz_module_path(module_record, locale: "pt-BR")
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Este quiz ainda não tem perguntas")
+    expect(response.body).to include("Crie uma turma antes de restringir o acesso a este conteúdo.")
+    expect(response.body).to include("0 de 0 questões publicadas")
   end
 
   it "prevents teachers from recording quiz attempts through learner routes" do
@@ -158,6 +194,19 @@ RSpec.describe "Teacher area", type: :request do
     expect(response).to have_http_status(:unprocessable_entity)
   end
 
+  it "shows a translated error when a module order is already in use" do
+    create(:quiz_module, created_by: teacher, position: 81)
+    sign_in(teacher)
+
+    post teacher_quiz_modules_path(locale: "pt-BR"), params: {
+      quiz_module: { title_pt: "Novo módulo", title_en: "New module", slug: "novo-modulo", position: 81, unlocked: "0", published: "0", audience: "public_audience" }
+    }
+
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(response.body).to include("Ordem do módulo já está em uso")
+    expect(response.body).not_to include("Translation missing")
+  end
+
   it "assigns new modules to the signed-in teacher and ignores ownership parameters" do
     sign_in(teacher)
 
@@ -242,6 +291,43 @@ RSpec.describe "Teacher area", type: :request do
     expect {
       delete teacher_quiz_module_question_path(module_record, question, locale: "pt-BR")
     }.to change(Question, :count).by(-1)
+  end
+
+  it "attaches a teacher-uploaded LIBRAS video to a question" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record, published: false)
+    4.times { create(:option, question: question) }
+    create(:feedback, question: question, kind: "correct")
+    create(:feedback, question: question, kind: "incorrect")
+    video = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("video"), filename: "questao.webm", content_type: "video/webm"
+    )
+    sign_in(teacher)
+
+    patch teacher_quiz_module_question_path(module_record, question, locale: "pt-BR"), params: {
+      question: { libras_video: video.signed_id }
+    }
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(question.reload.libras_video).to be_attached
+    expect(question.libras_video.filename.to_s).to eq("questao.webm")
+  end
+
+  it "keeps a question and shows its error when deletion is blocked" do
+    module_record = create(:quiz_module, created_by: teacher)
+    question = create(:question, quiz_module: module_record)
+    sign_in(teacher)
+    allow_any_instance_of(Question).to receive(:destroy) do |record|
+      record.errors.add(:base, "A questão não pode ser excluída agora")
+      false
+    end
+
+    expect {
+      delete teacher_quiz_module_question_path(module_record, question, locale: "pt-BR")
+    }.not_to change(Question, :count)
+
+    expect(response).to redirect_to(teacher_quiz_module_path(module_record, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("A questão não pode ser excluída agora")
   end
 
   it "rerenders the question form when an otherwise draft update fails validation" do

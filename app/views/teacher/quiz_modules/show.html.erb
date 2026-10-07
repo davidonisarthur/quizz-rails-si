@@ -14,6 +14,21 @@
     </div>
   </div>
 
+  <section class="mt-6 grid gap-px overflow-hidden rounded-xl border ink-rule bg-bg3 sm:grid-cols-3" aria-label="<%= t("teacher.quiz_readiness") %>">
+    <div class="bg-bg2 p-5">
+      <p class="eyebrow"><%= t("teacher.quiz_step_details") %></p>
+      <p class="mt-3 text-sm font-bold text-tx0"><%= @module.published? ? t("teacher.published") : t("teacher.draft") %></p>
+    </div>
+    <div class="bg-bg2 p-5">
+      <p class="eyebrow"><%= t("teacher.quiz_step_questions") %></p>
+      <p class="mt-3 text-sm font-bold text-tx0"><%= t("teacher.question_status", published: @published_questions_count, total: @questions.size) %></p>
+    </div>
+    <div class="bg-bg2 p-5">
+      <p class="eyebrow"><%= t("teacher.quiz_step_access") %></p>
+      <p class="mt-3 text-sm font-bold text-tx0"><%= @module.audience_public_audience? ? t("teacher.audience_public") : t("teacher.assigned_classes_count", count: @assignments.size) %></p>
+    </div>
+  </section>
+
   <section class="mt-6 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
     <p class="eyebrow"><%= t("teacher.audience") %></p>
     <% if @module.audience_public_audience? %>
@@ -24,20 +39,40 @@
       <p class="mt-3 text-sm leading-6 text-tx1"><%= t("teacher.classroom_access_hint") %></p>
       <% if @classrooms.any? %>
         <%= form_with url: teacher_quiz_module_module_assignments_path(@module, locale: I18n.locale), class: "mt-5 flex flex-wrap gap-3" do |f| %>
+          <%= f.label :classroom_id, t("classrooms.assign_to"), class: "sr-only" %>
           <%= f.select :classroom_id, @classrooms.map { |classroom| [classroom.name, classroom.id] }, {}, class: "focus-ink rounded-md border border-bg3 px-3 py-2" %>
           <%= f.submit t("classrooms.assign"), class: "focus-ink cursor-pointer rounded-md bg-accent px-4 py-2 text-xs font-extrabold text-bg2 uppercase" %>
         <% end %>
+      <% else %>
+        <div class="mt-5 rounded-lg border border-dashed border-bg3 bg-bg1 p-4 text-sm leading-6 text-tx1">
+          <p><%= t("teacher.create_classroom_before_assigning") %></p>
+          <%= link_to t("teacher.create_classroom"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink editorial-link mt-3 inline-block font-bold" %>
+        </div>
       <% end %>
+      <% if @assignments.any? %>
       <div class="mt-5 space-y-2">
         <% @assignments.each do |assignment| %>
-          <div class="flex items-center justify-between gap-4 text-sm"><span><%= assignment.classroom.name %></span><%= button_to t("teacher.delete"), teacher_quiz_module_module_assignment_path(@module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink text-red" %></div>
+          <div class="flex items-center justify-between gap-4 rounded-md bg-bg1 px-4 py-3 text-sm"><span class="font-bold"><%= assignment.classroom.name %></span><%= button_to t("teacher.remove_classroom_access"), teacher_quiz_module_module_assignment_path(@module, assignment, locale: I18n.locale), method: :delete, class: "focus-ink min-h-11 text-sm font-bold text-red", form: { data: { turbo_confirm: t("teacher.confirm_remove_access") } } %></div>
         <% end %>
       </div>
+      <% elsif @classrooms.any? %>
+        <p class="mt-5 rounded-lg border border-dashed border-bg3 bg-bg1 p-4 text-sm leading-6 text-tx1"><%= t("teacher.no_classroom_assignments") %></p>
+      <% end %>
     <% end %>
   </section>
 
-  <div class="mt-8 space-y-3">
-    <% @module.questions.order(:position).each do |question| %>
+  <section class="mt-8" aria-labelledby="quiz-questions-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow"><%= t("teacher.quiz_step_questions") %></p>
+        <h2 id="quiz-questions-title" class="type-display mt-2 text-3xl"><%= t("teacher.questions") %></h2>
+      </div>
+      <%= link_to t("teacher.new_question"), new_teacher_quiz_module_question_path(@module, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center rounded-md bg-accent px-4 py-3 text-xs font-extrabold tracking-[0.08em] text-bg2 uppercase hover:bg-tx0" %>
+    </div>
+
+    <% if @questions.any? %>
+    <div class="mt-5 space-y-3">
+    <% @questions.each do |question| %>
       <article class="flex flex-wrap items-center justify-between gap-5 rounded-xl border ink-rule bg-bg2 p-5">
         <div class="max-w-2xl">
           <p class="eyebrow"><%= t("teacher.question_number", number: question.position) %> · <%= question.published? ? t("teacher.published") : t("teacher.draft") %></p>
@@ -54,5 +89,13 @@
         </div>
       </article>
     <% end %>
-  </div>
+    </div>
+    <% else %>
+      <div class="mt-5 rounded-xl border border-dashed border-bg3 bg-bg2 p-6 sm:p-8">
+        <h3 class="type-display text-2xl"><%= t("teacher.no_questions_title") %></h3>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-tx1"><%= t("teacher.no_questions_description") %></p>
+        <%= link_to t("teacher.new_question"), new_teacher_quiz_module_question_path(@module, locale: I18n.locale), class: "focus-ink mt-5 inline-flex min-h-11 items-center rounded-md bg-accent px-4 text-xs font-extrabold tracking-[0.08em] text-bg2 uppercase hover:bg-tx0" %>
+      </div>
+    <% end %>
+  </section>
 </section>

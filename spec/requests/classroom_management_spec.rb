@@ -49,6 +49,25 @@ RSpec.describe "Classroom management", type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it "explains the empty state and shows the material assigned to a classroom" do
+    sign_in(teacher)
+
+    get teacher_classrooms_path(locale: "pt-BR")
+    expect(response.body).to include("Você ainda não tem turmas")
+
+    classroom = teacher.classrooms.create!(name: "Turma com materiais")
+    quiz_module = create(:quiz_module, created_by: teacher, title_pt: "Quiz da turma")
+    study_module = create(:study_module, created_by: teacher, title_pt: "Estudo da turma")
+    ModuleAssignment.create!(classroom: classroom, quiz_module: quiz_module)
+    StudyModuleAssignment.create!(classroom: classroom, study_module: study_module)
+
+    get teacher_classroom_path(classroom, locale: "pt-BR")
+
+    expect(response.body).to include("Conteúdos liberados para esta turma")
+    expect(response.body).to include("Quiz da turma")
+    expect(response.body).to include("Estudo da turma")
+  end
+
   it "keeps the classroom and reports an error when its deletion is blocked" do
     classroom = teacher.classrooms.create!(name: "Turma protegida contra exclusão")
     sign_in(teacher)
@@ -83,6 +102,30 @@ RSpec.describe "Classroom management", type: :request do
     expect {
       delete teacher_classroom_classroom_enrollment_path(classroom, enrollment, locale: "pt-BR")
     }.to change(ClassroomEnrollment, :count).by(-1)
+  end
+
+  it "keeps assignments and enrollments when their removal is blocked" do
+    classroom = teacher.classrooms.create!(name: "Turma com remoção protegida")
+    enrollment = classroom.classroom_enrollments.create!(user: student)
+    quiz_module = create(:quiz_module, created_by: teacher)
+    assignment = ModuleAssignment.create!(classroom: classroom, quiz_module: quiz_module)
+    sign_in(teacher)
+
+    allow_any_instance_of(ClassroomEnrollment).to receive(:destroy) do |record|
+      record.errors.add(:base, "A matrícula não pode ser removida agora")
+      false
+    end
+    delete teacher_classroom_classroom_enrollment_path(classroom, enrollment, locale: "pt-BR")
+    expect(response).to redirect_to(teacher_classroom_path(classroom, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("A matrícula não pode ser removida agora")
+
+    allow_any_instance_of(ModuleAssignment).to receive(:destroy) do |record|
+      record.errors.add(:base, "A atribuição não pode ser removida agora")
+      false
+    end
+    delete teacher_quiz_module_module_assignment_path(quiz_module, assignment, locale: "pt-BR")
+    expect(response).to redirect_to(teacher_quiz_module_path(quiz_module, locale: "pt-BR"))
+    expect(flash[:alert]).to eq("A atribuição não pode ser removida agora")
   end
 
   it "does not enroll teachers or expose another teacher's enrollment endpoint" do

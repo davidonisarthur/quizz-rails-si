@@ -13,8 +13,12 @@ module Teacher
     end
 
     def destroy
-      @classroom.classroom_enrollments.find(params[:id]).destroy
-      redirect_to teacher_classroom_path(@classroom, locale: I18n.locale), notice: t("classrooms.student_removed")
+      enrollment = @classroom.classroom_enrollments.find(params[:id])
+      if enrollment.destroy
+        redirect_to teacher_classroom_path(@classroom, locale: I18n.locale), notice: t("classrooms.student_removed")
+      else
+        redirect_to teacher_classroom_path(@classroom, locale: I18n.locale), alert: enrollment.errors.full_messages.to_sentence
+      end
     end
 
     private

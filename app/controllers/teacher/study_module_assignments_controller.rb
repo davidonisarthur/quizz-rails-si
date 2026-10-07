@@ -11,8 +11,12 @@ module Teacher
     end
 
     def destroy
-      @study_module.study_module_assignments.find(params[:id]).destroy
-      redirect_to teacher_study_module_path(@study_module, locale: I18n.locale), notice: t("classrooms.study_unassigned")
+      assignment = @study_module.study_module_assignments.find(params[:id])
+      if assignment.destroy
+        redirect_to teacher_study_module_path(@study_module, locale: I18n.locale), notice: t("classrooms.study_unassigned")
+      else
+        redirect_to teacher_study_module_path(@study_module, locale: I18n.locale), alert: assignment.errors.full_messages.to_sentence
+      end
     end
 
     private
