@@ -4,10 +4,10 @@
     <%= javascript_tag nonce: true do %>
       (function() {
         const theme = localStorage.getItem('theme');
-        if (theme === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
+        if (theme === 'dark') {
           document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
       })();
     <% end %>
@@ -27,6 +27,9 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "trix", "data-turbo-track": "reload" %>
@@ -37,22 +40,57 @@
 
   <body class="min-h-screen bg-bg0 text-tx0 antialiased">
     <a href="#main-content" class="skip-link"><%= t("navigation.skip_to_content") %></a>
-    <div class="mx-auto min-h-screen max-w-[1440px] bg-bg0">
-      <nav aria-label="<%= t('navigation.main') %>" class="border-b ink-rule bg-bg2 px-4 py-3 sm:px-8 sm:py-4">
-        <div class="mx-auto max-w-7xl">
+    <div class="app-shell">
+      <aside class="app-sidebar" aria-label="<%= t('navigation.main') %>">
+        <div class="app-sidebar__inner">
+          <%= link_to root_path(locale: I18n.locale), class: "focus-ink sidebar-brand" do %>
+            <span class="sidebar-brand__mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span><strong>Primo</strong><b>Quiz</b><small><%= t('brand.subtitle') %></small></span>
+          <% end %>
+
+          <nav class="sidebar-nav" aria-label="<%= t('navigation.main') %>">
+            <% if current_user&.teacher? %>
+              <%= link_to teacher_root_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(teacher_root_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">▦</span><%= t('navigation.dashboard') %><% end %>
+              <%= link_to teacher_classrooms_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(teacher_classrooms_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">◌</span><%= t('classrooms.title') %><% end %>
+              <%= link_to teacher_quiz_modules_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(teacher_quiz_modules_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">✓</span><%= t('teacher.quizzes') %><% end %>
+              <%= link_to teacher_study_modules_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(teacher_study_modules_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">✦</span><%= t('study.management.title') %><% end %>
+            <% else %>
+              <%= link_to root_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(root_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">⌂</span><%= t('navigation.home') %><% end %>
+              <%= link_to study_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(study_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">✦</span><%= t('study.nav') %><% end %>
+              <%= link_to quiz_modules_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(quiz_modules_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">✓</span><%= t('navigation.quizzes') %><% end %>
+              <% if current_user %>
+                <%= link_to profile_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(profile_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">◌</span><%= t('navigation.profile') %><% end %>
+              <% end %>
+            <% end %>
+            <%= link_to libras_lab_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(libras_lab_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">⌁</span><%= t('navigation.vision_lab') %><% end %>
+            <%= link_to about_path(locale: I18n.locale), class: "focus-ink sidebar-nav__link #{current_page?(about_path(locale: I18n.locale)) ? 'is-active' : ''}" do %><span aria-hidden="true">i</span><%= t('navigation.about_project') %><% end %>
+          </nav>
+
+          <p class="sidebar-caption"><%= t('brand.footer') %></p>
+        </div>
+      </aside>
+
+      <div class="app-stage">
+      <nav aria-label="<%= t('navigation.main') %>" class="app-topbar">
+        <div class="app-topbar__inner">
           <div class="flex items-center justify-between gap-4">
-          <%= link_to root_path(locale: I18n.locale), class: "focus-ink leading-none" do %>
+          <%= link_to root_path(locale: I18n.locale), class: "focus-ink app-topbar__brand leading-none" do %>
             <span class="type-display text-3xl">Primo<span class="text-accent">Quiz</span></span>
             <span class="mt-1 block text-[0.6rem] font-bold tracking-[0.22em] text-tx1 uppercase"><%= t('brand.subtitle') %></span>
           <% end %>
 
-          <div class="hidden items-center justify-end gap-x-5 gap-y-3 text-sm font-semibold md:flex">
-            <div class="flex items-center gap-5">
-              <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
-              <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+          <div class="app-topbar__desktop hidden items-center justify-end gap-x-5 gap-y-3 text-sm font-semibold md:flex">
+            <div class="app-topbar__links flex items-center gap-5">
               <% if current_user&.teacher? %>
-                <%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink text-tx1 transition-colors hover:text-accent" %>
+                <%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(teacher_root_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(teacher_root_path(locale: I18n.locale)) ? 'page' : nil } %>
+                <%= link_to t("classrooms.title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(teacher_classrooms_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(teacher_classrooms_path(locale: I18n.locale)) ? 'page' : nil } %>
+                <%= link_to t("teacher.quizzes"), teacher_quiz_modules_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(teacher_quiz_modules_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(teacher_quiz_modules_path(locale: I18n.locale)) ? 'page' : nil } %>
+              <% else %>
+                <%= link_to t("navigation.home"), root_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(root_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(root_path(locale: I18n.locale)) ? 'page' : nil } %>
+                <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(study_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(study_path(locale: I18n.locale)) ? 'page' : nil } %>
+                <%= link_to t("navigation.quizzes"), quiz_modules_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(quiz_modules_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(quiz_modules_path(locale: I18n.locale)) ? 'page' : nil } %>
               <% end %>
+              <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink app-topbar__link #{current_page?(about_path(locale: I18n.locale)) ? 'is-active' : ''}", aria: { current: current_page?(about_path(locale: I18n.locale)) ? 'page' : nil } %>
             </div>
 
             <% if current_user %>
@@ -75,7 +113,7 @@
               <%= button_to toggle_libras_mode_path(locale: I18n.locale),
                             method: :post,
                             class: "focus-ink w-full cursor-pointer px-3 py-2 text-left text-sm font-semibold transition-colors #{libras_mode_enabled? ? 'text-accent' : 'text-tx1 hover:bg-bg1 hover:text-tx0'}",
-                            aria: { label: t('quiz.libras_mode') } do %>
+                            aria: { label: t('quiz.libras_mode'), pressed: libras_mode_enabled? } do %>
                 <%= t('quiz.libras_mode') %>
               <% end %>
               <button type="button"
@@ -92,6 +130,20 @@
               </div>
             </details>
           </div>
+
+          <% if current_user %>
+            <details class="app-mobile-account group relative md:hidden">
+              <summary class="focus-ink flex min-h-11 cursor-pointer list-none items-center rounded-md border border-bg3 px-3 text-sm font-bold text-tx1 hover:border-accent hover:text-accent [&::-webkit-details-marker]:hidden">
+                <%= t('navigation.account') %><span class="ml-1.5 text-tx2 group-open:text-accent" aria-hidden="true">+</span>
+              </summary>
+              <div class="app-mobile-account__panel">
+                <% unless current_user.teacher? %>
+                  <%= link_to t('navigation.profile'), profile_path(locale: I18n.locale), class: "focus-ink block px-3 py-3 text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+                <% end %>
+                <%= button_to t('sessions.sign_out'), session_path(locale: I18n.locale), method: :delete, class: "focus-ink w-full cursor-pointer px-3 py-3 text-left text-tx1 transition-colors hover:bg-bg1 hover:text-tx0" %>
+              </div>
+            </details>
+          <% end %>
           </div>
 
           <details class="group mt-3 border-t ink-rule pt-3 md:hidden">
@@ -99,9 +151,17 @@
               <%= t("navigation.menu") %><span class="text-xl leading-none group-open:text-accent" aria-hidden="true">+</span>
             </summary>
             <div class="grid gap-1 pb-1 pt-3 text-base font-semibold">
-              <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+              <% unless current_user&.teacher? %>
+                <%= link_to t("navigation.home"), root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <%= link_to t("study.nav"), study_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <%= link_to t("navigation.quizzes"), quiz_modules_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+              <% end %>
               <%= link_to t("navigation.about_project"), about_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
-              <% if current_user&.teacher? %><%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %><% end %>
+              <% if current_user&.teacher? %>
+                <%= link_to t("navigation.dashboard"), teacher_root_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <%= link_to t("classrooms.title"), teacher_classrooms_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+                <%= link_to t("teacher.quizzes"), teacher_quiz_modules_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
+              <% end %>
               <% if current_user %>
                 <% unless current_user.teacher? %>
                   <%= link_to t("navigation.profile"), profile_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
@@ -111,7 +171,7 @@
                 <%= link_to t("sessions.sign_in"), new_session_path(locale: I18n.locale), class: "focus-ink flex min-h-11 items-center rounded-md px-3 text-tx1 hover:bg-bg1 hover:text-accent" %>
               <% end %>
               <div class="mt-2 grid grid-cols-2 gap-2 border-t ink-rule pt-3">
-                <%= button_to toggle_libras_mode_path(locale: I18n.locale), method: :post, class: "focus-ink min-h-11 cursor-pointer rounded-md border border-bg3 px-3 text-sm font-bold #{libras_mode_enabled? ? 'border-accent text-accent' : 'text-tx1'}", aria: { label: t("quiz.libras_mode") } do %><%= t("quiz.libras_mode") %><% end %>
+                <%= button_to toggle_libras_mode_path(locale: I18n.locale), method: :post, class: "focus-ink min-h-11 cursor-pointer rounded-md border border-bg3 px-3 text-sm font-bold #{libras_mode_enabled? ? 'border-accent text-accent' : 'text-tx1'}", aria: { label: t("quiz.libras_mode"), pressed: libras_mode_enabled? } do %><%= t("quiz.libras_mode") %><% end %>
                 <button type="button" data-controller="theme" data-action="click->theme#toggle" class="focus-ink min-h-11 cursor-pointer rounded-md border border-bg3 px-3 text-sm font-bold text-tx1" aria-label="<%= t("theme.toggle") %>"><%= t("theme.label") %></button>
               </div>
               <div class="mt-2 flex gap-2" aria-label="<%= t("navigation.language") %>">
@@ -123,7 +183,7 @@
         </div>
       </nav>
 
-      <main id="main-content" tabindex="-1" class="mx-auto max-w-7xl px-4 py-7 sm:px-8 sm:py-12">
+      <main id="main-content" tabindex="-1" class="app-content px-0 py-7 sm:py-12">
       <% if flash[:alert] %>
         <div class="mb-8 border-l-4 border-red bg-red/10 px-5 py-4 text-sm font-bold text-red" role="alert">
           <%= flash[:alert] %>
@@ -137,9 +197,10 @@
       <%= yield %>
       </main>
 
-      <footer class="mx-5 border-t ink-rule py-5 text-[0.65rem] font-bold tracking-[0.1em] text-tx2 uppercase sm:mx-8">
+      <footer class="app-footer">
         PrimoQuiz · <%= t('brand.footer') %>
       </footer>
+      </div>
     </div>
 
     <!-- VLibras Widget Container (Permanent across Turbo navigations) -->

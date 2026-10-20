@@ -1,13 +1,17 @@
-<section class="mx-auto max-w-2xl py-10 sm:py-16">
+<section class="quiz-result py-10 sm:py-16">
   <p class="eyebrow"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
-  <div class="mt-5 rounded-xl border ink-rule bg-bg2 p-7 sm:p-10">
-    <h1 class="type-display max-w-2xl text-4xl leading-tight sm:text-5xl"><%= t('quiz.completed_title') %></h1>
-    <p class="mt-8 text-sm font-extrabold tracking-[0.12em] text-tx1 uppercase"><%= t('quiz.score_label') %></p>
-    <p class="type-display mt-1 text-6xl text-accent sm:text-8xl"><%= @score %><span class="text-3xl text-tx1 sm:text-4xl"> / <%= @total %></span></p>
+  <div class="quiz-result-card">
+    <div>
+      <h1 class="type-display max-w-2xl text-4xl leading-tight sm:text-5xl"><%= t('quiz.completed_title') %></h1>
+      <p class="mt-5 max-w-xl text-base leading-7 text-tx1"><%= t('quiz.score_label') %></p>
+    </div>
+    <div class="quiz-result-card__score" role="img" aria-label="<%= t('quiz.score_label') %>: <%= @score %> / <%= @total %>">
+      <strong><%= @score %> <span>/ <%= @total %></span></strong>
+    </div>
   </div>
   <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink editorial-link min-h-11 px-1 py-3 text-center text-xs font-extrabold tracking-[0.12em] uppercase sm:text-left" %>
-    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink inline-flex min-h-11 items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0" do %>
+    <%= link_to t('quiz.back_home'), root_path(locale: I18n.locale), class: "focus-ink quiz-secondary-action" %>
+    <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale), class: "focus-ink quiz-primary-action" do %>
       <%= t('quiz.try_again') %><span aria-hidden="true">→</span>
     <% end %>
   </div>

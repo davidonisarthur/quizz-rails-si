@@ -19,13 +19,13 @@ export class HandLandmarkRenderer {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  draw(landmarks) {
+  draw(landmarks, { candidate = false } = {}) {
     this.clear()
     if (!landmarks?.length) return
 
     this.context.lineWidth = Math.max(2, this.canvas.width / 320)
-    this.context.strokeStyle = "#4bb9ed"
-    this.context.fillStyle = "#f4c95d"
+    this.context.strokeStyle = candidate ? "#78cfad" : "#4bb9ed"
+    this.context.fillStyle = candidate ? "#d9f6e9" : "#f4c95d"
 
     HAND_CONNECTIONS.forEach(([ start, end ]) => {
       const first = landmarks[start]

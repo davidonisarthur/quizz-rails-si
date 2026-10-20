@@ -1,3 +1,110 @@
-<div class="mx-auto max-w-5xl py-10 sm:py-16">
-  <%= render "quiz_modules/catalog", heading: t('modules.title') %>
-</div>
+<section class="activity-selection py-8 sm:py-12" aria-labelledby="activity-selection-title">
+  <header class="activity-selection__hero">
+    <div class="activity-selection__hero-copy">
+      <div class="activity-selection__badges">
+        <span class="activity-selection__badge"><span aria-hidden="true">◈</span><%= t('modules.selection_badge') %></span>
+        <span class="activity-selection__badge activity-selection__badge--libras"><span aria-hidden="true">⌁</span><%= t('modules.libras_badge') %></span>
+      </div>
+      <p class="eyebrow"><%= t('brand.subtitle') %></p>
+      <h1 id="activity-selection-title" class="type-display"><%= t('modules.selection_title') %></h1>
+      <p class="activity-selection__description"><%= t('modules.selection_description') %></p>
+    </div>
+
+    <%= button_to toggle_libras_mode_path(locale: I18n.locale), method: :post, form_class: "activity-selection__libras-toggle-form", class: "focus-ink activity-selection__libras-toggle" do %>
+      <span class="activity-selection__libras-toggle-icon" aria-hidden="true">⌁</span>
+      <span>
+        <strong><%= libras_mode_enabled? ? t('modules.libras_on') : t('modules.libras_off') %></strong>
+        <small><%= t('modules.libras_toggle_hint') %></small>
+      </span>
+    <% end %>
+
+    <section class="activity-selection__progress" aria-labelledby="selection-progress-title">
+      <div class="activity-selection__progress-heading">
+        <div>
+          <p id="selection-progress-title"><%= t('modules.progress_label') %></p>
+          <strong><%= t('modules.progress_count', completed: @completed_modules_count, total: @modules.count) %></strong>
+        </div>
+        <span><%= @completion_percentage %>%</span>
+      </div>
+      <div class="activity-selection__progress-track" role="progressbar" aria-labelledby="selection-progress-title" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= @completion_percentage %>">
+        <span style="width: <%= @completion_percentage %>%"></span>
+      </div>
+    </section>
+  </header>
+
+  <div class="activity-selection__content">
+    <section class="activity-selection__list" aria-labelledby="activity-list-title">
+      <header class="activity-selection__list-heading">
+        <div>
+          <p class="eyebrow"><%= t('modules.available_eyebrow') %></p>
+          <h2 id="activity-list-title" class="type-display"><%= t('modules.available_title') %></h2>
+        </div>
+        <span><%= t('modules.modules_count', count: @modules.count) %></span>
+      </header>
+
+      <% @modules.each do |modulo| %>
+        <% available = modulo.available_to?(current_user) %>
+        <% completed = @attempted_module_ids.include?(modulo.id) %>
+        <% state = completed ? 'completed' : available ? 'available' : 'locked' %>
+        <% published_questions = modulo.questions.count(&:published?) %>
+
+        <article class="activity-card activity-card--<%= state %>">
+          <header class="activity-card__header">
+            <span class="activity-card__status"><span aria-hidden="true"><%= completed ? '✓' : available ? '↗' : '•' %></span><%= completed ? t('home.module.completed') : available ? t('modules.available') : t('modules.locked') %></span>
+            <span class="activity-card__questions"><%= t('home.module.questions', count: published_questions) %></span>
+          </header>
+
+          <div class="activity-card__body">
+            <div class="activity-card__copy">
+              <span class="activity-card__index" aria-hidden="true"><%= format('%02d', modulo.position) %></span>
+              <div>
+                <p><%= t('modules.module_label', number: modulo.position) %></p>
+                <h3 class="type-display"><%= I18n.locale == :en ? modulo.title_en : modulo.title_pt %></h3>
+                <span class="activity-card__description"><%= available ? t('modules.card_available_description') : t('modules.complete_previous') %></span>
+              </div>
+            </div>
+
+            <div class="activity-card__visual" aria-hidden="true">
+              <span><%= modulo.position %></span>
+              <i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+
+          <footer class="activity-card__footer">
+            <span><%= completed ? t('modules.completed_hint') : available ? t('modules.available_hint') : t('modules.locked_hint') %></span>
+            <% if available %>
+              <%= link_to play_quiz_module_path(modulo.slug, locale: I18n.locale), class: "focus-ink activity-card__action" do %>
+                <%= completed ? t('home.module.review') : t('modules.play') %><span aria-hidden="true">→</span>
+              <% end %>
+            <% else %>
+              <span class="activity-card__locked"><span aria-hidden="true">⌁</span><%= t('modules.locked') %></span>
+            <% end %>
+          </footer>
+        </article>
+      <% end %>
+    </section>
+
+    <aside class="activity-selection__side" aria-label="<%= t('modules.support_label') %>">
+      <section class="activity-side-card activity-side-card--libras">
+        <span class="activity-side-card__icon" aria-hidden="true">⌁</span>
+        <p class="eyebrow"><%= t('modules.accessibility_eyebrow') %></p>
+        <h2 class="type-display"><%= t('modules.accessibility_title') %></h2>
+        <p><%= t('modules.accessibility_description') %></p>
+        <%= button_to toggle_libras_mode_path(locale: I18n.locale), method: :post, class: "focus-ink activity-side-card__action" do %>
+          <%= libras_mode_enabled? ? t('modules.disable_libras') : t('modules.enable_libras') %><span aria-hidden="true">→</span>
+        <% end %>
+      </section>
+
+      <section class="activity-side-card">
+        <span class="activity-side-card__icon activity-side-card__icon--outline" aria-hidden="true">i</span>
+        <p class="eyebrow"><%= t('modules.how_it_works_eyebrow') %></p>
+        <h2 class="type-display"><%= t('modules.how_it_works_title') %></h2>
+        <ol>
+          <li><span>1</span><%= t('modules.how_it_works_one') %></li>
+          <li><span>2</span><%= t('modules.how_it_works_two') %></li>
+          <li><span>3</span><%= t('modules.how_it_works_three') %></li>
+        </ol>
+      </section>
+    </aside>
+  </div>
+</section>

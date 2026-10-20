@@ -1,30 +1,125 @@
-<div class="mx-auto max-w-3xl py-8 sm:py-14">
+<% question_text = I18n.locale == :en ? @question.body_en : @question.body_pt %>
+<% context_text = I18n.locale == :en ? @question.context_en : @question.context_pt %>
+<% feedback_text = I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %>
+<% correct = @answered_correctly %>
+<% progress = (((@current_index + 1).to_f / @total_questions) * 100).round %>
+<% libras_text = [question_text, context_text.presence].compact.join(" ") %>
+
+<div class="feedback-stage py-8 sm:py-12">
   <%= turbo_frame_tag "quiz_content" do %>
-    <% progress = (((@current_index + 1).to_f / @total_questions) * 100).round %>
-    <header class="mb-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
-      <div class="mb-3 flex items-center justify-between gap-4 text-xs font-extrabold tracking-[0.12em] text-tx1 uppercase">
+    <header class="feedback-progress" aria-label="<%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %>">
+      <div class="feedback-progress__labels">
         <span><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %></span>
-        <span class="text-accent"><%= progress %>%</span>
+        <strong><%= progress %>%</strong>
       </div>
-      <div class="h-[3px] bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500" style="width: <%= progress %>%"></div></div>
+      <div class="feedback-progress__track" aria-hidden="true"><span style="width: <%= progress %>%"></span></div>
     </header>
 
-    <section class="rounded-xl border bg-bg2 p-6 sm:p-9 <%= @feedback.kind == 'correct' ? 'border-green text-green' : 'border-red text-red' %>">
-      <p class="eyebrow mb-3 text-current"><%= @feedback.kind == 'correct' ? t('quiz.correct') : t('quiz.incorrect') %></p>
-      <h1 class="type-display text-4xl leading-tight sm:text-5xl"><%= @feedback.kind == 'correct' ? t('quiz.correct') : t('quiz.incorrect') %></h1>
-      <p class="mt-5 max-w-2xl text-base leading-7 text-tx0"><%= I18n.locale == :en ? @feedback.body_en : @feedback.body_pt %></p>
+    <section class="feedback-hero feedback-hero--<%= correct ? 'correct' : 'incorrect' %>" aria-labelledby="feedback-title">
+      <div class="feedback-hero__icon" aria-hidden="true"><%= correct ? '✓' : '!' %></div>
+      <div class="feedback-hero__content">
+        <p class="feedback-hero__eyebrow"><%= correct ? t('quiz.feedback.correct_kicker') : t('quiz.feedback.incorrect_kicker') %></p>
+        <h1 id="feedback-title" class="type-display"><%= correct ? t('quiz.correct') : t('quiz.incorrect') %></h1>
+        <p><%= correct ? t('quiz.feedback.correct_summary') : t('quiz.feedback.incorrect_summary') %></p>
+      </div>
+      <span class="feedback-hero__status"><%= correct ? t('quiz.feedback.answer_confirmed') : t('quiz.feedback.answer_review') %></span>
     </section>
 
-    <div class="mt-8 flex justify-stretch sm:justify-end">
+    <div class="feedback-layout">
+      <div class="feedback-layout__main">
+        <article class="feedback-question-card" aria-labelledby="answered-question-title">
+          <header class="feedback-question-card__header">
+            <div class="feedback-question-card__metadata">
+              <span class="feedback-question-card__number" aria-hidden="true"><%= format('%02d', @current_index + 1) %></span>
+              <p><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %> · <%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
+            </div>
+            <span class="feedback-question-card__answer-state"><%= correct ? t('quiz.correct') : t('quiz.feedback.review_answer') %></span>
+          </header>
+
+          <h2 id="answered-question-title" class="type-display"><%= question_text %></h2>
+
+          <div class="feedback-options" aria-label="<%= t('quiz.feedback.answer_key') %>">
+            <% @options.each_with_index do |option, index| %>
+              <% selected = index == @selected_index %>
+              <% is_correct_option = index == @question.correct_index %>
+              <% state = if selected && is_correct_option
+                'selected-correct'
+              elsif selected
+                'selected-incorrect'
+              elsif is_correct_option
+                'correct'
+              else
+                'neutral'
+              end %>
+              <% option_text = I18n.locale == :en ? option.text_en : option.text_pt %>
+
+              <div class="feedback-option feedback-option--<%= state %>">
+                <div class="feedback-option__topline">
+                  <span class="feedback-option__letter" aria-hidden="true"><%= (index + 65).chr %></span>
+                  <% if selected && is_correct_option %>
+                    <span class="feedback-option__badge"><span aria-hidden="true">✓</span><%= t('quiz.feedback.your_correct_answer') %></span>
+                  <% elsif selected %>
+                    <span class="feedback-option__badge"><span aria-hidden="true">!</span><%= t('quiz.feedback.your_answer') %></span>
+                  <% elsif is_correct_option %>
+                    <span class="feedback-option__badge"><span aria-hidden="true">✓</span><%= t('quiz.feedback.correct_answer') %></span>
+                  <% end %>
+                </div>
+                <p><%= option_text %></p>
+              </div>
+            <% end %>
+          </div>
+        </article>
+
+        <article class="feedback-explanation" aria-labelledby="feedback-explanation-title">
+          <div class="feedback-explanation__icon" aria-hidden="true">?</div>
+          <div>
+            <p class="eyebrow"><%= t('quiz.feedback.explanation_eyebrow') %></p>
+            <h2 id="feedback-explanation-title" class="type-display"><%= t('quiz.feedback.explanation_title') %></h2>
+          </div>
+          <p class="feedback-explanation__body"><%= feedback_text %></p>
+
+          <% if context_text.present? %>
+            <div class="feedback-explanation__context">
+              <span aria-hidden="true">i</span>
+              <p><strong><%= t('quiz.feedback.context_label') %></strong><%= context_text %></p>
+            </div>
+          <% end %>
+        </article>
+      </div>
+
+      <aside class="feedback-libras-card" aria-labelledby="feedback-libras-title">
+        <div class="feedback-libras-card__icon" aria-hidden="true">⌁</div>
+        <p class="eyebrow"><%= t('quiz.libras_mode') %></p>
+        <h2 id="feedback-libras-title" class="type-display"><%= t('quiz.feedback.libras_title') %></h2>
+
+        <% if libras_mode_enabled? %>
+          <p><%= @question.libras_video.attached? ? t('quiz.feedback.libras_video_ready') : t('quiz.feedback.libras_avatar_ready') %></p>
+          <div class="feedback-libras-card__actions">
+            <button type="button" data-controller="vlibras" data-action="click->vlibras#translate" data-vlibras-text-value="<%= libras_text %>" class="focus-ink feedback-libras-card__button" aria-label="<%= t('quiz.translate_with_vlibras') %>">
+              <span aria-hidden="true">↗</span><%= t('quiz.translate_with_vlibras') %>
+            </button>
+            <%= render "shared/libras_video_player", video: @question.libras_video, button_label: t("quiz.watch_video_libras"), modal_title: t("quiz.libras_mode"), button_class: "focus-ink feedback-libras-card__button feedback-libras-card__button--quiet" %>
+          </div>
+        <% else %>
+          <p><%= t('quiz.feedback.libras_inactive') %></p>
+          <%= button_to toggle_libras_mode_path(locale: I18n.locale), method: :post, class: "focus-ink feedback-libras-card__button" do %>
+            <span aria-hidden="true">⌁</span><%= t('quiz.feedback.activate_libras') %>
+          <% end %>
+        <% end %>
+      </aside>
+    </div>
+
+    <footer class="feedback-actions">
+      <p><%= t('quiz.feedback.next_step') %></p>
       <% if @next_question %>
-        <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
+        <%= link_to play_quiz_module_path(@module.slug, locale: I18n.locale, question_index: @next_index), class: "focus-ink quiz-primary-action" do %>
           <%= t('quiz.next_question') %><span aria-hidden="true">→</span>
         <% end %>
       <% else %>
-        <%= link_to result_quiz_module_path(@module.slug, locale: I18n.locale), data: { turbo_frame: "_top" }, class: "focus-ink inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-md bg-accent px-5 py-3 text-xs font-extrabold tracking-[0.12em] text-bg2 uppercase transition-colors hover:bg-tx0 sm:w-auto" do %>
+        <%= link_to result_quiz_module_path(@module.slug, locale: I18n.locale), data: { turbo_frame: "_top" }, class: "focus-ink quiz-primary-action" do %>
           <%= t('quiz.see_result') %><span aria-hidden="true">→</span>
         <% end %>
       <% end %>
-    </div>
+    </footer>
   <% end %>
 </div>

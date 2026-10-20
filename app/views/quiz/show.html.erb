@@ -1,39 +1,50 @@
-<div class="mx-auto max-w-3xl py-8 sm:py-14">
+<div class="quiz-stage py-8 sm:py-12">
   <%= turbo_frame_tag "quiz_content" do %>
     <% progress = ((@current_index.to_f / @total_questions) * 100).round %>
-    <header class="mb-8 rounded-xl border ink-rule bg-bg2 p-5 sm:p-6">
+    <header class="quiz-progress">
       <div class="mb-3 flex items-center justify-between gap-4 text-xs font-extrabold tracking-[0.12em] text-tx1 uppercase">
         <span><%= t('quiz.progress', current: @current_index + 1, total: @total_questions) %></span>
         <span class="text-accent"><%= progress %>%</span>
       </div>
-      <div class="h-[3px] bg-bg3" aria-hidden="true"><div class="h-full bg-accent transition-all duration-500 ease-out" style="width: <%= progress %>%"></div></div>
+      <div class="quiz-progress__track" aria-hidden="true"><div class="quiz-progress__value" style="width: <%= progress %>%"></div></div>
     </header>
 
-    <section class="mb-8 rounded-xl border ink-rule bg-bg2 p-6 sm:p-9">
-      <p class="eyebrow mb-4"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
-      <h1 class="type-display max-w-3xl text-3xl leading-tight sm:text-4xl"><%= I18n.locale == :en ? @question.body_en : @question.body_pt %></h1>
+    <div class="quiz-main-grid <%= 'quiz-main-grid--with-libras' if libras_mode_enabled? %>">
+      <section class="quiz-question-card">
+        <div class="quiz-question-card__topline">
+          <p class="eyebrow"><%= I18n.locale == :en ? @module.title_en : @module.title_pt %></p>
+          <span class="quiz-question-card__number" aria-hidden="true"><%= format('%02d', @current_index + 1) %></span>
+        </div>
+        <h1 class="type-display mt-5 max-w-3xl text-3xl leading-tight sm:text-4xl"><%= I18n.locale == :en ? @question.body_en : @question.body_pt %></h1>
 
-      <% if @question.context_pt.present? %>
-        <p class="mt-7 max-w-2xl border-l-2 border-accent pl-5 text-base leading-7 text-tx1"><%= I18n.locale == :en ? @question.context_en : @question.context_pt %></p>
-      <% end %>
+        <% if @question.context_pt.present? %>
+          <p class="quiz-question-card__context"><%= I18n.locale == :en ? @question.context_en : @question.context_pt %></p>
+        <% end %>
+      </section>
 
       <% if libras_mode_enabled? %>
-        <div class="mt-7 flex flex-wrap gap-3">
-          <button type="button" data-controller="vlibras" data-action="click->vlibras#translate" data-vlibras-text-value="<%= [(I18n.locale == :en ? @question.body_en : @question.body_pt), (@question.context_pt.present? ? (I18n.locale == :en ? @question.context_en : @question.context_pt) : nil)].compact.join(' ') %>" class="focus-ink inline-flex items-center gap-2 border border-amber px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-amber uppercase transition-colors hover:bg-amber hover:text-bg2 cursor-pointer" aria-label="<%= t('quiz.translate_with_vlibras') %>">
-            <span aria-hidden="true">↗</span><%= t('quiz.translate_with_vlibras') %>
-          </button>
+        <aside class="quiz-libras-panel" aria-label="<%= t('quiz.libras_mode') %>">
+          <div class="quiz-libras-panel__badge" aria-hidden="true">⌁</div>
+          <p class="eyebrow"><%= t('quiz.libras_mode') %></p>
+          <h2 class="type-display mt-2 text-xl"><%= @question.libras_video.attached? ? t('quiz.watch_video_libras') : t('quiz.translate_with_vlibras') %></h2>
+          <p class="mt-2 text-sm leading-6 text-tx1"><%= t('quiz.translate_with_vlibras') %></p>
+          <div class="mt-5 grid gap-3">
+            <button type="button" data-controller="vlibras" data-action="click->vlibras#translate" data-vlibras-text-value="<%= [(I18n.locale == :en ? @question.body_en : @question.body_pt), (@question.context_pt.present? ? (I18n.locale == :en ? @question.context_en : @question.context_pt) : nil)].compact.join(' ') %>" class="focus-ink inline-flex items-center gap-2 border border-amber px-4 py-3 text-xs font-extrabold tracking-[0.1em] text-amber uppercase transition-colors hover:bg-amber hover:text-bg2 cursor-pointer" aria-label="<%= t('quiz.translate_with_vlibras') %>">
+              <span aria-hidden="true">↗</span><%= t('quiz.translate_with_vlibras') %>
+            </button>
 
-          <%= render "shared/libras_video_player", video: @question.libras_video, button_label: t("quiz.watch_video_libras"), modal_title: t("quiz.libras_mode"), button_class: "focus-ink inline-flex items-center gap-2 border border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase transition-colors hover:bg-tx0 hover:text-bg2 cursor-pointer" %>
-        </div>
+            <%= render "shared/libras_video_player", video: @question.libras_video, button_label: t("quiz.watch_video_libras"), modal_title: t("quiz.libras_mode"), button_class: "focus-ink inline-flex items-center gap-2 border border-tx0 px-4 py-3 text-xs font-extrabold tracking-[0.1em] uppercase transition-colors hover:bg-tx0 hover:text-bg2 cursor-pointer" %>
+          </div>
+        </aside>
       <% end %>
-    </section>
+    </div>
 
-    <div class="space-y-3">
+    <div class="quiz-options" aria-label="<%= I18n.locale == :en ? @question.body_en : @question.body_pt %>">
       <% @options.each_with_index do |option, index| %>
-        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink group flex min-h-14 w-full items-start gap-3 rounded-xl border ink-rule bg-bg2 px-4 py-4 text-left text-base font-semibold transition-colors hover:border-accent hover:bg-bg1 cursor-pointer sm:gap-5 sm:px-6 sm:py-5 sm:text-lg" do %>
-          <span class="module-index text-accent"><%= (index + 65).chr %></span>
-          <span class="min-w-0 pt-0.5"><%= I18n.locale == :en ? option.text_en : option.text_pt %></span>
-          <span aria-hidden="true" class="ml-auto pt-0.5 text-accent opacity-0 transition-opacity group-hover:opacity-100">→</span>
+        <%= button_to answer_quiz_module_path(@module.slug, locale: I18n.locale, option_index: index, question_id: @question.id), method: :post, class: "focus-ink quiz-option-card group" do %>
+          <span class="quiz-option-card__letter" aria-hidden="true"><%= (index + 65).chr %></span>
+          <span class="quiz-option-card__text"><%= I18n.locale == :en ? option.text_en : option.text_pt %></span>
+          <span aria-hidden="true" class="quiz-option-card__arrow">→</span>
         <% end %>
       <% end %>
     </div>

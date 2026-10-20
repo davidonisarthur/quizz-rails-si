@@ -1,113 +1,194 @@
-# PrimoQuiz: Plataforma Web Interativa e Acessível para o Ensino de Teoria dos Números a Estudantes Surdos
+# PrimoQuiz
 
 [![Ruby on Rails](https://img.shields.io/badge/Ruby_on_Rails-8.1.3-CC0000?style=flat&logo=ruby-on-rails)](https://rubyonrails.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
 [![Hotwire](https://img.shields.io/badge/Hotwire-Turbo_|_Stimulus-000000?style=flat)](https://hotwired.dev/)
-[![Acessibilidade](https://img.shields.io/badge/Acessibilidade-LIBRAS-FFD700?style=flat)](https://www.gov.br/inclusao)
+[![Acessibilidade](https://img.shields.io/badge/Acessibilidade-LIBRAS-005236?style=flat)](https://www.gov.br/inclusao)
 
----
+Plataforma web bilíngue e acessível para o ensino de Matemática e Computação, desenvolvida em um projeto de Iniciação Científica da UTFPR, sob orientação da Prof.ª Dr.ª Renata da Silva Dessbesel e em coautoria com o Prof. Renan de Bastos Andrade.
 
-## 📌 Resumo / Abstract
+## Demonstração
 
-### Resumo (Português)
-O **PrimoQuiz** é uma plataforma web interativa desenvolvida como projeto de **Iniciação Científica**, cujo objetivo principal é promover a **acessibilidade no ensino de matemática para alunos surdos**. A aplicação foca no ensino de **Teoria dos Números** (com ênfase em números primos, Crivo de Eratóstenes, Teorema Fundamental da Aritmética e Criptografia RSA), conectando conceitos matemáticos abstratos com aplicações práticas no cotidiano tecnológico (ex.: segurança bancária e criptografia de mensagens).
+<video src="docs/media/video_docs.mp4" controls preload="metadata" width="100%">
+  Seu navegador não suporta vídeo HTML5. Baixe o arquivo pelo link abaixo.
+</video>
 
-A solução integra recursos de **multimodalidade e tecnologia assistiva**, incluindo interpretação em **LIBRAS (Língua Brasileira de Sinais)** via vídeo por questão, internacionalização (PT-BR / EN), design responsivo com suporte a temas claro/escuro (*Dark/Light Mode*) e respostas dinâmicas em tempo real sem recarregamento de página (*Hotwire Turbo*). O software combina metodologias de gamificação e feedback pedagógico imediato para engajar estudantes do Ensino Médio.
+[Assistir ou baixar a demonstração em vídeo](docs/media/video_docs.mp4).
 
-### Abstract (English)
-**PrimoQuiz** is an interactive web platform developed as a **Scientific Initiation project** aimed at promoting **accessibility in mathematics education for deaf students**. The application focuses on teaching **Number Theory** (emphasizing prime numbers, the Sieve of Eratosthenes, the Fundamental Theorem of Arithmetic, and RSA Cryptography), connecting abstract mathematical concepts with practical real-world applications (e.g., banking security and message encryption).
+> O arquivo de demonstração está versionado em `docs/media/video_docs.mp4`. Em hospedagens que não renderizam a tag `<video>`, o link direto continua disponível.
 
-The solution incorporates **multimodal features and assistive technologies**, including **Brazilian Sign Language (LIBRAS)** video support per question, internationalization (PT-BR / EN), a responsive dark/light theme UI, and real-time page updates without reloads via *Hotwire Turbo*. The software leverages gamification and immediate pedagogical feedback to increase high school student engagement.
+## Visão geral
 
----
+O PrimoQuiz foi concebido para reduzir barreiras de acesso a conteúdos de Matemática e Computação. A plataforma une quizzes progressivos, materiais de estudo, feedback pedagógico e recursos de Libras, preservando uma navegação simples para estudantes e um fluxo de autoria controlado para professores.
 
-## 🔬 Contexto Científico e Problematização
+O conteúdo inicial trabalha Teoria dos Números, números primos, lógica e criptografia. A estrutura, porém, permite que professores criem novos quizzes e conteúdos de estudo para turmas específicas sem alterar o código da aplicação.
 
-1. **Desafio da Inclusão na Educação Matemática**: Alunos surdos frequentemente enfrentam barreiras na aprendizagem de matemática devido à escassez de materiais didáticos digitais sinalizados em LIBRAS e à predominância de abordagens estritamente textuais.
-2. **Relevância da Teoria dos Números**: A Teoria dos Números é um pilar da matemática moderna e da Ciência da Computação. O PrimoQuiz contextualiza números primos demonstrando sua utilidade na **segurança digital** (criptografia assimétrica RSA), motivando o aluno a compreender a relevância da disciplina.
-3. **Engajamento por Gamificação e Feedback Pedagógico**: O software aplica técnicas de gamificação (módulos progressivos e pontuação) alinhadas a feedbacks explicativos detalhados para cada resposta (correta ou incorreta), estimulando a autonomia e o aprendizado significativo.
+### Objetivos
 
----
+- oferecer atividades de aprendizagem em Português e Inglês;
+- disponibilizar apoio em Libras por avatar VLibras e vídeos gravados;
+- permitir que docentes criem, publiquem e distribuam seus próprios materiais;
+- manter o processamento do protótipo de visão computacional inteiramente no navegador;
+- registrar tentativas e disponibilizar informações de progresso para alunos e docentes.
 
-## 🛠️ Arquitetura e Stack Tecnológica
+## Funcionalidades
 
-O sistema foi arquitetado utilizando padrões modernos de desenvolvimento web focados em alta performance, manutenibilidade e baixo custo de infraestrutura:
+### Para estudantes
 
-| Camada | Tecnologia | Descrição |
+- **Percurso de quizzes:** módulos padrão da plataforma e atividades liberadas por sequência de aprendizagem.
+- **Feedback pedagógico após cada resposta:** a tela mostra a alternativa escolhida, o gabarito quando necessário e a explicação cadastrada pelo professor.
+- **Perfil de aprendizagem:** progresso por módulo, melhor resultado, última tentativa, módulos pendentes e progresso em conteúdos de estudo.
+- **Área de estudo:** conteúdos guiados sobre Matemática e Computação, incluindo o tema introdutório da Máquina de Turing.
+- **Internacionalização:** interface e conteúdos disponíveis em PT-BR e EN.
+- **Tema claro/escuro e navegação responsiva:** interface adaptada para desktop e dispositivos móveis, com foco visível e alvos de toque adequados.
+
+### Recursos de acessibilidade e Libras
+
+- **Modo Libras:** integra o avatar VLibras para traduzir enunciados, contextos e trechos de estudo.
+- **Vídeos gravados hospedados na plataforma:** questões e conteúdos de estudo aceitam MP4, WebM ou OGG de até 150 MB via Active Storage; não dependem de links do YouTube.
+- **Player acessível:** os vídeos são abertos em modal com controles nativos, foco gerenciado e suporte a teclado.
+- **Interface bilíngue e responsiva:** os recursos são preservados nos fluxos de quiz, estudo e feedback.
+
+### Área do professor
+
+A área do professor não é apenas uma rota oculta: ela é protegida por papel de usuário e por verificações de autoria no servidor.
+
+- **Painel docente:** apresenta número de turmas, alunos, materiais publicados, rascunhos e um próximo passo contextual.
+- **Gestão de turmas:** criação e exclusão de turmas; inclusão e remoção de estudantes pelo e-mail cadastrado.
+- **Autoria de quizzes:** criação, edição, publicação, pré-visualização e exclusão de quizzes próprios.
+- **Editor de questões:** alternativas PT/EN, contexto, resposta correta, feedback para acerto e erro, publicação, duplicação e reordenação de questões.
+- **Autoria de conteúdos de estudo:** editor rico com Action Text/Trix, anexos, versão em Português e Inglês, resumo, vídeo em Libras e vínculo opcional com um quiz.
+- **Visibilidade por audiência:** cada quiz ou conteúdo pode ser público ou restrito às turmas do próprio professor. Os conteúdos padrão da plataforma permanecem disponíveis como base comum.
+- **Atribuição por turma:** quizzes e conteúdos de estudo podem ser liberados para uma ou mais turmas; apenas estudantes matriculados recebem acesso ao material restrito.
+- **Relatórios de quizzes:** total de tentativas, estudantes participantes, média de acertos e desempenho por questão, com filtro por turma.
+- **Uploads diretos protegidos:** somente professor ou administrador pode iniciar o envio direto de vídeos para o Active Storage.
+
+### Acesso docente e administração
+
+- estudantes podem enviar uma solicitação de acesso docente pelo perfil;
+- administradores aprovam ou recusam solicitações pendentes;
+- administradores podem emitir convites de uso único para um e-mail específico; o convite expira em sete dias;
+- usuários têm os papéis `student`, `teacher` e `admin`; as autorizações são verificadas no backend.
+
+### Laboratório de visão computacional
+
+O laboratório é um protótipo técnico para futuras práticas de Libras. Ele usa **MediaPipe Tasks Vision** no navegador para:
+
+- abrir e encerrar a webcam corretamente;
+- detectar os 21 landmarks de uma mão e desenhar suas conexões sobre o vídeo;
+- analisar somente relações geométricas normalizadas, sem usar coordenadas absolutas em pixels;
+- identificar a configuração de teste `gesture_01` após estabilização temporal de múltiplos frames;
+- apresentar feedback de enquadramento e de condições da mão;
+- processar vídeo e landmarks localmente: nenhuma imagem da webcam é enviada ao servidor.
+
+`gesture_01` é somente uma configuração técnica. Ela não representa nem avalia um sinal real de Libras nesta versão.
+
+## Fluxo de conteúdo e permissões
+
+```text
+Administrador
+  ├── aprova solicitação docente
+  └── gera convite docente
+
+Professor
+  ├── cria turmas ──> matricula estudantes
+  ├── cria quizzes ──> cria questões, feedbacks e vídeos em Libras
+  ├── cria conteúdos de estudo ──> texto rico, anexos e vídeos em Libras
+  └── atribui quizzes/conteúdos às próprias turmas
+
+Estudante matriculado
+  ├── visualiza materiais públicos e os atribuídos às suas turmas
+  ├── responde quizzes e recebe feedback imediato
+  └── acompanha tentativas e progresso no perfil
+```
+
+## Modelo de dados
+
+```text
+User (student | teacher | admin)
+  ├──< QuizAttempt ──< QuizResponse >── Question >── QuizModule
+  ├──< ClassroomEnrollment >── Classroom (teacher)
+  ├──< TeacherAccessRequest
+  └──< StudyProgress
+
+QuizModule ──< Question ──< Option
+                       └──< Feedback
+QuizModule ──< ModuleAssignment >── Classroom
+
+StudyModule ──< StudyModuleAssignment >── Classroom
+```
+
+Principais entidades:
+
+- **`QuizModule`**: módulo de quiz público, padrão da plataforma ou restrito a turmas.
+- **`Question`**, **`Option`** e **`Feedback`**: enunciado, alternativas e devolutivas pedagógicas bilíngues.
+- **`QuizAttempt`** e **`QuizResponse`**: desempenho final e respostas individuais para perfil e relatórios.
+- **`Classroom`** e **`ClassroomEnrollment`**: organização das turmas e matrícula exclusiva de estudantes.
+- **`StudyModule`**: conteúdo editorial rico, com visibilidade, vínculo opcional com quiz e vídeo em Libras.
+- **`TeacherAccessRequest`** e **`TeacherInvitation`**: governança para concessão do papel docente.
+
+## Arquitetura e stack
+
+| Camada | Tecnologia | Uso no projeto |
 |---|---|---|
-| **Linguagem / Framework Backend** | Ruby 4.0.5 / Rails 8.1.3 | Arquitetura MVC com facilidade de I18n, segurança nativa e rotas RESTful. |
-| **Banco de Dados** | PostgreSQL | Armazenamento relacional de usuários, módulos, questões e histórico de tentativas. |
-| **Frontend & Interatividade** | Hotwire (Turbo + Stimulus) | Atualizações reativas de interface via HTML sobre HTTP, sem necessidade de SPAs complexas. |
-| **Estilização & UI/UX** | Tailwind CSS | Sistema de design *dark-first* adaptativo baseado nos tokens do Notion, garantindo contraste visual e acessibilidade. |
-| **Acessibilidade Multimodal** | Vídeos em LIBRAS & I18n | Player de vídeo em LIBRAS integrado e suporte a internacionalização (Português / Inglês). |
-| **Suíte de Testes** | RSpec + Capybara + FactoryBot | Garantia de qualidade por meio de testes unitários de model e testes de integração. |
+| Backend | Ruby 4.0.5 e Rails 8.1.3 | MVC, rotas REST, I18n, autenticação e autorização por papel. |
+| Banco de dados | PostgreSQL | Dados de usuários, turmas, conteúdo, tentativas e respostas. |
+| Frontend | Hotwire (Turbo + Stimulus) | Navegação fluida, Turbo Frames no quiz e controladores de interface. |
+| Estilos | Tailwind CSS 4 | Tokens visuais, tema claro/escuro e layout responsivo. |
+| Conteúdo rico | Action Text/Trix + Active Storage | Editor editorial, anexos e armazenamento dos vídeos enviados à plataforma. |
+| Acessibilidade | VLibras + vídeos locais | Avatar de Libras e mídia gravada associada a questões e estudos. |
+| Visão computacional | MediaPipe Tasks Vision | Landmarks de mão processados inteiramente no navegador. |
+| Qualidade | RSpec, Capybara, FactoryBot e SimpleCov | Testes de modelos, requisições, rotas e jornadas end-to-end. |
 
----
-
-## 🗂️ Modelo de Dados
-
-O modelo relacional do PrimoQuiz é estruturado nas seguintes entidades:
-
-```
-QuizModule (1) ──< Question (N) ──< Option (N)
-                                └──< Feedback (N)
-QuizModule (1) ──< QuizAttempt (N) >── User (1)
-```
-
-- **`User`**: Cadastro e autenticação segura (`has_secure_password`), perfil e histórico.
-- **`QuizModule`**: Módulos didáticos sequenciais (ex.: "O que é primo?", "Crivo de Eratóstenes", "Primos e Criptografia").
-- **`Question`**: Questões vinculadas aos módulos, com suporte a texto bilíngue, contexto teórico e URL do vídeo em LIBRAS.
-- **`Option`**: Opções de resposta por questão.
-- **`Feedback`**: Explicações pedagógicas diferenciadas para acertos e erros.
-- **`QuizAttempt`**: Registro de desempenho e pontuação por usuário/módulo.
-
----
-
-## 🌟 Principais Funcionalidades
-
-- 🤟 **Suporte a LIBRAS por Questão**: Player de vídeo acessível contendo a tradução do enunciado e contexto para a Língua Brasileira de Sinais.
-- 🌐 **Internacionalização (I18n)**: Suporte completo aos idiomas Português (PT-BR) e Inglês (EN).
-- ⚡ **Interatividade sem Reload**: Utilização de Turbo Frames para navegação rápida e transição fluida entre questões.
-- 🌓 **Tema Adaptativo (Dark / Light Mode)**: Interface visual de alto contraste configurável pelo usuário.
-- 📈 **Histórico individual**: Acompanhamento de tentativas e progresso por módulo para incentivar a aprendizagem.
-- 🎓 **Feedbacks Pedagógicos Detalhados**: Explicação teórica imediata após a resposta de cada pergunta.
-
----
-
-## 🚀 Como Executar o Projeto Localmente
+## Como executar localmente
 
 ### Pré-requisitos
-- Ruby `>= 3.3` (Recomendado Ruby 4.x)
-- Node.js `>= 20`
-- PostgreSQL instalado e ativo
 
-### Passo a Passo
+- Ruby `4.0.5` (ou uma versão compatível definida pelo projeto);
+- PostgreSQL em execução;
+- Node.js `20+` para ferramentas de frontend;
+- um navegador moderno para VLibras, webcam e testes de sistema.
+
+### Instalação
 
 ```bash
-# 1. Clonar o repositório
 git clone https://github.com/davidonisarthur/quizz-rails-si.git
 cd quizz-rails-si
 
-# 2. Instalar dependências
-bundle install
+# Instala dependências e prepara o banco.
+bin/setup --skip-server
 
-# 3. Configurar o banco de dados
-rails db:create
-rails db:migrate
-rails db:seed
+# Carrega os módulos e questões padrão da plataforma.
+bin/rails db:seed
 
-# 4. Iniciar o servidor de desenvolvimento
-bin/dev # ou rails server
+# Inicia Rails e o watcher do Tailwind.
+bin/dev
 ```
 
-Acesse no navegador: `http://localhost:3000`
+Abra `http://localhost:3000/pt-BR`.
 
----
+Para recriar o banco localmente, use `bin/setup --reset`. Para configurar uma conta existente como docente somente em desenvolvimento, pode-se executar:
 
-## 🔐 Configuração para produção
+```bash
+TEACHER_EMAIL=professor@exemplo.com bin/rails db:seed
+```
 
-Antes de publicar, configure o domínio público e a senha do PostgreSQL no ambiente de deploy:
+## Testes e qualidade
+
+```bash
+# Suíte completa (modelos, requisições, rotas e jornadas de sistema)
+bundle exec rspec
+
+# Pipeline local: setup, estilo, auditorias, testes e validação das seeds
+bin/ci
+```
+
+A execução mais recente da suíte contém **232 exemplos, 0 falhas**, com **100,00% de cobertura de linhas** e **97,73% de cobertura de ramos** pelo SimpleCov. A suíte cobre, entre outros fluxos, matrícula em turmas, visibilidade por audiência, autoria e exclusão de conteúdo, progresso do aluno, Libras, upload de vídeo, controle de acesso e jornadas end-to-end de aluno e professor.
+
+## Produção e operação segura
+
+Antes do deploy, defina o domínio permitido e a senha do PostgreSQL:
 
 ```bash
 APP_HOST=quiz.exemplo.com
@@ -115,32 +196,32 @@ APP_HOSTS=quiz.exemplo.com,www.quiz.exemplo.com
 QUIZZ_RAILS_DATABASE_PASSWORD=uma-senha-segura
 ```
 
-Em produção, a aplicação exige HTTPS e permite apenas os hosts definidos em `APP_HOSTS` (ou em `APP_HOST`). A configuração Kamal ainda contém valores de exemplo para servidor e registry; substitua-os pelos dados da sua infraestrutura antes de executar um deploy.
+Em produção, a aplicação exige HTTPS, restringe os hosts a `APP_HOSTS`/`APP_HOST` e utiliza serviços de cache, fila e cabo do Rails. O armazenamento de mídia está configurado como disco local por padrão; para produção com múltiplas instâncias, configure um serviço persistente compatível com Active Storage, como S3, antes de disponibilizar vídeos.
 
-### Operação segura
+Boas práticas operacionais:
 
-- Configure backup automático e externo do PostgreSQL antes do primeiro deploy; teste uma restauração em ambiente isolado.
-- Crie o primeiro administrador apenas por terminal autenticado do ambiente de produção: `TARGET_EMAIL=admin@exemplo.com TARGET_ROLE=admin bin/rails access:grant_role`.
-- Professores podem solicitar acesso pelo perfil. Administradores aprovam solicitações ou geram convites de uso único, válidos por sete dias.
-- Nunca exponha a tarefa de alteração de papel, o `RAILS_MASTER_KEY` ou senhas do banco por rotas públicas.
+- configure backup externo do PostgreSQL e teste restaurações;
+- armazene `RAILS_MASTER_KEY` e credenciais somente no provedor de deploy;
+- crie ou promova o primeiro administrador apenas em terminal autenticado de produção:
 
----
+  ```bash
+  TARGET_EMAIL=admin@exemplo.com TARGET_ROLE=admin bin/rails access:grant_role
+  ```
 
-## 📖 Citação Acadêmica / Citation (BibTeX)
+- não exponha tarefas de papel de usuário, chaves ou senhas por rotas públicas.
 
-Caso utilize este software ou sua documentação em seu artigo científico ou trabalho acadêmico, utilize o formato de citação abaixo:
+## Citação acadêmica
 
 ```bibtex
 @misc{primoquiz2026,
-  author       = {Arthur, Davidonis},
-  title        = {PrimoQuiz: Plataforma Web Interativa e Acessível para o Ensino de Teoria dos Números a Estudantes Surdos},
+  author       = {Arthur Davidonis and Renata da Silva Dessbesel and Renan de Bastos Andrade},
+  title        = {PrimoQuiz: Plataforma Web Interativa e Acessível para o Ensino de Matemática e Computação},
   year         = {2026},
   publisher    = {GitHub},
-  journal      = {Repositório de Iniciação Científica},
   howpublished = {\url{https://github.com/davidonisarthur/quizz-rails-si}}
 }
 ```
 
 ---
 
-*Projeto desenvolvido no âmbito de Iniciação Científica (IC).*
+Projeto desenvolvido no âmbito de Iniciação Científica da UTFPR.

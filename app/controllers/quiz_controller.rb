@@ -45,6 +45,8 @@ class QuizController < ApplicationController
     end
 
     correct   = chosen == @question.correct_index
+    @selected_index = chosen
+    @answered_correctly = correct
     session[:quiz]["score"] += 1 if correct
     quiz["responses"] ||= []
     quiz["responses"] << { "question_id" => @question.id, "selected_index" => chosen, "correct" => correct }

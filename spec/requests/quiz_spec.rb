@@ -98,6 +98,14 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include("50%")
     end
 
+    it "destaca a alternativa escolhida e correta no feedback pedagógico" do
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 1, question_id: q1.id)
+
+      expect(response.body).to include("Sua resposta correta")
+      expect(response.body).to include("17")
+      expect(response.body).to include("Alternativas e gabarito")
+    end
+
     it "não incrementa score mas atualiza o index da sessão quando a resposta está incorreta" do
       post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
 
@@ -107,6 +115,15 @@ RSpec.describe "Quizzes", type: :request do
       expect(response.body).to include("Tente novamente, 15 não é primo!")
       expect(response.body).to include("Questão 1 de 2")
       expect(response.body).to include("50%")
+    end
+
+    it "mostra a escolha e revela o gabarito quando a resposta está incorreta" do
+      post answer_quiz_module_path(slug: quiz_module.slug, locale: "pt-BR", option_index: 0, question_id: q1.id)
+
+      expect(response.body).to include("Sua resposta")
+      expect(response.body).to include("Resposta correta")
+      expect(response.body).to include("15")
+      expect(response.body).to include("17")
     end
 
     it "inclui link para ver resultado quebrando o frame turbo (data-turbo-frame='_top') quando for a última questão" do

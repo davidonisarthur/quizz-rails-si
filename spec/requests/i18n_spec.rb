@@ -60,10 +60,32 @@ RSpec.describe "I18n Translations", type: :request do
   describe "Página de módulos" do
     it "usa os textos centralizados para os dois idiomas" do
       get quiz_modules_path(locale: "pt-BR")
-      expect(response.body).to include("Módulos de Quiz")
+      expect(response.body).to include("Escolha uma atividade")
+      expect(response.body).to include("Seu avanço nas atividades")
 
       get quiz_modules_path(locale: "en")
-      expect(response.body).to include("Quiz Modules")
+      expect(response.body).to include("Choose an activity")
+      expect(response.body).to include("Your activity progress")
+    end
+
+    it "mostra o progresso real do aluno autenticado" do
+      create(:quiz_attempt, user: user, quiz_module: quiz_module, score: 1)
+      post session_path(locale: "pt-BR"), params: { email: user.email, password: "password123" }
+
+      get quiz_modules_path(locale: "pt-BR")
+
+      expect(response.body).to include("1 de 1 atividades concluídas")
+      expect(response.body).to include("100%")
+    end
+
+    it "mantém o estado vazio quando não há atividades disponíveis" do
+      QuizModule.destroy_all
+
+      get quiz_modules_path(locale: "pt-BR")
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("0 de 0 atividades concluídas")
+      expect(response.body).to include("0%")
     end
   end
 

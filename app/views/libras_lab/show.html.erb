@@ -12,6 +12,12 @@
            state_recognized: t("libras_lab.state_recognized"),
            state_error: t("libras_lab.state_error"),
            progress: t("libras_lab.progress", current: "%{current}", required: "%{required}"),
+           frame_waiting: t("libras_lab.feedback.frame_waiting"),
+           frame_good: t("libras_lab.feedback.frame_good"),
+           frame_adjust: t("libras_lab.feedback.frame_adjust"),
+           feedback_matched: t("libras_lab.feedback.matched"),
+           feedback_adjust: t("libras_lab.feedback.adjust"),
+           history_entry: t("libras_lab.history.entry", gesture: "%{gesture}", time: "%{time}"),
            error_insecure_context: t("libras_lab.error.insecure_context"),
            error_unsupported: t("libras_lab.error.unsupported"),
            error_permission_denied: t("libras_lab.error.permission_denied"),
@@ -47,6 +53,9 @@
       <div class="relative aspect-video bg-tx0">
         <video data-hand-gesture-target="video" class="h-full w-full -scale-x-100 object-cover" autoplay muted playsinline aria-label="Webcam"></video>
         <canvas data-hand-gesture-target="canvas" class="pointer-events-none absolute inset-0 h-full w-full -scale-x-100" aria-hidden="true"></canvas>
+        <div data-hand-gesture-target="framingGuide" class="hand-framing-guide" data-state="waiting" aria-hidden="true">
+          <span><%= t("libras_lab.feedback.guide") %></span>
+        </div>
         <div data-hand-gesture-target="cameraPlaceholder" class="absolute inset-0 flex items-center justify-center p-8 text-center text-sm leading-7 text-tx2">
           <p><%= t("libras_lab.state_idle") %></p>
         </div>
@@ -56,7 +65,37 @@
     <aside class="rounded-xl border ink-rule bg-bg2 p-6 sm:p-8" aria-labelledby="libras-lab-state-title">
       <p class="eyebrow text-accent"><%= t("libras_lab.status_label") %></p>
       <h2 id="libras-lab-state-title" data-hand-gesture-target="status" class="type-display mt-3 text-3xl" aria-live="polite"><%= t("libras_lab.state_idle") %></h2>
-      <p data-hand-gesture-target="detail" class="mt-4 text-sm leading-7 text-tx1" aria-live="polite"><%= t("libras_lab.progress", current: 0, required: 10) %></p>
+      <p data-hand-gesture-target="detail" class="mt-4 text-sm leading-7 text-tx1"><%= t("libras_lab.progress", current: 0, required: 10) %></p>
+
+      <div class="mt-5">
+        <div class="flex items-center justify-between gap-3 text-xs font-bold text-tx1">
+          <span><%= t("libras_lab.stability.label") %></span>
+          <span data-hand-gesture-target="stabilityValue"><%= t("libras_lab.progress", current: 0, required: 10) %></span>
+        </div>
+        <div class="mt-2 h-2 overflow-hidden rounded-full bg-bg1">
+          <div data-hand-gesture-target="stabilityBar" class="h-full rounded-full bg-accent transition-[width] duration-150" role="progressbar" aria-label="<%= t("libras_lab.stability.label") %>" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <section class="mt-8 border-t ink-rule pt-7" aria-labelledby="libras-lab-feedback-title">
+        <p class="eyebrow text-accent"><%= t("libras_lab.feedback.eyebrow") %></p>
+        <h3 id="libras-lab-feedback-title" class="type-display mt-2 text-2xl"><%= t("libras_lab.feedback.title") %></h3>
+        <p data-hand-gesture-target="framing" class="mt-3 text-sm leading-6 text-tx1" data-state="waiting"><%= t("libras_lab.feedback.frame_waiting") %></p>
+        <ul class="mt-5 grid gap-2" aria-label="<%= t("libras_lab.feedback.expected_label") %>">
+          <% {
+            index: t("libras_lab.feedback.conditions.index"),
+            middle: t("libras_lab.feedback.conditions.middle"),
+            ring: t("libras_lab.feedback.conditions.ring"),
+            pinky: t("libras_lab.feedback.conditions.pinky"),
+            orientation: t("libras_lab.feedback.conditions.orientation")
+          }.each do |key, label| %>
+            <li data-hand-gesture-target="feedbackItem" data-feedback-key="<%= key %>" data-state="adjust" class="hand-feedback-item flex items-center justify-between gap-3 rounded-md border border-bg3 px-3 py-2 text-sm">
+              <span><%= label %></span>
+              <span data-feedback-status class="shrink-0 text-xs font-extrabold tracking-[0.08em] uppercase"><%= t("libras_lab.feedback.adjust") %></span>
+            </li>
+          <% end %>
+        </ul>
+      </section>
 
       <div class="mt-8 border-t ink-rule pt-7">
         <h3 class="type-display text-2xl"><%= t("libras_lab.instructions_title") %></h3>
@@ -66,6 +105,18 @@
           <% end %>
         </ol>
       </div>
+
+      <section class="mt-8 border-t ink-rule pt-7" aria-labelledby="libras-lab-history-title">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="eyebrow text-accent"><%= t("libras_lab.history.eyebrow") %></p>
+            <h3 id="libras-lab-history-title" class="type-display mt-2 text-2xl"><%= t("libras_lab.history.title") %></h3>
+          </div>
+          <button type="button" data-hand-gesture-target="clearHistory" data-action="hand-gesture#clearHistory" class="focus-ink hidden min-h-11 cursor-pointer text-xs font-bold text-tx1 underline decoration-bg3 underline-offset-4 hover:text-accent"><%= t("libras_lab.history.clear") %></button>
+        </div>
+        <p data-hand-gesture-target="historyEmpty" class="mt-3 text-sm leading-6 text-tx1"><%= t("libras_lab.history.empty") %></p>
+        <ul data-hand-gesture-target="history" class="mt-4 space-y-2" aria-live="polite"></ul>
+      </section>
     </aside>
   </div>
 </section>
