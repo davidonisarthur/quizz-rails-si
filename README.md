@@ -10,13 +10,18 @@ Plataforma web bilíngue e acessível para o ensino de Matemática e Computaçã
 
 ## Demonstração
 
-<video src="docs/media/video_docs.mp4" controls preload="metadata" width="100%">
+<video controls preload="metadata" width="100%" poster="https://img.youtube.com/vi/f6QIPoQavCc/hqdefault.jpg">
+  <source src="https://raw.githubusercontent.com/davidonisarthur/quizz-rails-si/main/docs/media/video_docs.mp4" type="video/mp4">
   Seu navegador não suporta vídeo HTML5. Baixe o arquivo pelo link abaixo.
 </video>
 
 [Assistir ou baixar a demonstração em vídeo](docs/media/video_docs.mp4).
 
-> O arquivo de demonstração está versionado em `docs/media/video_docs.mp4`. Em hospedagens que não renderizam a tag `<video>`, o link direto continua disponível.
+[<img src="https://img.youtube.com/vi/f6QIPoQavCc/hqdefault.jpg" alt="Assistir à demonstração no YouTube" width="480">](https://youtu.be/f6QIPoQavCc)
+
+Também é possível [assistir à demonstração no YouTube](https://youtu.be/f6QIPoQavCc).
+
+> O arquivo de demonstração está versionado em `docs/media/video_docs.mp4`. Em hospedagens que não renderizam a tag `<video>`, o link direto e a miniatura do YouTube continuam disponíveis.
 
 ## Visão geral
 
